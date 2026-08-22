@@ -196,6 +196,10 @@ def plot_rate_comparison(agg_df, group_col, outdir="outputs"):
 
 
 def main():
+    print("=" * 70)
+    print("PART 2: PAIRWISE GROUP COMPARISONS")
+    print("STEP 4: Compare Groups Using t-tests (CPA)")
+    print("=" * 70)
     df = pd.read_csv("data/marketing_data_clean.csv")
     channel_col = cm["channel"]
 
@@ -213,6 +217,9 @@ def main():
     print(cr_ttest_results.to_string(index=False))
 
     # --- Fisher's exact on conversions (binary) vs. clicks (attempts) ---
+    print("\n" + "=" * 70)
+    print("STEP 5: Compare Binary Outcomes Using Fisher's Exact Test")
+    print("=" * 70)
     if "conversions_est" in df.columns:
         agg, fisher_results = pairwise_fisher(df, channel_col, "conversions_est", cm["clicks"])
         print("\n=== Fisher's exact results ===")
@@ -225,6 +232,10 @@ def main():
               "(needs Clicks + Conversion_Rate columns).")
 
     plot_correction_comparison(cpa_results, fisher_results if len(fisher_results) else cr_ttest_results)
+
+    print("\n" + "=" * 70)
+    print("PART 3: MULTIPLE COMPARISONS CORRECTION — complete (Bonferroni + FDR above)")
+    print("=" * 70)
 
     cpa_results.to_csv("data/cpa_pairwise_results.csv", index=False)
     fisher_results.to_csv("data/conversion_pairwise_results.csv", index=False)

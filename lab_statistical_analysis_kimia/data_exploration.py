@@ -128,6 +128,10 @@ def clean_and_prepare(df):
         cr_frac = cr / 100 if cr.max() > 1.5 else cr
         df["conversions_est"] = (df[cm["clicks"]] * cr_frac).round()
 
+    # CTR = Clicks / Impressions (Step 3 requirement — computable from this dataset)
+    if cm["clicks"] in df.columns and cm["impressions"] in df.columns:
+        df["ctr"] = df[cm["clicks"]] / df[cm["impressions"]]
+
     return df
 
 
@@ -136,11 +140,12 @@ def channel_summary(df):
     ch = cm["channel"]
     metrics = [c for c in
                [cm["conversion_rate"], cm["acquisition_cost"], cm["roi"],
-                cm["clicks"], cm["impressions"], cm["engagement_score"]]
-               if c in df.columns]
+                cm["clicks"], cm["impressions"], cm["engagement_score"],
+                "ctr"]
+               if c in df.columns or c == "ctr"]
 
     summary = df.groupby(ch)[metrics].agg(["mean", "median", "std", "count"]).round(2)
-    print("\n=== Channel Summary ===")
+    print("\n=== Channel Summary (Step 3: Key Marketing Metrics) ===")
     print(summary)
 
     n_by_channel = df[ch].value_counts()
@@ -151,6 +156,16 @@ def channel_summary(df):
     if cm["date"] in df.columns:
         date_range = (df[cm["date"]].min(), df[cm["date"]].max())
         print(f"\nDate range: {date_range[0]} to {date_range[1]}")
+
+    print(
+        "\n*** NOTE on ROAS / Profit / Profit Margin ***\n"
+        "This dataset (Kaggle: manishabhatt22/marketing-campaign-performance-dataset)\n"
+        "has no Revenue column, only Acquisition_Cost and ROI (already a computed ratio).\n"
+        "ROAS = Revenue / Cost and Profit = Revenue - Cost both require a Revenue figure\n"
+        "that isn't present in the raw data, so they cannot be honestly computed here.\n"
+        "ROI is reported instead as the closest available proxy for return performance.\n"
+        "This is a documented dataset limitation, not an oversight — see README.md.\n"
+    )
 
     return summary, n_by_channel, date_range
 
@@ -188,17 +203,50 @@ def plot_distributions(df, outdir="outputs"):
     plt.close()
 
 
-def plot_metrics_overview(summary_means, outdir="outputs"):
+def plot_metrics_overview(df, outdir="outputs"):
+    """Step 3 required chart: CPA, ROAS, conversion rate, total conversions,
+    total cost, profit — one panel each where computable. ROAS and Profit
+    panels are replaced with an explicit 'not available' note since this
+    dataset has no Revenue column (see channel_summary() note printed above)."""
     import os
     os.makedirs(outdir, exist_ok=True)
-    cols = [c for c in summary_means.columns]
-    n = len(cols)
-    fig, axes = plt.subplots(1, n, figsize=(5 * n, 4))
-    if n == 1:
-        axes = [axes]
-    for ax, col in zip(axes, cols):
-        summary_means[col].sort_values().plot.barh(ax=ax)
-        ax.set_title(col)
+    cm = COLUMN_MAP
+    ch = cm["channel"]
+
+    means = df.groupby(ch)[[cm["acquisition_cost"], cm["roi"], cm["conversion_rate"], "ctr"]].mean()
+
+    # conversions_est total and cost total, computed directly for clarity
+    if "conversions_est" in df.columns:
+        total_conversions = df.groupby(ch)["conversions_est"].sum()
+    else:
+        total_conversions = df.groupby(ch)[cm["clicks"]].count()
+    total_cost = df.groupby(ch)[cm["acquisition_cost"]].sum()
+
+    fig, axes = plt.subplots(2, 3, figsize=(18, 10))
+    axes = axes.flatten()
+
+    means[cm["acquisition_cost"]].sort_values().plot.barh(ax=axes[0], color="steelblue")
+    axes[0].set_title("CPA (Acquisition Cost) by channel")
+
+    axes[1].text(0.5, 0.5, "ROAS not available:\nno Revenue column in this dataset\n(see note in console output)",
+                 ha="center", va="center", fontsize=11, wrap=True)
+    axes[1].set_title("ROAS by channel")
+    axes[1].axis("off")
+
+    means[cm["conversion_rate"]].sort_values(ascending=False).plot.barh(ax=axes[2], color="seagreen")
+    axes[2].set_title("Conversion rate by channel")
+
+    total_conversions.sort_values(ascending=False).plot.barh(ax=axes[3], color="darkorange")
+    axes[3].set_title("Total conversions by channel")
+
+    total_cost.sort_values(ascending=False).plot.barh(ax=axes[4], color="indianred")
+    axes[4].set_title("Total cost by channel")
+
+    axes[5].text(0.5, 0.5, "Profit not available:\nno Revenue column in this dataset\n(ROI reported instead — see table above)",
+                 ha="center", va="center", fontsize=11, wrap=True)
+    axes[5].set_title("Profit by channel")
+    axes[5].axis("off")
+
     plt.tight_layout()
     plt.savefig(f"{outdir}/group_metrics_overview.png", dpi=150)
     print(f"Saved {outdir}/group_metrics_overview.png")
@@ -206,16 +254,22 @@ def plot_metrics_overview(summary_means, outdir="outputs"):
 
 
 def main():
+    print("=" * 70)
+    print("PART 1: DATASET DISCOVERY & EXPLORATION")
+    print("STEP 1: Dataset selected — see README.md for name/source/URL/rationale")
+    print("STEP 2: Load and Explore Your Dataset")
+    print("=" * 70)
     df_raw = load_raw()
     missing = reconcile_columns(df_raw)
     df = clean_and_prepare(df_raw)
+    print("\n" + "=" * 70)
+    print("STEP 3: Calculate Key Marketing Metrics")
+    print("=" * 70)
     summary, n_by_channel, date_range = channel_summary(df)
 
-    # Mean-only view for bar charts
+    # Mean-only view kept for reference; plot_metrics_overview now takes df directly
     cm = COLUMN_MAP
-    metric_cols = [c for c in [cm["conversion_rate"], cm["acquisition_cost"], cm["roi"]] if c in df.columns]
-    means = df.groupby(cm["channel"])[metric_cols].mean()
-    plot_metrics_overview(means)
+    plot_metrics_overview(df)
     plot_distributions(df)
 
     out_path = "data/marketing_data_clean.csv"

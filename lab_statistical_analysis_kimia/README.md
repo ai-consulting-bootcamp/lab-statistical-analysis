@@ -51,6 +51,12 @@ this repo — download it from the Kaggle URL above; it's ~27 MB).
 
 ## Key results summary
 
+- **Metrics computed:** CPA (Acquisition_Cost), Conversion Rate, CTR (Clicks/Impressions),
+  and ROI, all broken out by channel. **ROAS and Profit/Profit Margin are not computed**
+  — this dataset has no `Revenue` column, only `Acquisition_Cost` and `ROI` (already a
+  ratio). This is stated explicitly in the console output of `data_exploration.py` and
+  as a labeled "not available" panel in `outputs/group_metrics_overview.png`, rather
+  than silently omitted.
 - **CPA (Acquisition_Cost):** no pairwise channel difference was significant
   even before correction (all uncorrected p > 0.08). No budget-allocation
   claim should be made on CPA differences between channels in this dataset.

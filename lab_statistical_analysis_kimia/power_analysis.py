@@ -121,6 +121,10 @@ def assess_significant_pairs(cpa_results_path="data/cpa_pairwise_results.csv",
 
 
 def main():
+    print("=" * 70)
+    print("PART 4: POWER ANALYSIS & SAMPLE SIZE PLANNING")
+    print("STEP 7: Perform Power Analysis")
+    print("=" * 70)
     df = pd.read_csv("data/marketing_data_clean.csv")
     from data_exploration import COLUMN_MAP as cm
     base_cpa = df[cm["acquisition_cost"]].mean()
