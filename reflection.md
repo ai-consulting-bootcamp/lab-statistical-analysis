@@ -1,0 +1,9 @@
+Reflection
+
+What surprised me most was how different the conclusions looked depending on whether I focused only on descriptive metrics or also considered statistical uncertainty. Campaign 916 appeared to be the most efficient based on observed CPA and purchase rate, but its much smaller sample size meant that I could not confidently treat it as better than campaign 936. The strongest and most consistent finding was that campaign 1178 had substantially higher CPA than the other two campaigns.
+
+Multiple-comparison correction did not change the main conclusions in this analysis. The two significant CPA comparisons remained significant after both Bonferroni and Benjamini-Hochberg correction, while none of the purchase-rate comparisons became significant. This was useful because it showed that the strongest CPA findings were robust rather than artifacts of testing several pairs.
+
+The main limitations are the strongly skewed CPA distributions, unequal campaign sizes, the fact that row-level CPA is undefined for ads with zero approved conversions, and the lack of a time variable. The power analysis also relies on simplified normal-distribution assumptions that do not fully match the observed CPA data, so its results should be interpreted as approximate.
+
+For a non-technical stakeholder, I would avoid focusing on p-values alone. I would explain that campaign 1178 is clearly more expensive per approved conversion, while campaigns 916 and 936 both look more efficient and are not statistically distinguishable from each other. I would recommend shifting more budget toward 916 and 936, but scaling 916 cautiously because its evidence base is much smaller.

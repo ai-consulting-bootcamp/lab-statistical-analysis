@@ -1,0 +1,5 @@
+effect_size_pct,minimum_observations_for_80_power
+5.0,180
+10.0,60
+15.0,30
+20.0,30
