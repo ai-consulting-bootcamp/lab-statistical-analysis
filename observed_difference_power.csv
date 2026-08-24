@@ -1,0 +1,17 @@
+group_a,group_b,observed_difference_pct,power_at_90_days,estimated_days_for_80pct_power
+Content,LinkedIn Ads,63.29834130887557,1.0,90
+Content,Outbound Sales,47.88082701459285,1.0,90
+Content,Paid Search,40.17568663443353,1.0,90
+Content,Referral,843.6811390439002,1.0,90
+LinkedIn Ads,Paid Search,16.49548165563404,1.0,90
+LinkedIn Ads,Partnerships,47.62775925850807,1.0,90
+LinkedIn Ads,Referral,1441.0156473033928,1.0,90
+LinkedIn Ads,SEO,62.50584112031855,1.0,90
+Outbound Sales,Partnerships,33.68975431395162,1.0,90
+Outbound Sales,Referral,1295.5234727988493,1.0,90
+Outbound Sales,SEO,47.16314928220634,1.0,90
+Paid Search,Partnerships,26.72402153321488,1.0,90
+Paid Search,Referral,1222.8115162944305,1.0,90
+Paid Search,SEO,39.495402577666695,1.0,90
+Partnerships,Referral,943.8522233511318,1.0,90
+Referral,SEO,848.2832350391836,1.0,90
