@@ -1,11 +1,11 @@
-metric,group_a,group_b,observed_pct_diff,n_per_group,power_at_current_n
-conversion_rate,Email,Influencer,-0.2956320989360749,51664577,1.0
-conversion_rate,Email,Paid Ads,-1.0261615493748537,51664577,1.0
-conversion_rate,Email,SEO,-0.3937708336635647,51615614,1.0
-conversion_rate,Email,Social Media,-0.1695163432057805,51664577,0.9933333333333333
-conversion_rate,Influencer,Paid Ads,-0.7326955336236409,52199354,1.0
-conversion_rate,Influencer,SEO,-0.098429724588267,51615614,0.7433333333333333
-conversion_rate,Influencer,Social Media,0.1264896998850023,52444314,0.92
-conversion_rate,Paid Ads,SEO,0.6389473477142832,51615614,1.0
-conversion_rate,Paid Ads,Social Media,0.8655269105243661,52199354,1.0
-conversion_rate,SEO,Social Media,0.2251410301692001,51615614,1.0
+metric,group_a,group_b,observed_pct_diff,n_per_group,power_at_current_n,estimated_n_needed_for_80pct,power_at_estimated_n
+conversion_rate,Email,Influencer,-0.2956320989360749,51664577,1.0,,
+conversion_rate,Email,Paid Ads,-1.0261615493748537,51664577,1.0,,
+conversion_rate,Email,SEO,-0.3937708336635647,51615614,1.0,,
+conversion_rate,Email,Social Media,-0.1695163432057805,51664577,0.99,,
+conversion_rate,Influencer,Paid Ads,-0.7326955336236409,52199354,1.0,,
+conversion_rate,Influencer,SEO,-0.098429724588267,51615614,0.76,77423421.0,0.8766666666666667
+conversion_rate,Influencer,Social Media,0.1264896998850023,52444314,0.9266666666666666,,
+conversion_rate,Paid Ads,SEO,0.6389473477142832,51615614,1.0,,
+conversion_rate,Paid Ads,Social Media,0.8655269105243661,52199354,1.0,,
+conversion_rate,SEO,Social Media,0.2251410301692001,51615614,1.0,,

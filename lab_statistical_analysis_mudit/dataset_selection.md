@@ -55,6 +55,15 @@ from the source data, with no adaptation needed.
 - **Not used:** `Channel_Used` (too granular/messy — noted above), `Target_Audience`,
   `Language`, `Customer_Segment`, `Engagement_Score`, `Duration` — available for a follow-up
   breakdown but out of scope for the primary channel comparison this lab asks for.
+- **Power analysis sample-size unit (Step 7):** the lab's template specifies power/sample-size
+  curves in **days** (`empirical_power_cpa(..., n_days, ...)`), because it assumes a daily CPA
+  time series per channel. This dataset has no such series: each row is a single campaign that
+  already spans 5–30 days (`Duration`), aggregated to totals/rates — there is no way to recover a
+  per-day CPA value from it without fabricating one. `power_analysis.py` therefore substitutes
+  **campaigns per group** for CPA power (one CPA observation per campaign is the direct analog of
+  one CPA observation per day) and **clicks per group** for conversion-rate power (the natural
+  Fisher's-exact denominator). This is a deliberate, documented adaptation — see the module
+  docstring in `power_analysis.py` and the caveat repeated in `executive_memo.md`.
 
 ## A note on what the analysis found
 
