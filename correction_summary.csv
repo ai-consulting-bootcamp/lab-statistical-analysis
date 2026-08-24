@@ -1,0 +1,7 @@
+metric,method,significant_comparisons
+CPA t-tests,Uncorrected,16
+CPA t-tests,Bonferroni,15
+CPA t-tests,Benjamini-Hochberg FDR,16
+Conversion rate Fisher tests,Uncorrected,16
+Conversion rate Fisher tests,Bonferroni,13
+Conversion rate Fisher tests,Benjamini-Hochberg FDR,15
