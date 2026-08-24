@@ -153,6 +153,67 @@ def correction_chart(tt: pd.DataFrame, fi: pd.DataFrame) -> None:
 
 
 
+
+# --------------------------------------------------------------------------
+# CPA - compared by bootstrap, because it is a ratio of totals
+# --------------------------------------------------------------------------
+
+def _cpa_bootstrap(cost: np.ndarray, conv: np.ndarray, b: int, rng) -> np.ndarray:
+    """Sampling distribution of CPA = total cost / total conversions.
+
+    CPA has no per-impression value - most impressions convert zero times - so
+    there is nothing to feed a t-test. Resampling impressions within a campaign
+    and recomputing the ratio each time gives its sampling distribution directly,
+    which is the standard way to put an interval on a ratio of totals.
+    """
+    n = len(cost)
+    out = np.empty(b)
+    for i in range(b):
+        idx = rng.integers(0, n, n)
+        c = conv[idx].sum()
+        out[i] = cost[idx].sum() / c if c > 0 else np.nan
+    return out
+
+
+def cpa_pairs(sub: pd.DataFrame, b: int = 2000, seed: int = 11) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Per-campaign CPA with a bootstrap interval, and all pairwise differences."""
+    rng = np.random.default_rng(seed)
+    groups = sorted(sub["group"].unique())
+
+    dists, per_group = {}, []
+    for g in groups:
+        d = sub[sub["group"] == g]
+        cost, conv = d["cost"].to_numpy(), d["conversion"].to_numpy()
+        boot = _cpa_bootstrap(cost, conv, b, rng)
+        dists[g] = boot
+        point = cost.sum() / conv.sum()
+        per_group.append({
+            "group": g, "cpa": point,
+            "cpa_ci_low": np.nanpercentile(boot, 2.5),
+            "cpa_ci_high": np.nanpercentile(boot, 97.5),
+            "conversions": int(conv.sum()), "impressions": len(d),
+        })
+
+    rows = []
+    for a, bb in itertools.combinations(groups, 2):
+        diff = dists[a] - dists[bb]
+        diff = diff[~np.isnan(diff)]
+        # Two-sided bootstrap p-value: how much of the difference distribution
+        # sits on the wrong side of zero.
+        p = 2 * min((diff <= 0).mean(), (diff >= 0).mean())
+        p = min(max(p, 1.0 / len(diff)), 1.0)   # cannot resolve below 1/B
+        ca = sub.loc[sub["group"] == a, "cost"].sum() / sub.loc[sub["group"] == a, "conversion"].sum()
+        cb = sub.loc[sub["group"] == bb, "cost"].sum() / sub.loc[sub["group"] == bb, "conversion"].sum()
+        rows.append({
+            "group_a": a, "group_b": bb, "cpa_a": ca, "cpa_b": cb,
+            "diff": ca - cb, "ratio": ca / cb,
+            "diff_ci_low": np.percentile(diff, 2.5),
+            "diff_ci_high": np.percentile(diff, 97.5),
+            "p_raw": p,
+        })
+    return pd.DataFrame(per_group).set_index("group"), pd.DataFrame(rows)
+
+
 def correction_bites_demo(sub: pd.DataFrame, seed: int = 7) -> pd.DataFrame:
     """Show the correction actually withdrawing results.
 
@@ -203,11 +264,20 @@ def main() -> int:
 
     tt = correct(ttest_pairs(sub), "Cost per impression (Welch's t-test)")
     fi = correct(fisher_pairs(sub), "Conversion rate (Fisher's exact test)")
+    cpa_g, cpa_p = cpa_pairs(sub)
+    cpa_p = correct(cpa_p, "CPA (bootstrap, 2,000 resamples)")
 
     print(f"\n{line}\nCOST PER IMPRESSION - all pairs\n{line}")
     print(tt[["group_a", "group_b", "mean_a", "mean_b", "pct_diff", "p_raw",
               "p_bonferroni", "p_bh", "cohens_d", "effect", "sig_bh"]]
           .round(6).to_string(index=False))
+
+    print(f"\n{line}\nCPA BY CAMPAIGN - point estimate with 95% bootstrap interval\n{line}")
+    print(cpa_g.round(5).to_string())
+    print(f"\n{line}\nCPA - all pairs (bootstrap)\n{line}")
+    print(cpa_p[["group_a", "group_b", "cpa_a", "cpa_b", "ratio", "diff_ci_low",
+                 "diff_ci_high", "p_raw", "p_bonferroni", "p_bh", "sig_bh"]]
+          .round(5).to_string(index=False))
 
     print(f"\n{line}\nCONVERSION RATE - all pairs\n{line}")
     print(fi[["group_a", "group_b", "cvr_a_pct", "cvr_b_pct", "abs_diff_pp",
@@ -234,6 +304,8 @@ def main() -> int:
             "{:.3f}")
     correction_chart(tt, fi)
 
+    cpa_g.to_csv(HERE / "results_cpa_by_campaign.csv")
+    cpa_p.to_csv(HERE / "results_cpa_pairs.csv", index=False)
     tt.to_csv(HERE / "results_ttest_cost.csv", index=False)
     fi.to_csv(HERE / "results_fisher_conversion.csv", index=False)
     print(f"\nwritten: results_ttest_cost.csv, results_fisher_conversion.csv")

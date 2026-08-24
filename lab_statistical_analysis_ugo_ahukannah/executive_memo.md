@@ -36,14 +36,19 @@ campaigns are meaningful; the absolute numbers are not money.
 
 ## Results
 
-| Campaign | Impressions | Conversion rate | 95% interval | CPA (cost units) |
-|---|---:|---:|---|---:|
-| B | 14,802 | **8.28%** | 7.85&ndash;8.74% | 0.0031 |
-| E | 6,071 | 7.69% | 7.05&ndash;8.39% | 0.0039 |
-| F | 5,808 | 4.68% | 4.17&ndash;5.26% | 0.0046 |
-| A | 21,680 | 3.76% | 3.52&ndash;4.03% | **0.0018** |
-| D | 9,755 | 2.36% | 2.07&ndash;2.68% | 0.0201 |
-| C | 10,157 | 2.04% | 1.78&ndash;2.33% | 0.0098 |
+| Campaign | Impressions | Conversion rate | 95% interval | CPA (cost units) | CPA 95% interval |
+|---|---:|---:|---|---:|---|
+| B | 14,802 | **8.28%** | 7.85&ndash;8.74% | 0.0031 | 0.0029&ndash;0.0033 |
+| E | 6,071 | 7.69% | 7.05&ndash;8.39% | 0.0039 | 0.0035&ndash;0.0043 |
+| F | 5,808 | 4.68% | 4.17&ndash;5.26% | 0.0046 | 0.0041&ndash;0.0052 |
+| A | 21,680 | 3.76% | 3.52&ndash;4.03% | **0.0018** | 0.0016&ndash;0.0019 |
+| D | 9,755 | 2.36% | 2.07&ndash;2.68% | 0.0201 | 0.0178&ndash;0.0228 |
+| C | 10,157 | 2.04% | 1.78&ndash;2.33% | 0.0098 | 0.0086&ndash;0.0114 |
+
+CPA is a ratio of totals, so it has no per-impression value to test directly. Its
+intervals and its pairwise comparisons come from a bootstrap over 2,000 resamples
+of each campaign. Fourteen of the fifteen CPA pairs are unambiguous; the
+exception is set out below.
 
 **Thirteen of fifteen** conversion comparisons are significant after correction.
 The two that are not are worth as much as the ones that are: **B and E are
@@ -69,12 +74,18 @@ A campaign that converts at 8.3% may do so because of who it reaches, not becaus
 of anything transferable. Nothing here establishes that moving budget into
 Campaign B would produce Campaign B's conversion rate on the traffic you moved.
 
-**Correction changed nothing here, and that is not evidence it was unnecessary.**
-At this sample size the p-values are effectively zero, so Bonferroni and
-Benjamini-Hochberg withdrew no results. Repeating the same tests on a realistic
-pilot-sized sample &mdash; 400 impressions per campaign &mdash; Bonferroni
-withdrew three of seven apparently significant findings. The correction matters
-whenever you are near the threshold, which is where most real decisions sit.
+**Correction changed exactly one conclusion, and it is worth knowing which.**
+Most p-values here are effectively zero, so correction leaves them untouched. The
+exception is **Campaign E against Campaign F on CPA**: significant on its own
+(p=0.042), still significant under Benjamini-Hochberg, and **not significant under
+Bonferroni** (p=0.63). Their CPA intervals overlap. Treat E and F as having
+comparable acquisition costs rather than a real gap.
+
+That single disagreement is the whole argument for correcting. Repeating the
+tests on a realistic pilot-sized sample &mdash; 400 impressions per campaign
+&mdash; Bonferroni withdrew three of seven apparently significant findings. The
+correction matters whenever you are near the threshold, which is where most real
+decisions sit.
 
 **Scope.** One 30-day window, one ad network, the six largest campaigns only,
 and a cost column we cannot convert to currency. ROAS is not computable from this

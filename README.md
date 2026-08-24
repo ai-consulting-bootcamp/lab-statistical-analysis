@@ -38,10 +38,14 @@ are not worth acting on.**
   cheap; the effect size is what decides.
 - **Two pairs are statistically indistinguishable** (B/E, C/D), which turns a
   ranking of six into two strong campaigns and two weak ones.
-- Correction withdrew **nothing** at full sample size, because the p-values sit at
-  machine zero. Repeated at a realistic pilot size of 400 impressions per
-  campaign, Bonferroni withdrew **three of seven** findings &mdash; which is what
-  the correction is actually for.
+- **CPA is compared by bootstrap** (2,000 resamples), because it is a ratio of
+  totals with no per-impression value to test. Fourteen of fifteen pairs are
+  unambiguous; on the fifteenth, **Bonferroni and Benjamini-Hochberg disagree**
+  &mdash; E vs F is significant under BH and not under Bonferroni, and the
+  intervals overlap.
+- Correction withdrew nothing on the other two families, because their p-values
+  sit at machine zero. Repeated at a realistic pilot size of 400 impressions per
+  campaign, Bonferroni withdrew **three of seven** findings.
 - The data is **observational, not an experiment**, so nothing here shows that
   moving budget reproduces the gap. Every recommendation is framed as a bounded
   test.
@@ -79,6 +83,7 @@ Double-clickable launchers (`run_*.command` / `.bat`) are provided for each.
 | `data/synthetic_platform_performance.csv` | Secondary set, synthetic, ROAS only |
 | `group_performance_summary.csv` | Per-campaign metrics with confidence intervals |
 | `results_ttest_cost.csv`, `results_fisher_conversion.csv` | Full pairwise results |
+| `results_cpa_by_campaign.csv`, `results_cpa_pairs.csv` | CPA with bootstrap intervals, and all 15 CPA pairs |
 | `results_correction_subsample_demo.csv` | The pilot-size correction demonstration |
 | `power_*.csv` | Achieved power and required sample sizes |
 | `figures/` | Overview, cost distributions, effect-size heatmap, correction effect, power curves |
@@ -90,6 +95,7 @@ Double-clickable launchers (`run_*.command` / `.bat`) are provided for each.
 | 1, 16 &mdash; find and evaluate a real dataset | [`dataset_documentation.md`](lab_statistical_analysis_ugo_ahukannah/dataset_documentation.md) &mdash; three candidates assessed against group structure, cost and revenue |
 | 2, 9, 17 &mdash; load and explore | `data_exploration.py`, `marketing_data.py` |
 | 3, 18 &mdash; CPA, ROAS, conversion rates | `data_exploration.py`; ROAS from the labelled synthetic set |
+| 3, 18 &mdash; pairwise CPA | `statistical_analysis.py` &mdash; bootstrap CPA per campaign and across all 15 pairs |
 | 4, 10, 19, 20 &mdash; t-tests and Fisher's exact | `statistical_analysis.py` &mdash; Welch's on cost, Fisher on conversion, all 15 pairs |
 | 5 &mdash; Cohen's d | `statistical_analysis.py`; heatmap in `figures/` |
 | 6, 11, 21 &mdash; Bonferroni and Benjamini-Hochberg | `statistical_analysis.py`, applied within each family, plus the pilot-size demonstration |

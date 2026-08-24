@@ -23,9 +23,21 @@ the data does not have.
 
 ## How multiple comparisons correction changed my conclusions
 
-Here, not at all &mdash; and working out *why* was the useful part. Bonferroni and
-Benjamini-Hochberg withdrew zero results, because a correction only bites when
-p-values sit near the threshold, and at this sample size they sit at zero.
+Once, and only once &mdash; which turned out to be more instructive than either
+"not at all" or "a lot". On the conversion and cost-per-impression families,
+Bonferroni and Benjamini-Hochberg withdrew nothing, because a correction only
+bites when p-values sit near the threshold and at this sample size they sit at
+zero. But on **CPA**, compared by bootstrap, the two methods disagreed:
+Campaign E against Campaign F is significant on its own (p=0.042), survives
+Benjamini-Hochberg, and fails Bonferroni (p=0.63). Their bootstrap intervals
+overlap, and the honest reading is that the two campaigns have comparable
+acquisition costs.
+
+That is a textbook illustration of the difference between the two corrections.
+Bonferroni controls the chance of *any* false positive and is brutal about it;
+Benjamini-Hochberg controls the expected *proportion* of false discoveries and
+keeps more. Which one you want depends on the cost of being wrong, and for a
+budget decision worth five figures I would take the conservative reading.
 
 Reporting "no change" alone would have been true but would have taught me
 nothing, so I re-ran the same fifteen conversion tests on a realistic pilot-sized
