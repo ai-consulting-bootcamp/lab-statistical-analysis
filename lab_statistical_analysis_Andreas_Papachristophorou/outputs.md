@@ -272,3 +272,171 @@ First five rows:
   </tbody>
 </table>
 </div>
+
+
+## Compare Groups Using t-tests
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Channel_A</th>
+      <th>Channel_B</th>
+      <th>Mean_A_%</th>
+      <th>Mean_B_%</th>
+      <th>Difference_pp</th>
+      <th>T_Statistic</th>
+      <th>P_Value</th>
+      <th>Cohens_d</th>
+      <th>Effect_Size</th>
+      <th>Significant_0.05</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Social Media</td>
+      <td>Email</td>
+      <td>10.66</td>
+      <td>10.49</td>
+      <td>-0.17</td>
+      <td>0.841</td>
+      <td>0.4002</td>
+      <td>-0.030</td>
+      <td>Negligible</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Social Media</td>
+      <td>PPC</td>
+      <td>10.66</td>
+      <td>10.41</td>
+      <td>-0.24</td>
+      <td>1.240</td>
+      <td>0.2150</td>
+      <td>-0.044</td>
+      <td>Negligible</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Social Media</td>
+      <td>Referral</td>
+      <td>10.66</td>
+      <td>10.31</td>
+      <td>-0.35</td>
+      <td>1.815</td>
+      <td>0.0696</td>
+      <td>-0.064</td>
+      <td>Negligible</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Social Media</td>
+      <td>SEO</td>
+      <td>10.66</td>
+      <td>10.35</td>
+      <td>-0.30</td>
+      <td>1.520</td>
+      <td>0.1286</td>
+      <td>-0.055</td>
+      <td>Negligible</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Email</td>
+      <td>PPC</td>
+      <td>10.49</td>
+      <td>10.41</td>
+      <td>-0.08</td>
+      <td>0.388</td>
+      <td>0.6981</td>
+      <td>-0.014</td>
+      <td>Negligible</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Email</td>
+      <td>Referral</td>
+      <td>10.49</td>
+      <td>10.31</td>
+      <td>-0.18</td>
+      <td>0.957</td>
+      <td>0.3388</td>
+      <td>-0.033</td>
+      <td>Negligible</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>Email</td>
+      <td>SEO</td>
+      <td>10.49</td>
+      <td>10.35</td>
+      <td>-0.14</td>
+      <td>0.685</td>
+      <td>0.4933</td>
+      <td>-0.025</td>
+      <td>Negligible</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>PPC</td>
+      <td>Referral</td>
+      <td>10.41</td>
+      <td>10.31</td>
+      <td>-0.11</td>
+      <td>0.574</td>
+      <td>0.5661</td>
+      <td>-0.020</td>
+      <td>Negligible</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>PPC</td>
+      <td>SEO</td>
+      <td>10.41</td>
+      <td>10.35</td>
+      <td>-0.06</td>
+      <td>0.309</td>
+      <td>0.7570</td>
+      <td>-0.011</td>
+      <td>Negligible</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>Referral</td>
+      <td>SEO</td>
+      <td>10.31</td>
+      <td>10.35</td>
+      <td>0.05</td>
+      <td>-0.249</td>
+      <td>0.8032</td>
+      <td>0.009</td>
+      <td>Negligible</td>
+      <td>False</td>
+    </tr>
+  </tbody>
+</table>
+</div>
