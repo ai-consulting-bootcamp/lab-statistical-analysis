@@ -1,2 +1,0 @@
-group_a,group_b,conversions_a,total_a,rate_a,conversions_b,total_b,rate_b,difference,pct_difference,odds_ratio,p_value,significant_uncorrected
-ad,psa,14423.0,564577.0,0.025546559636683747,420.0,23524.0,0.01785410644448223,-0.007692453192201517,-30.111503472880507,1.4421459480522942,1.0470720577954195e-14,True

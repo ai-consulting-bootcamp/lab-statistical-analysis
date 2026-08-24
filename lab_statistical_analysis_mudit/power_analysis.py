@@ -3,14 +3,15 @@ Step 7: Power Analysis & Sample Size Planning
 ================================================
 Empirical (Monte Carlo) power analysis for both metrics used in this lab:
 
-  - `empirical_power_total_ads` — continuous metric (adapts the lab's
-    `empirical_power_cpa` recipe to total_ads, since there is no CPA here).
+  - `empirical_power_cpa` — continuous metric, following the lab's recipe exactly
+    (normal-distributed CPA per simulated campaign, std = 15% of the mean, capped
+    at 50% of base).
   - `empirical_power_conversion` — binary metric (conversion rate), simulated
     with binomial counts and tested with Fisher's exact test, matching the
     test used in Step 5.
 
-Sample size is expressed in **users per group**, not "days", because this
-dataset has no daily time series — see dataset_selection.md.
+Sample size is expressed in **campaigns per group**, not "days" — this dataset is
+campaign-level (one row per campaign), not a daily time series (see dataset_selection.md).
 """
 import os
 
@@ -29,100 +30,101 @@ os.makedirs("figures", exist_ok=True)
 
 df = pd.read_csv("data/marketing_data.csv")
 
-BASE_TOTAL_ADS_MEAN = df["total_ads"].mean()
-BASE_TOTAL_ADS_STD = df["total_ads"].std()
-BASE_CONVERSION_RATE = df["converted"].mean()
+BASE_CPA_MEAN = df["Acquisition_Cost"].mean()
+BASE_CPA_STD = df["Acquisition_Cost"].std()
+BASE_CONVERSION_RATE = df["Conversions"].sum() / df["Clicks"].sum()
 
-print(f"Base total_ads: mean={BASE_TOTAL_ADS_MEAN:.2f}, std={BASE_TOTAL_ADS_STD:.2f}")
+print(f"Base CPA: mean={BASE_CPA_MEAN:.2f}, std={BASE_CPA_STD:.2f}")
 print(f"Base conversion rate: {BASE_CONVERSION_RATE:.4%}")
 
 
-def empirical_power_total_ads(true_diff_pct, base_mean, base_std, n_users, n_sim=1000, alpha=0.05):
-    """Power to detect a true_diff_pct relative difference in mean total_ads
-    between two groups of size n_users, via independent t-test."""
+def empirical_power_cpa(true_diff_pct, base_mean, base_std, n_campaigns, n_sim=1000, alpha=0.05):
+    """Power to detect a true_diff_pct relative difference in mean CPA between two
+    groups of size n_campaigns, via independent t-test."""
     rejections = 0
-    mean_b = base_mean * (1 + true_diff_pct)
+    cap_a = base_mean * 0.5
+    cap_b = (base_mean * (1 + true_diff_pct)) * 0.5
     for _ in range(n_sim):
-        a = rng.normal(base_mean, base_std, n_users)
-        a = np.clip(a, 0, None)  # total_ads cannot be negative
-        b = rng.normal(mean_b, base_std, n_users)
-        b = np.clip(b, 0, None)
-        _, p_value = ttest_ind(a, b)
-        if p_value < alpha:
+        a = np.maximum(rng.normal(base_mean, base_std * 0.15, n_campaigns), cap_a)
+        b = np.maximum(rng.normal(base_mean * (1 + true_diff_pct), base_std * 0.15, n_campaigns), cap_b)
+        _, p = ttest_ind(a, b)
+        if p < alpha:
             rejections += 1
     return rejections / n_sim
 
 
-def empirical_power_conversion(true_diff_pct, base_rate, n_users, n_sim=1000, alpha=0.05):
-    """Power to detect a true_diff_pct relative difference in conversion rate
-    between two groups of size n_users, via Fisher's exact test."""
+def empirical_power_conversion(true_diff_pct, base_rate, n_clicks, n_sim=1000, alpha=0.05):
+    """Power to detect a true_diff_pct relative difference in conversion rate between
+    two groups with n_clicks each, via Fisher's exact test on simulated binomial counts."""
     rejections = 0
-    rate_b = base_rate * (1 + true_diff_pct)
+    rate_b = min(base_rate * (1 + true_diff_pct), 0.999)
     for _ in range(n_sim):
-        conv_a = rng.binomial(n_users, base_rate)
-        conv_b = rng.binomial(n_users, rate_b)
-        table = [[conv_a, n_users - conv_a], [conv_b, n_users - conv_b]]
-        _, p_value = fisher_exact(table, alternative="two-sided")
-        if p_value < alpha:
+        conv_a = rng.binomial(n_clicks, base_rate)
+        conv_b = rng.binomial(n_clicks, rate_b)
+        table = [[conv_a, n_clicks - conv_a], [conv_b, n_clicks - conv_b]]
+        _, p = fisher_exact(table, alternative="two-sided")
+        if p < alpha:
             rejections += 1
     return rejections / n_sim
 
 
-# 1a. Power curves — total_ads -----------------------------------------------
-effect_sizes = [0.05, 0.10, 0.15, 0.20]
-n_grid_continuous = [30, 60, 90, 120, 180]
-
-rows = []
-for pct in effect_sizes:
-    for n in n_grid_continuous:
-        power = empirical_power_total_ads(pct, BASE_TOTAL_ADS_MEAN, BASE_TOTAL_ADS_STD, n, n_sim=500)
-        rows.append({"effect_size_pct": pct, "n_users": n, "power": power})
-power_total_ads_df = pd.DataFrame(rows)
-power_total_ads_df.to_csv("results/power_analysis_total_ads.csv", index=False)
-
+# 1. Power curves for CPA ------------------------------------------------------
 print()
 print("=" * 70)
-print("POWER TABLE — total_ads (continuous)")
+print("POWER CURVES — CPA (t-test)")
 print("=" * 70)
-print(power_total_ads_df.pivot(index="n_users", columns="effect_size_pct", values="power"))
+
+effect_sizes = [0.05, 0.10, 0.15, 0.20]
+campaign_ns = [30, 60, 90, 120, 180]
+
+power_rows = []
+for pct in effect_sizes:
+    for n in campaign_ns:
+        power = empirical_power_cpa(pct, BASE_CPA_MEAN, BASE_CPA_STD, n, n_sim=500)
+        power_rows.append({"effect_size_pct": pct, "n_campaigns": n, "power": power})
+        print(f"CPA  {pct:.0%} diff, n={n:>4} campaigns/group -> power={power:.3f}")
+
+power_df = pd.DataFrame(power_rows)
+power_df.to_csv("results/power_analysis_cpa.csv", index=False)
 
 fig, ax = plt.subplots(figsize=(8, 6))
 for pct in effect_sizes:
-    subset = power_total_ads_df[power_total_ads_df["effect_size_pct"] == pct]
-    ax.plot(subset["n_users"], subset["power"], marker="o", label=f"{pct:.0%} difference")
+    subset = power_df[power_df["effect_size_pct"] == pct]
+    ax.plot(subset["n_campaigns"], subset["power"], marker="o", label=f"{pct:.0%} relative difference")
 ax.axhline(0.8, color="gray", linestyle="--", label="80% power target")
-ax.set_xlabel("Users per group")
+ax.set_xlabel("Campaigns per group")
 ax.set_ylabel("Power")
-ax.set_title("Power curves — detecting a difference in mean total_ads")
+ax.set_title(f"Power curves — detecting a relative difference in CPA\n(base CPA=${BASE_CPA_MEAN:.0f})")
 ax.legend()
 ax.grid(alpha=0.3)
 fig.tight_layout()
-fig.savefig("figures/power_analysis_total_ads.png", dpi=150)
+fig.savefig("figures/power_analysis_cpa.png", dpi=150)
 plt.close(fig)
-print("Saved figures/power_analysis_total_ads.png")
+print("Saved figures/power_analysis_cpa.png")
 
-# 1b. Power curves — conversion rate ------------------------------------------
-n_grid_binary = [500, 1000, 2000, 5000, 10000]
-rows = []
-for pct in effect_sizes:
-    for n in n_grid_binary:
-        power = empirical_power_conversion(pct, BASE_CONVERSION_RATE, n, n_sim=500)
-        rows.append({"effect_size_pct": pct, "n_users": n, "power": power})
-power_conv_df = pd.DataFrame(rows)
-power_conv_df.to_csv("results/power_analysis_conversion.csv", index=False)
-
+# 2. Power curves for conversion rate -------------------------------------------
 print()
 print("=" * 70)
-print("POWER TABLE — conversion rate (binary)")
+print("POWER CURVES — conversion rate (Fisher's exact)")
 print("=" * 70)
-print(power_conv_df.pivot(index="n_users", columns="effect_size_pct", values="power"))
+
+click_ns = [500, 1000, 2500, 5000, 10000]
+power_rows_conv = []
+for pct in effect_sizes:
+    for n in click_ns:
+        power = empirical_power_conversion(pct, BASE_CONVERSION_RATE, n, n_sim=500)
+        power_rows_conv.append({"effect_size_pct": pct, "n_clicks": n, "power": power})
+        print(f"Conversion  {pct:.0%} diff, n={n:>5} clicks/group -> power={power:.3f}")
+
+power_conv_df = pd.DataFrame(power_rows_conv)
+power_conv_df.to_csv("results/power_analysis_conversion.csv", index=False)
 
 fig, ax = plt.subplots(figsize=(8, 6))
 for pct in effect_sizes:
     subset = power_conv_df[power_conv_df["effect_size_pct"] == pct]
-    ax.plot(subset["n_users"], subset["power"], marker="o", label=f"{pct:.0%} relative difference")
+    ax.plot(subset["n_clicks"], subset["power"], marker="o", label=f"{pct:.0%} relative difference")
 ax.axhline(0.8, color="gray", linestyle="--", label="80% power target")
-ax.set_xlabel("Users per group")
+ax.set_xlabel("Clicks per group")
 ax.set_ylabel("Power")
 ax.set_title(f"Power curves — detecting a relative difference in conversion rate\n(base rate={BASE_CONVERSION_RATE:.2%})")
 ax.legend()
@@ -132,7 +134,7 @@ fig.savefig("figures/power_analysis_conversion.png", dpi=150)
 plt.close(fig)
 print("Saved figures/power_analysis_conversion.png")
 
-# 2. Minimum sample size for 80% power ----------------------------------------
+# 3. Minimum sample size for 80% power ----------------------------------------
 def find_min_n(power_fn, base_args, effect_pct, candidate_ns, target_power=0.8, n_sim=300):
     for n in candidate_ns:
         power = power_fn(effect_pct, *base_args, n, n_sim=n_sim)
@@ -148,78 +150,71 @@ print("=" * 70)
 
 candidate_ns_continuous = [30, 60, 90, 120, 180, 300, 500, 1000, 2000, 5000]
 min_n_rows = []
+current_n_campaigns = int(df.groupby("Campaign_Type", observed=True).size().min())
 for pct in effect_sizes:
-    n, power = find_min_n(
-        empirical_power_total_ads, (BASE_TOTAL_ADS_MEAN, BASE_TOTAL_ADS_STD), pct, candidate_ns_continuous
-    )
-    current_n = int(df.groupby("most_ads_day", observed=True).size().min())  # smallest group we actually have
-    sufficient = current_n >= n if n else True
+    n, power = find_min_n(empirical_power_cpa, (BASE_CPA_MEAN, BASE_CPA_STD), pct, candidate_ns_continuous)
+    sufficient = current_n_campaigns >= n if n else True
     min_n_rows.append(
-        {"metric": "total_ads", "effect_size_pct": pct, "min_n_users": n, "achieved_power": power,
-         "current_min_group_n": current_n, "current_data_sufficient": sufficient}
+        {"metric": "cpa", "effect_size_pct": pct, "min_n_campaigns": n, "achieved_power": power,
+         "current_min_group_n": current_n_campaigns, "current_data_sufficient": sufficient}
     )
-    print(f"total_ads   {pct:.0%} diff -> min n/group = {n} (power={power}) | "
-          f"current smallest group n={current_n} -> {'SUFFICIENT' if sufficient else 'INSUFFICIENT'}")
+    print(f"CPA   {pct:.0%} diff -> min n/group = {n} campaigns (power={power}) | "
+          f"current smallest group n={current_n_campaigns} -> {'SUFFICIENT' if sufficient else 'INSUFFICIENT'}")
 
-candidate_ns_binary = [500, 1000, 2000, 5000, 10000, 20000, 50000, 100000]
+candidate_ns_clicks = [200, 500, 1000, 2500, 5000, 10000, 25000, 50000]
+current_n_clicks = int(df.groupby("Campaign_Type", observed=True)["Clicks"].sum().min())
 for pct in effect_sizes:
-    n, power = find_min_n(
-        empirical_power_conversion, (BASE_CONVERSION_RATE,), pct, candidate_ns_binary
-    )
-    current_n = int(df.groupby("most_ads_day", observed=True).size().min())
-    sufficient = current_n >= n if n else True
+    n, power = find_min_n(empirical_power_conversion, (BASE_CONVERSION_RATE,), pct, candidate_ns_clicks)
+    sufficient = current_n_clicks >= n if n else True
     min_n_rows.append(
-        {"metric": "conversion_rate", "effect_size_pct": pct, "min_n_users": n, "achieved_power": power,
-         "current_min_group_n": current_n, "current_data_sufficient": sufficient}
+        {"metric": "conversion_rate", "effect_size_pct": pct, "min_n_campaigns": n, "achieved_power": power,
+         "current_min_group_n": current_n_clicks, "current_data_sufficient": sufficient}
     )
-    print(f"conversion  {pct:.0%} diff -> min n/group = {n} (power={power}) | "
-          f"current smallest group n={current_n} -> {'SUFFICIENT' if sufficient else 'INSUFFICIENT'}")
+    print(f"Conversion {pct:.0%} diff -> min n/group = {n} clicks (power={power}) | "
+          f"current smallest group n={current_n_clicks:,} -> {'SUFFICIENT' if sufficient else 'INSUFFICIENT'}")
 
 min_n_df = pd.DataFrame(min_n_rows)
 min_n_df.to_csv("results/power_min_sample_size.csv", index=False)
 
-# 3. Assess current data adequacy for observed significant pairs --------------
+# 4. Assess current data adequacy for observed FDR-significant pairs -----------
 print()
 print("=" * 70)
-print("CURRENT DATA ADEQUACY — power to detect the *observed* effects, at *actual* current n")
+print("CURRENT DATA ADEQUACY — observed FDR-significant pairs")
 print("=" * 70)
 
 ttest_corrected = pd.read_csv("results/ttest_results_corrected.csv")
 fisher_corrected = pd.read_csv("results/fisher_results_corrected.csv")
-group_sizes = df.groupby("most_ads_day", observed=True).size()
 
 adequacy_rows = []
+
 sig_ttest = ttest_corrected[ttest_corrected["significant_fdr"]]
 for _, row in sig_ttest.iterrows():
-    n_actual = int(min(group_sizes[row["group_a"]], group_sizes[row["group_b"]]))
-    observed_pct = abs(row["pct_difference"]) / 100
-    power = empirical_power_total_ads(observed_pct, BASE_TOTAL_ADS_MEAN, BASE_TOTAL_ADS_STD, n_actual, n_sim=300)
+    obs_pct = abs(row["pct_difference"]) / 100
+    n_group = int(df.loc[df["Campaign_Type"].isin([row["group_a"], row["group_b"]]),
+                          "Campaign_Type"].value_counts().min())
+    power = empirical_power_cpa(obs_pct, BASE_CPA_MEAN, BASE_CPA_STD, n_group, n_sim=300)
     adequacy_rows.append(
-        {"metric": "total_ads", "group_a": row["group_a"], "group_b": row["group_b"],
-         "observed_pct_diff": row["pct_difference"], "n_actual": n_actual, "power_at_current_n": power}
+        {"metric": "cpa", "group_a": row["group_a"], "group_b": row["group_b"],
+         "observed_pct_diff": row["pct_difference"], "n_per_group": n_group, "power_at_current_n": power}
     )
+    print(f"CPA {row['group_a']} vs {row['group_b']}: observed diff={row['pct_difference']:+.2f}%, "
+          f"n={n_group} campaigns/group -> power={power:.3f}")
 
 sig_fisher = fisher_corrected[fisher_corrected["significant_fdr"]]
 for _, row in sig_fisher.iterrows():
-    n_actual = int(min(group_sizes[row["group_a"]], group_sizes[row["group_b"]]))
-    observed_pct = abs(row["pct_difference"]) / 100
-    power = empirical_power_conversion(observed_pct, BASE_CONVERSION_RATE, n_actual, n_sim=300)
+    obs_pct = abs(row["pct_difference"]) / 100
+    n_group = int(min(row["total_a"], row["total_b"]))
+    power = empirical_power_conversion(obs_pct, BASE_CONVERSION_RATE, n_group, n_sim=300)
     adequacy_rows.append(
         {"metric": "conversion_rate", "group_a": row["group_a"], "group_b": row["group_b"],
-         "observed_pct_diff": row["pct_difference"], "n_actual": n_actual, "power_at_current_n": power}
+         "observed_pct_diff": row["pct_difference"], "n_per_group": n_group, "power_at_current_n": power}
     )
+    print(f"Conversion {row['group_a']} vs {row['group_b']}: observed diff={row['pct_difference']:+.2f}%, "
+          f"n={n_group:,} clicks/group -> power={power:.3f}")
 
-adequacy_df = pd.DataFrame(adequacy_rows)
-adequacy_df.to_csv("results/power_current_data_adequacy.csv", index=False)
-print(adequacy_df.round(4).to_string(index=False))
-
-low_power = adequacy_df[adequacy_df["power_at_current_n"] < 0.8]
-print()
-if len(low_power) == 0:
-    print("Every FDR-significant pair (both metrics) has >=80% power at our actual current sample sizes — "
-          "we are well-powered to detect the differences we found. This is a direct consequence of the "
-          "very large per-group sample sizes (tens of thousands of users), which is exactly why so many "
-          "comparisons cleared statistical significance even when the underlying effect (Cohen's d) is tiny.")
+if not adequacy_rows:
+    print("No FDR-significant pairs to assess (none survived correction).")
 else:
-    print(f"{len(low_power)} FDR-significant pairs have <80% power at current n — treat these as provisional:")
-    print(low_power.round(4).to_string(index=False))
+    adequacy_df = pd.DataFrame(adequacy_rows)
+    adequacy_df.to_csv("results/power_current_data_adequacy.csv", index=False)
+    print(f"\nSaved results/power_current_data_adequacy.csv ({len(adequacy_df)} pairs)")

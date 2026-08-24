@@ -1,33 +1,28 @@
-# Executive Memo: Marketing A/B Test & Ad-Delivery Timing Analysis
+# Executive Memo: Nykaa Campaign Performance — CPA & Conversion Rate by Campaign Type
 
 **Date:** 25.08.2026
 **Analyst:** Mudit Airan
-**Dataset:** Kaggle "Marketing A/B Testing" (`marketing_AB.csv`), 588,101 users
-**Period analyzed:** Not date-stamped in source data; day-of-week and hour-of-day only
+**Dataset:** Kaggle "Nykaa Campaign Data" (`nykaa_campaign_data.csv`), 55,555 campaigns
+**Period analyzed:** 2024-07-01 to 2025-06-24
 
 ---
 
 ## Executive Summary
 
-This analysis had two goals: (1) confirm whether showing ads (vs. a public-service-announcement
-control) actually increases conversion, and (2) test whether conversion performance and ad
-exposure vary meaningfully by day of week, in order to inform ad-delivery scheduling.
+The CMO asked whether marketing spend should be reallocated across channels based on
+cost-efficiency. This analysis compared **CPA (cost per acquisition)** and **conversion rate**
+across the 5 campaign types in this dataset (Email, Influencer, Paid Ads, SEO, Social Media).
 
-**Headline finding:** users shown real ad creative converted at **2.55%**, vs. **1.79%** for
-users shown the PSA control — a statistically significant **30% relative lift**
-(p = 1.05 × 10⁻¹⁴, odds ratio = 1.44). This is the single most defensible, decision-ready result
-in this dataset.
+**Headline finding: there is no statistically or practically meaningful difference in CPA
+between campaign types**, and while conversion rate differences are technically significant
+after correction, every one is under 1% relative — far too small to act on. With ~11,100
+campaigns and 50M+ clicks per group, this dataset has more than enough statistical power to
+detect a real 5-20% difference had one existed; its absence is a genuine finding, not a data
+limitation.
 
-**Secondary finding:** conversion rate varies meaningfully by the day of week a user received
-most of their ads — Monday (3.28%) is the strongest day and Saturday (2.11%) the weakest, and
-most of these day-pair differences survive correction for multiple comparisons. Ad *exposure*
-(`total_ads`) also differs by day in a statistically significant way, but every one of those
-differences has a negligible effect size (Cohen's d) — a textbook case of statistical
-significance without practical significance, discussed further below.
-
-**Important scope note:** this dataset has no cost, revenue, impressions, or click data, so
-**CPA, ROAS, and CTR could not be calculated**, and no literal per-channel budget allocation is
-possible. See Statistical Caveats.
+**Recommendation: do not reallocate budget by `Campaign_Type` on the basis of this analysis.**
+Any tilt in spend that this analysis' composite ranking implies is cosmetic, not statistically
+supported — see Recommendations and Statistical Caveats below.
 
 ---
 
@@ -35,104 +30,109 @@ possible. See Statistical Caveats.
 
 ### Top performing groups
 
-- **Experiment arm:** `ad` beats `psa` on conversion rate — 2.55% vs. 1.79% (+30.1% relative,
-  p = 1.05e-14, survives at any reasonable correction threshold since it is the single planned
-  comparison).
-- **Day of week (by conversion rate):** Monday (3.28%) > Tuesday (2.98%) > Wednesday (2.49%) >
-  Sunday (2.45%) > Friday (2.22%) > Thursday (2.16%) > Saturday (2.11%).
+Differences are small enough that "top performing" should be read with caution (see caveats),
+but by point estimate:
+
+- **CPA (lower is better):** Social Media ($166.89) < Influencer ($169.15) < SEO ($169.29) <
+  Email ($169.70) < Paid Ads ($170.16) — full table in
+  `results/group_summary_by_campaign_type.csv`; range across all 5 groups is **$166.89–$170.16**
+  (a $3.27 spread, ~2% of the mean).
+- **ROAS:** Social Media (2.97x) highest, Email (2.93x) lowest — a 0.04x spread.
+- **Conversion rate (conversions/clicks):** all 5 groups sit within 22.0%–22.2%.
 
 ### Statistically significant differences found
 
-- **Conversion rate by day of week:** 17 of 21 pairwise comparisons remained significant after
-  Benjamini-Hochberg (FDR) correction (full table: `results/fisher_results_corrected.csv`).
-  Monday and Tuesday are reliably higher-converting than every other day.
-- **Ad exposure (`total_ads`) by day of week:** 19 of 21 pairwise comparisons were "significant"
-  both before and after correction, **but every single one had a negligible Cohen's d (|d| < 0.1)**
-  (`results/ttest_results_corrected.csv`). With ~80,000 users per day-of-week group, even a
-  practically trivial difference in mean ad exposure clears the p < 0.05 bar. **These results
-  should not drive any action** — correction alone did not filter them out; effect size did.
+- **CPA by Campaign_Type:** **0 of 10** pairwise t-tests were significant even before correction
+  (all p > 0.32). Every Cohen's d was negligible (|d| < 0.02). This is a genuine null result —
+  correction wasn't needed to rule these out; they were never significant to begin with.
+  Full table: `results/ttest_results_corrected.csv`.
+- **Conversion rate by Campaign_Type:** **10 of 10** pairwise Fisher's exact tests were
+  significant, both before and after Bonferroni/FDR correction. But every single difference is
+  **under 1% relative** (range: 0.10%–1.03%). With clicks aggregated in the millions per group,
+  even a fractional difference clears the p < 0.05 bar — this is a textbook case of statistical
+  significance without practical significance. **These results should not drive budget
+  decisions.** Full table: `results/fisher_results_corrected.csv`.
 
 ### Data adequacy (power analysis)
 
-- At current sample sizes (77,479–92,608 users per day-of-week group), we have **≥80% power**
-  to detect 13 of the 17 FDR-significant conversion-rate differences and 16 of the 19
-  FDR-significant `total_ads` differences we actually observed.
-- Four pairs are under-powered at current n (58–77% power): Tuesday–Wednesday, Tuesday–Thursday,
-  and Tuesday–Sunday for `total_ads`, and Monday–Tuesday for conversion rate. Treat these four as
-  provisional pending more data. Full table: `results/power_current_data_adequacy.csv`.
-- For future, smaller-scale tests: detecting a 15–20% relative difference in conversion rate
-  reliably (80% power) needs roughly 20,000–50,000 users per group; a 10% relative difference
-  needs on the order of 100,000 per group at this base rate (~2.5%). Full curves:
-  `figures/power_analysis_conversion.png`, `results/power_min_sample_size.csv`.
+- 80% power to detect a 5% relative CPA difference needs only ~300 campaigns/group — current
+  data has **~11,100/group, ~37x more than needed**. 80% power to detect a 5% relative
+  conversion-rate difference needs ~25,000 clicks/group — current data has **51M+/group,
+  ~2,000x more than needed**. Full curves: `figures/power_analysis_cpa.png`,
+  `figures/power_analysis_conversion.png`; minimum sample sizes:
+  `results/power_min_sample_size.csv`.
+- This directly supports the headline finding: **the absence of a large, meaningful difference
+  is not because we lack the data to see one** — we have far more than enough. If a real,
+  actionable CPA or conversion-rate gap existed between these campaign types, this dataset would
+  have detected it.
 
 ---
 
 ## Recommendations
 
-1. **Keep running ad creative over the PSA control.** This is the best-supported, most powerful
-   finding in the data (p = 1.05e-14, well-powered, single planned comparison — no correction
-   concerns). If any campaigns are currently defaulting to PSA-style placeholder creative, that
-   is the highest-value fix available from this analysis.
+1. **Do not reallocate the $500K monthly budget by `Campaign_Type` based on CPA or conversion
+   rate.** There is no statistically defensible basis to prefer one campaign type over another
+   on these metrics — see `results/allocation_recommendation.csv` for the composite-ranking
+   exercise the lab template calls for, but treat it as illustrative only (see caveat below),
+   **not** an actionable reallocation.
 
-2. **Weight ad delivery toward Monday and Tuesday**, where conversion rates are reliably higher
-   even after FDR correction. `results/allocation_recommendation.csv` translates the day-of-week
-   composite ranking into a bounded delivery-schedule weighting (8%–25% per day):
+2. **Investigate other dimensions the data does support**, which this analysis did not test but
+   which are available in the source file: `Channel_Used` (specific platforms, e.g. Instagram,
+   WhatsApp, YouTube — 156 raw combinations, would need cleanup), `Target_Audience`,
+   `Customer_Segment`, and `Duration`. If budget reallocation is the goal, these are more
+   promising places to look for a real signal than `Campaign_Type`.
 
-   | Day | Conversion rate | Recommended delivery weight |
-   |---|---|---|
-   | Monday | 3.28% | 25.0% |
-   | Tuesday | 2.98% | 25.0% |
-   | Wednesday | 2.49% | 13.6% |
-   | Sunday | 2.45% | 12.4% |
-   | Friday | 2.22% | 8.0% |
-   | Thursday | 2.16% | 8.0% |
-   | Saturday | 2.11% | 8.0% |
+3. **Treat the current allocation (or an even split) as the safe default** until a dimension
+   with a real, practically meaningful effect is found. Continuing to split spend roughly evenly
+   across Email, Influencer, Paid Ads, SEO, and Social Media is not a mistake here — it's what
+   the evidence supports.
 
-   The $500K figure from the lab scenario is applied only illustratively (Monday/Tuesday ≈
-   $125,000/month each) to show what this weighting means in dollar terms — it is **not** a
-   validated real budget allocation, since this dataset has no real per-channel spend data.
-
-3. **Do not use the `total_ads`-by-day results to change exposure/frequency strategy.** They are
-   statistically significant purely due to sample size; the effect sizes are all negligible.
-
-4. **Collect cost and revenue data going forward.** The single biggest gap limiting this
-   analysis is the absence of spend and revenue fields — without them, CPA and ROAS (the metrics
-   this kind of decision should really be based on) cannot be computed at all.
+4. **Re-run this comparison periodically as new campaigns accumulate**, in case channel
+   performance genuinely shifts over time — this snapshot (Jul 2024–Jun 2025) shows no
+   difference *now*, which is not a permanent guarantee.
 
 ---
 
 ## Statistical Caveats
 
-- **Dataset limitations and source:** Kaggle "Marketing A/B Testing" dataset, 588,101 rows,
-  user-level, no cost/revenue/impression/click fields, no date stamps (only day-of-week/hour-of-day).
-  See `dataset_selection.md` for full discussion.
-- **No CPA/ROAS/CTR:** these could not be calculated; all recommendations here are based on
-  conversion rate and ad-exposure counts only, not cost efficiency.
+- **Dataset limitations and source:** Kaggle "Nykaa Campaign Data", 55,555 campaign-level rows.
+  See `dataset_selection.md` for full discussion, including why `Campaign_Type` (not the more
+  granular `Channel_Used`) was used as the grouping variable.
 - **Multiple comparisons correction applied:** Benjamini-Hochberg FDR (primary) and Bonferroni
-  (reported alongside) across the 21 day-of-week pairwise comparisons in each metric family.
-  See `multiple_comparisons_correction.py` output for full detail.
-- **Confidence intervals:** bootstrap 95% CIs (1,000 resamples) reported for mean `total_ads`
-  and conversion rate by day in `results/confidence_intervals.csv`; several day-pairs have
-  overlapping CIs even where the point-estimate difference is statistically significant —
-  read the CI table alongside the p-values, not instead of them.
-- **Statistical vs. practical significance:** the `total_ads` findings are the clearest
-  illustration in this analysis — large sample sizes make even negligible effects statistically
-  significant. Cohen's d was checked for every continuous comparison for exactly this reason.
-- **Power analysis limitations:** power curves are Monte Carlo estimates (500–1,000 simulations)
-  under a normal (continuous) or binomial (binary) data-generating assumption; real-world
-  seasonality, day-of-week user-mix differences, and non-stationarity are not modeled.
-- **External factors:** day-of-week effects here are correlational (which day a user happened to
-  see the most ads), not from a randomized day-of-week experiment — confounding by campaign
-  timing, promotions, or audience mix cannot be ruled out. The `ad` vs. `psa` finding, by
-  contrast, is a randomized comparison and is the more causally trustworthy result.
+  (reported alongside) across the 10 `Campaign_Type` pairwise comparisons in each metric family
+  (CPA, conversion rate). See `multiple_comparisons_correction.py` output for full detail.
+- **Confidence intervals:** bootstrap 95% CIs (1,000 resamples) for mean CPA and conversion rate
+  by group are in `results/confidence_intervals.csv` — they overlap heavily across all 5 groups,
+  consistent with the null/near-null findings above.
+- **Statistical vs. practical significance:** the conversion-rate family is the clearest
+  illustration in this analysis — with 50M+ clicks per group, even a 0.1% relative difference is
+  "significant." Every comparison's percentage difference was checked against a 10%
+  practical-meaningfulness screen for exactly this reason, and none passed.
+- **The composite ranking / allocation table is a required lab deliverable, not a
+  recommendation.** It ranks groups by CPA and ROAS point estimates (50/50 weighting, per the
+  lab's suggested formula) even though neither metric showed a statistically or practically
+  meaningful difference. Reading it as "Social Media should get 30% of budget" would be
+  overstating what the data supports — see Recommendation 1.
+- **Power analysis limitations:** power curves are Monte Carlo estimates (300–500 simulations
+  per point) under a normal (CPA) or binomial (conversion rate) data-generating assumption; the
+  real CPA distribution is right-skewed (a small number of very high-cost campaigns), and
+  real-world seasonality or campaign-mix shifts over the year analyzed are not modeled.
+- **External factors:** `Campaign_Type` groups are observational, not from a randomized
+  experiment — campaigns of each type may have been run against different audiences, budgets, or
+  time periods, so this is a correlational comparison. That said, the finding here is a **null**
+  result (no difference), which is generally more robust to this kind of confounding than a
+  positive finding would be — confounding would more plausibly *create* a spurious difference
+  than hide a real one across 55,555 campaigns.
 
 ---
 
 ## Next Steps
 
-- [ ] Instrument cost and revenue by channel/campaign so CPA/ROAS can be computed directly.
-- [ ] Run a proper randomized day-of-week or dayparting experiment to test the scheduling
-      recommendation causally, rather than relying on the correlational `most_ads_day` grouping.
-- [ ] Re-test the four under-powered pairs once more data accumulates.
-- [ ] Confirm the ad-vs-psa lift holds when segmented by day of week and any other available
-      user attributes, to check the finding isn't concentrated in one subgroup.
+- [ ] Repeat this comparison using `Channel_Used` (after resolving multi-channel campaigns,
+      e.g. by exploding to one row per platform) to check whether individual platforms
+      (Instagram, YouTube, WhatsApp, etc.) show a real CPA or conversion-rate gap that
+      `Campaign_Type` averages over.
+- [ ] Repeat using `Target_Audience` and `Customer_Segment` as grouping variables.
+- [ ] Test whether `Duration` (campaign length) correlates with CPA or conversion rate.
+- [ ] Re-test this exact comparison in 6-12 months as more campaigns accumulate, in case channel
+      performance diverges over time.

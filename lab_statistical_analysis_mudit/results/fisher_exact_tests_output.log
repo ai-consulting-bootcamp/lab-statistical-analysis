@@ -1,48 +1,38 @@
 ======================================================================
-CONVERSION SUMMARY BY most_ads_day
+CONVERSION SUMMARY BY Campaign_Type
 ======================================================================
-              conversions  total_attempts  non_conversions    rate
-most_ads_day                                                      
-Friday               2057           92608            90551  0.0222
-Monday               2857           87073            84216  0.0328
-Saturday             1719           81660            79941  0.0211
-Sunday               2090           85391            83301  0.0245
-Thursday             1790           82982            81192  0.0216
-Tuesday              2312           77479            75167  0.0298
-Wednesday            2018           80908            78890  0.0249
+               conversions  total_clicks  non_conversions    rate
+Campaign_Type                                                    
+Email             11425766      51664577         40238811  0.2212
+Influencer        11563919      52444314         40880395  0.2205
+Paid Ads          11425573      52199354         40773781  0.2189
+SEO               11369989      51615614         40245625  0.2203
+Social Media      11595675      52521898         40926223  0.2208
 
-   Monday vs Tuesday   | rate_a=3.2812% rate_b=2.9840% diff=-0.2971% ( -9.06%) | OR=1.103 p=5.8028e-04
-   Monday vs Wednesday | rate_a=3.2812% rate_b=2.4942% diff=-0.7870% (-23.98%) | OR=1.326 p=6.1238e-22
-   Monday vs Thursday  | rate_a=3.2812% rate_b=2.1571% diff=-1.1241% (-34.26%) | OR=1.539 p=3.2246e-46
-   Monday vs Friday    | rate_a=3.2812% rate_b=2.2212% diff=-1.0600% (-32.30%) | OR=1.493 p=3.6048e-43
-   Monday vs Saturday  | rate_a=3.2812% rate_b=2.1051% diff=-1.1761% (-35.84%) | OR=1.578 p=1.6211e-50
-   Monday vs Sunday    | rate_a=3.2812% rate_b=2.4476% diff=-0.8336% (-25.41%) | OR=1.352 p=2.7641e-25
-  Tuesday vs Wednesday | rate_a=2.9840% rate_b=2.4942% diff=-0.4898% (-16.42%) | OR=1.202 p=2.3975e-09
-  Tuesday vs Thursday  | rate_a=2.9840% rate_b=2.1571% diff=-0.8269% (-27.71%) | OR=1.395 p=1.0339e-25
-  Tuesday vs Friday    | rate_a=2.9840% rate_b=2.2212% diff=-0.7628% (-25.56%) | OR=1.354 p=5.8603e-23
-  Tuesday vs Saturday  | rate_a=2.9840% rate_b=2.1051% diff=-0.8790% (-29.46%) | OR=1.430 p=7.0997e-29
-  Tuesday vs Sunday    | rate_a=2.9840% rate_b=2.4476% diff=-0.5365% (-17.98%) | OR=1.226 p=2.7499e-11
-Wednesday vs Thursday  | rate_a=2.4942% rate_b=2.1571% diff=-0.3371% (-13.52%) | OR=1.160 p=5.9764e-06
-Wednesday vs Friday    | rate_a=2.4942% rate_b=2.2212% diff=-0.2730% (-10.95%) | OR=1.126 p=1.8796e-04
-Wednesday vs Saturday  | rate_a=2.4942% rate_b=2.1051% diff=-0.3891% (-15.60%) | OR=1.190 p=1.6743e-07
-Wednesday vs Sunday    | rate_a=2.4942% rate_b=2.4476% diff=-0.0466% ( -1.87%) | OR=1.020 p=5.4814e-01
- Thursday vs Friday    | rate_a=2.1571% rate_b=2.2212% diff=+0.0641% ( +2.97%) | OR=0.971 p=3.6061e-01
- Thursday vs Saturday  | rate_a=2.1571% rate_b=2.1051% diff=-0.0520% ( -2.41%) | OR=1.025 p=4.7355e-01
- Thursday vs Sunday    | rate_a=2.1571% rate_b=2.4476% diff=+0.2905% (+13.47%) | OR=0.879 p=7.3517e-05
-   Friday vs Saturday  | rate_a=2.2212% rate_b=2.1051% diff=-0.1161% ( -5.23%) | OR=1.056 p=9.9232e-02
-   Friday vs Sunday    | rate_a=2.2212% rate_b=2.4476% diff=+0.2264% (+10.19%) | OR=0.905 p=1.5720e-03
- Saturday vs Sunday    | rate_a=2.1051% rate_b=2.4476% diff=+0.3425% (+16.27%) | OR=0.857 p=2.7257e-06
+       Email vs Influencer   | rate_a=22.1153% rate_b=22.0499% diff=-0.0654% ( -0.30%) | OR=1.004 p=8.9210e-16
+       Email vs Paid Ads     | rate_a=22.1153% rate_b=21.8883% diff=-0.2269% ( -1.03%) | OR=1.013 p=1.7701e-171
+       Email vs SEO          | rate_a=22.1153% rate_b=22.0282% diff=-0.0871% ( -0.39%) | OR=1.005 p=1.4122e-26
+       Email vs Social Media | rate_a=22.1153% rate_b=22.0778% diff=-0.0375% ( -0.17%) | OR=1.002 p=4.0053e-06
+  Influencer vs Paid Ads     | rate_a=22.0499% rate_b=21.8883% diff=-0.1616% ( -0.73%) | OR=1.009 p=1.2796e-88
+  Influencer vs SEO          | rate_a=22.0499% rate_b=22.0282% diff=-0.0217% ( -0.10%) | OR=1.001 p=7.5771e-03
+  Influencer vs Social Media | rate_a=22.0499% rate_b=22.0778% diff=+0.0279% ( +0.13%) | OR=0.998 p=5.7059e-04
+    Paid Ads vs SEO          | rate_a=21.8883% rate_b=22.0282% diff=+0.1399% ( +0.64%) | OR=0.992 p=2.1959e-66
+    Paid Ads vs Social Media | rate_a=21.8883% rate_b=22.0778% diff=+0.1894% ( +0.87%) | OR=0.989 p=3.6592e-121
+         SEO vs Social Media | rate_a=22.0282% rate_b=22.0778% diff=+0.0496% ( +0.23%) | OR=0.997 p=1.0403e-09
 
-Total comparisons: 21 | Significant at alpha=0.05 (uncorrected): 17
+Total comparisons: 10 | Significant at alpha=0.05 (uncorrected): 10
 
-======================================================================
-HEADLINE COMPARISON: test_group (ad vs. psa)
-======================================================================
-            conversions  total_attempts  non_conversions    rate
-test_group                                                      
-ad                14423          564577           550154  0.0255
-psa                 420           23524            23104  0.0179
-
-       ad vs psa       | rate_a=2.5547% rate_b=1.7854% diff=-0.7692% (-30.11%) | OR=1.442 p=1.0471e-14
+Significant pairs (uncorrected) — rate difference and a rough practical-meaningfulness screen:
+   group_a      group_b  rate_a  rate_b  pct_difference  p_value  practically_meaningful
+     Email     Paid Ads  0.2212  0.2189         -1.0262   0.0000                   False
+  Paid Ads Social Media  0.2189  0.2208          0.8655   0.0000                   False
+Influencer     Paid Ads  0.2205  0.2189         -0.7327   0.0000                   False
+  Paid Ads          SEO  0.2189  0.2203          0.6389   0.0000                   False
+     Email          SEO  0.2212  0.2203         -0.3938   0.0000                   False
+     Email   Influencer  0.2212  0.2205         -0.2956   0.0000                   False
+       SEO Social Media  0.2203  0.2208          0.2251   0.0000                   False
+     Email Social Media  0.2212  0.2208         -0.1695   0.0000                   False
+Influencer Social Media  0.2205  0.2208          0.1265   0.0006                   False
+Influencer          SEO  0.2205  0.2203         -0.0984   0.0076                   False
 
 Saved figures/rate_comparison.png

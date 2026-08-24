@@ -1,93 +1,134 @@
 ======================================================================
 RAW DATA — shape, columns, dtypes
 ======================================================================
-Shape: (588101, 7)
-Unnamed: 0        int64
-user id           int64
-test group       object
-converted          bool
-total ads         int64
-most ads day     object
-most ads hour     int64
+Shape: (55555, 16)
+Campaign_ID          object
+Campaign_Type        object
+Target_Audience      object
+Duration              int64
+Channel_Used         object
+Impressions           int64
+Clicks                int64
+Leads                 int64
+Conversions           int64
+Revenue               int64
+Acquisition_Cost    float64
+ROI                 float64
+Language             object
+Engagement_Score    float64
+Customer_Segment     object
+Date                 object
 dtype: object
 
-   Unnamed: 0  user id test group  converted  total ads most ads day  most ads hour
-0           0  1069124         ad      False        130       Monday             20
-1           1  1119715         ad      False         93      Tuesday             22
-2           2  1144181         ad      False         21      Tuesday             18
-3           3  1435133         ad      False        355      Tuesday             10
-4           4  1015700         ad      False        276       Friday             14
+   Campaign_ID Campaign_Type        Target_Audience  Duration                  Channel_Used  Impressions  Clicks  \
+0  NY-CMP-1000  Social Media       College Students        21             WhatsApp, YouTube        57804    6156   
+1  NY-CMP-1001      Paid Ads  Tier 2 City Customers        18                       YouTube        91801    3321   
+2  NY-CMP-1002    Influencer                  Youth        23     WhatsApp, Google, YouTube        15536    2182   
+3  NY-CMP-1003         Email          Working Women        18  YouTube, Facebook, Instagram        88114    8413   
+4  NY-CMP-1004      Paid Ads       College Students        10           Facebook, Instagram        96871    3743   
+
+   Leads  Conversions  Revenue  Acquisition_Cost   ROI Language  Engagement_Score       Customer_Segment        Date  
+0   3616         2355  1867515            111.03  6.14    Hindi             20.98       College Students  29-04-2025  
+1   1971         1357  1046247            180.83  3.26    Hindi              7.24       College Students  06-04-2025  
+2    952          755   197055             90.60  1.88  English             25.03       College Students  14-01-2025  
+3   2231          947   376906            249.07  0.60    Hindi             13.15       College Students  04-06-2025  
+4   2060         1258   518296            228.60  0.80    Hindi              7.29  Tier 2 City Customers  29-12-2024  
 
 ======================================================================
 DATA QUALITY
 ======================================================================
 Missing values per column:
-Unnamed: 0       0
-user id          0
-test group       0
-converted        0
-total ads        0
-most ads day     0
-most ads hour    0
+Campaign_ID         0
+Campaign_Type       0
+Target_Audience     0
+Duration            0
+Channel_Used        0
+Impressions         0
+Clicks              0
+Leads               0
+Conversions         0
+Revenue             0
+Acquisition_Cost    0
+ROI                 0
+Language            0
+Engagement_Score    0
+Customer_Segment    0
+Date                0
 dtype: int64
 
 Duplicate rows: 0
-Duplicate user ids: 0
+Duplicate campaign ids: 0
 
-test group value counts:
-test group
-ad     564577
-psa     23524
+Campaign_Type value counts (grouping variable):
+Campaign_Type
+Influencer      11134
+Paid Ads        11116
+Social Media    11114
+Email           11112
+SEO             11079
 Name: count, dtype: int64
 
-most ads day value counts:
-most ads day
-Friday       92608
-Monday       87073
-Sunday       85391
-Thursday     82982
-Saturday     81660
-Wednesday    80908
-Tuesday      77479
+Target_Audience value counts:
+Target_Audience
+Working Women            11224
+Premium Shoppers         11182
+Tier 2 City Customers    11100
+College Students         11078
+Youth                    10971
 Name: count, dtype: int64
 
-total ads summary:
-count    588101.000000
-mean         24.820876
-std          43.715181
-min           1.000000
-25%           4.000000
-50%          13.000000
-75%          27.000000
-max        2065.000000
-Name: total ads, dtype: float64
+Customer_Segment value counts:
+Customer_Segment
+College Students         11293
+Working Women            11123
+Youth                    11088
+Premium Shoppers         11059
+Tier 2 City Customers    10992
+Name: count, dtype: int64
 
-most ads hour range: 0 - 23
+Channel_Used — top 10 raw values (multi-channel campaigns are comma-separated, 156 distinct combinations; too granular/messy to use as the primary grouping variable, so Campaign_Type is used instead — see dataset_selection.md):
+Channel_Used
+Instagram           3178
+YouTube             3150
+WhatsApp            3096
+Google              3092
+Email               3060
+Facebook            3036
+WhatsApp, Google     673
+Email, Facebook      660
+Google, Facebook     659
+WhatsApp, Email      658
+Name: count, dtype: int64
+
+Funnel field summaries:
+  Impressions: min=10,001.00 median=55,182.00 max=100,000.00
+  Clicks: min=202.00 median=3,907.00 max=14,868.00
+  Leads: min=56.00 median=1,481.00 max=8,876.00
+  Conversions: min=19.00 median=779.00 max=6,686.00
+  Revenue: min=6,183.00 median=360,436.00 max=4,579,910.00
+  Acquisition_Cost: min=9.08 median=207.51 max=15,473.16
+  ROI: min=-0.97 median=1.24 max=74.42
+
+Funnel consistency violations (Conversions <= Leads <= Clicks <= Impressions): 0
 
 ======================================================================
 PREPARED DATA SUMMARY
 ======================================================================
-Rows: 588101
-Grouping variable: most_ads_day — 7 groups
-most_ads_day
-Monday       87073
-Tuesday      77479
-Wednesday    80908
-Thursday     82982
-Friday       92608
-Saturday     81660
-Sunday       85391
+Rows: 55555
+Grouping variable: Campaign_Type — 5 groups
+Campaign_Type
+Email           11112
+Influencer      11134
+Paid Ads        11116
+SEO             11079
+Social Media    11114
 Name: count, dtype: int64
 
-Secondary grouping variable: test_group — 2 groups
-test_group
-ad     564577
-psa     23524
-Name: count, dtype: int64
+Continuous metrics available: CPA (Acquisition_Cost), CTR, Conversion Rate, ROAS, Profit, Profit Margin
+Binary outcome: Conversions (per Click, aggregated by group for Fisher's exact test)
 
-Continuous metric: total_ads (ad exposure per user)
-Binary outcome: converted
+Date range: 2024-07-01 to 2025-06-24
+Overall conversion rate (conversions / clicks): 22.0318%
+Saved exploration summary to results/data_exploration_summary.csv
 
-Overall conversion rate: 2.5239%
-
-Saved cleaned dataset to data/marketing_data.csv (588,101 rows)
+Saved cleaned dataset to data/marketing_data.csv (55,555 rows)

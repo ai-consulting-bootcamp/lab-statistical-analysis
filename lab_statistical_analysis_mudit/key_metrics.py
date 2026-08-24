@@ -1,12 +1,8 @@
 """
 Step 3: Calculate Key Marketing Metrics
 =========================================
-Aggregates the cleaned dataset by group (most_ads_day) and by the primary
-experiment arm (test_group), computes the metrics that are actually available
-in this dataset (conversion rate, ad exposure), and visualizes them.
-
-No CPA / ROAS / CTR here — this dataset has no cost, revenue, or impression
-data (see dataset_selection.md).
+Aggregates the cleaned dataset by Campaign_Type (the channel grouping variable) and
+computes CTR, Conversion Rate, CPA, ROAS, Profit, and Profit Margin, then visualizes them.
 """
 import os
 
@@ -22,95 +18,94 @@ os.makedirs("results", exist_ok=True)
 os.makedirs("figures", exist_ok=True)
 
 df = pd.read_csv("data/marketing_data.csv")
-day_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-df["most_ads_day"] = pd.Categorical(df["most_ads_day"], categories=day_order, ordered=True)
 
-# 1. Aggregate metrics by group (most_ads_day) -------------------------------
-group_summary = df.groupby("most_ads_day", observed=True).agg(
-    users=("user_id", "count"),
-    conversions=("converted", "sum"),
-    total_ads_sum=("total_ads", "sum"),
-    total_ads_mean=("total_ads", "mean"),
-    total_ads_median=("total_ads", "median"),
-    total_ads_std=("total_ads", "std"),
+# 1. Aggregate metrics by group (Campaign_Type) -------------------------------
+group_summary = df.groupby("Campaign_Type", observed=True).agg(
+    campaigns=("Campaign_ID", "count"),
+    impressions=("Impressions", "sum"),
+    clicks=("Clicks", "sum"),
+    leads=("Leads", "sum"),
+    conversions=("Conversions", "sum"),
+    revenue=("Revenue", "sum"),
+    cost=("Total_Cost", "sum"),
 )
-group_summary["conversion_rate"] = group_summary["conversions"] / group_summary["users"]
-group_summary = group_summary.round(2)
+group_summary["ctr"] = group_summary["clicks"] / group_summary["impressions"]
+group_summary["conversion_rate"] = group_summary["conversions"] / group_summary["clicks"]
+group_summary["cpa"] = group_summary["cost"] / group_summary["conversions"]
+group_summary["roas"] = group_summary["revenue"] / group_summary["cost"]
+group_summary["profit"] = group_summary["revenue"] - group_summary["cost"]
+group_summary["profit_margin"] = group_summary["profit"] / group_summary["revenue"]
+group_summary = group_summary.replace([np.inf, -np.inf], np.nan).round(2)
 
 print("=" * 70)
-print("GROUP SUMMARY — by most_ads_day (7 groups)")
+print("GROUP SUMMARY — by Campaign_Type (5 groups)")
 print("=" * 70)
 print(group_summary)
 
-# 2. Aggregate metrics by test_group (the actual A/B experiment) -------------
-arm_summary = df.groupby("test_group", observed=True).agg(
-    users=("user_id", "count"),
-    conversions=("converted", "sum"),
-    total_ads_mean=("total_ads", "mean"),
-)
-arm_summary["conversion_rate"] = arm_summary["conversions"] / arm_summary["users"]
-arm_summary = arm_summary.round(4)
+group_summary.to_csv("results/group_summary_by_campaign_type.csv")
 
-print()
-print("=" * 70)
-print("ARM SUMMARY — by test_group (ad vs. psa)")
-print("=" * 70)
-print(arm_summary)
-print()
-print("Note: conversion_rate is the main comparable metric in this lab — this dataset has no "
-      "cost, revenue, or impression data, so CPA, ROAS, and CTR are not available (see dataset_selection.md).")
+# 2. Visualize key metrics ----------------------------------------------------
+fig, axes = plt.subplots(2, 3, figsize=(17, 10))
 
-group_summary.to_csv("results/group_summary_by_day.csv")
-arm_summary.to_csv("results/arm_summary_ad_vs_psa.csv")
+order = group_summary.sort_values("cpa").index
+axes[0, 0].barh(order.astype(str), group_summary.loc[order, "cpa"], color="#2E86AB")
+axes[0, 0].set_xlabel("CPA ($)")
+axes[0, 0].set_title("CPA by Campaign_Type (lower is better)")
 
-# 3. Visualize key metrics ----------------------------------------------------
-fig, axes = plt.subplots(2, 2, figsize=(13, 10))
+order2 = group_summary.sort_values("roas").index
+axes[0, 1].barh(order2.astype(str), group_summary.loc[order2, "roas"], color="#A23B72")
+axes[0, 1].set_xlabel("ROAS (revenue / cost)")
+axes[0, 1].set_title("ROAS by Campaign_Type")
 
-order = group_summary.sort_values("conversion_rate").index
-axes[0, 0].barh(order.astype(str), group_summary.loc[order, "conversion_rate"] * 100, color="#2E86AB")
-axes[0, 0].set_xlabel("Conversion rate (%)")
-axes[0, 0].set_title("Conversion rate by most_ads_day")
+order3 = group_summary.sort_values("conversion_rate").index
+axes[0, 2].barh(order3.astype(str), group_summary.loc[order3, "conversion_rate"] * 100, color="#F18F01")
+axes[0, 2].set_xlabel("Conversion rate (%) [conversions / clicks]")
+axes[0, 2].set_title("Conversion rate by Campaign_Type")
 
-order2 = group_summary.sort_values("total_ads_mean").index
-axes[0, 1].barh(order2.astype(str), group_summary.loc[order2, "total_ads_mean"], color="#A23B72")
-axes[0, 1].set_xlabel("Mean total ads shown")
-axes[0, 1].set_title("Mean ad exposure by most_ads_day")
-
-order3 = group_summary.sort_values("conversions").index
-axes[1, 0].barh(order3.astype(str), group_summary.loc[order3, "conversions"], color="#F18F01")
+order4 = group_summary.sort_values("conversions").index
+axes[1, 0].barh(order4.astype(str), group_summary.loc[order4, "conversions"], color="#6A994E")
 axes[1, 0].set_xlabel("Total conversions")
-axes[1, 0].set_title("Total conversions by most_ads_day")
+axes[1, 0].set_title("Total conversions by Campaign_Type")
 
-order4 = group_summary.sort_values("users").index
-axes[1, 1].barh(order4.astype(str), group_summary.loc[order4, "users"], color="#6A994E")
-axes[1, 1].set_xlabel("Number of users")
-axes[1, 1].set_title("Sample size by most_ads_day")
+order5 = group_summary.sort_values("cost").index
+axes[1, 1].barh(order5.astype(str), group_summary.loc[order5, "cost"], color="#BC4B51")
+axes[1, 1].set_xlabel("Total cost ($)")
+axes[1, 1].set_title("Total cost by Campaign_Type")
+
+order6 = group_summary.sort_values("profit").index
+axes[1, 2].barh(order6.astype(str), group_summary.loc[order6, "profit"], color="#5B85AA")
+axes[1, 2].axvline(0, color="black", linewidth=0.8)
+axes[1, 2].set_xlabel("Profit ($) [revenue - cost]")
+axes[1, 2].set_title("Profit by Campaign_Type")
 
 for ax in axes.flat:
     ax.grid(axis="x", alpha=0.3)
 
-fig.suptitle("Group Metrics Overview — most_ads_day", fontsize=14, fontweight="bold")
+fig.suptitle("Group Metrics Overview — Campaign_Type", fontsize=14, fontweight="bold")
 fig.tight_layout()
 fig.savefig("figures/group_metrics_overview.png", dpi=150)
 plt.close(fig)
 print("\nSaved figures/group_metrics_overview.png")
 
-# 4. Examine distributions -----------------------------------------------------
+# 3. Examine distributions -----------------------------------------------------
+# Per-campaign CPA (Acquisition_Cost) is the continuous metric used for the Step 4 t-tests,
+# so its distribution by group is what matters for checking t-test assumptions.
+groups = sorted(df["Campaign_Type"].unique())
 fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 
-for day in day_order:
-    subset = df.loc[df["most_ads_day"] == day, "total_ads"]
-    axes[0].hist(np.log1p(subset), bins=40, alpha=0.35, label=day, density=True)
-axes[0].set_xlabel("log(1 + total_ads)")
+for g in groups:
+    subset = df.loc[df["Campaign_Type"] == g, "Acquisition_Cost"]
+    axes[0].hist(np.log1p(subset), bins=40, alpha=0.4, label=g, density=True)
+axes[0].set_xlabel("log(1 + CPA)")
 axes[0].set_ylabel("Density")
-axes[0].set_title("Distribution of ad exposure by group\n(log-scaled: total_ads is heavily right-skewed)")
+axes[0].set_title("Distribution of CPA by group\n(log-scaled: CPA is right-skewed)")
 axes[0].legend(fontsize=8)
 
-box_data = [df.loc[df["most_ads_day"] == day, "total_ads"] for day in day_order]
-axes[1].boxplot(box_data, tick_labels=day_order, showfliers=False)
-axes[1].set_ylabel("total_ads (outliers hidden for readability)")
-axes[1].set_title("total_ads by group (box plot)")
-axes[1].tick_params(axis="x", rotation=45)
+box_data = [df.loc[df["Campaign_Type"] == g, "Acquisition_Cost"] for g in groups]
+axes[1].boxplot(box_data, tick_labels=groups, showfliers=False)
+axes[1].set_ylabel("CPA ($) (outliers hidden for readability)")
+axes[1].set_title("CPA by group (box plot)")
+axes[1].tick_params(axis="x", rotation=30)
 
 fig.tight_layout()
 fig.savefig("figures/group_distributions.png", dpi=150)
@@ -121,12 +116,18 @@ print()
 print("=" * 70)
 print("KEY INSIGHTS")
 print("=" * 70)
-best_conv = group_summary["conversion_rate"].idxmax()
-worst_conv = group_summary["conversion_rate"].idxmin()
-print(f"Highest conversion rate: {best_conv} ({group_summary.loc[best_conv, 'conversion_rate']:.2%})")
-print(f"Lowest conversion rate:  {worst_conv} ({group_summary.loc[worst_conv, 'conversion_rate']:.2%})")
-print(f"total_ads is heavily right-skewed (mean {df['total_ads'].mean():.1f} vs. median {df['total_ads'].median():.1f}, "
-      f"max {df['total_ads'].max()}) — a small number of users see very many ads.")
-print("Sample sizes per most_ads_day group are large (77k-93k), and with n this large the t-test's "
+print("Note: conversion_rate here is conversions/clicks (per the lab's formula), separate "
+      "from CPA/ROAS which are the primary cost-efficiency metrics for this dataset.")
+best_cpa = group_summary["cpa"].idxmin()
+worst_cpa = group_summary["cpa"].idxmax()
+best_roas = group_summary["roas"].idxmax()
+worst_roas = group_summary["roas"].idxmin()
+print(f"Lowest (best) CPA: {best_cpa} (${group_summary.loc[best_cpa, 'cpa']:.2f})")
+print(f"Highest (worst) CPA: {worst_cpa} (${group_summary.loc[worst_cpa, 'cpa']:.2f})")
+print(f"Highest ROAS: {best_roas} ({group_summary.loc[best_roas, 'roas']:.2f}x)")
+print(f"Lowest ROAS: {worst_roas} ({group_summary.loc[worst_roas, 'roas']:.2f}x)")
+print(f"CPA is right-skewed (mean {df['Acquisition_Cost'].mean():.1f} vs. median {df['Acquisition_Cost'].median():.1f}, "
+      f"max {df['Acquisition_Cost'].max():.1f}) — a small number of campaigns have very high per-acquisition cost.")
+print("Sample sizes per Campaign_Type group are large (~11,000), and with n this large the t-test's "
       "reliance on the CLT for the sampling distribution of the mean holds even though the raw "
       "distribution is skewed.")

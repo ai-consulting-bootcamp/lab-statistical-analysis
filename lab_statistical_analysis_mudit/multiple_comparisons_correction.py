@@ -2,8 +2,8 @@
 Step 6: Apply Multiple Comparisons Correction
 =================================================
 Applies Bonferroni and Benjamini-Hochberg (FDR) correction to the two
-families of pairwise tests from Steps 4 and 5 (21 t-tests on total_ads,
-21 Fisher's exact tests on conversion rate, both across most_ads_day).
+families of pairwise tests from Steps 4 and 5 (10 t-tests on CPA,
+10 Fisher's exact tests on conversion rate, both across Campaign_Type).
 """
 import os
 
@@ -22,7 +22,7 @@ os.makedirs("figures", exist_ok=True)
 ALPHA = 0.05
 
 ttest_df = pd.read_csv("results/ttest_results.csv")
-fisher_df = pd.read_csv("results/fisher_results_by_day.csv")
+fisher_df = pd.read_csv("results/fisher_results_by_campaign_type.csv")
 
 # 1. The multiple comparisons problem ----------------------------------------
 total_comparisons = len(ttest_df) + len(fisher_df)
@@ -37,10 +37,9 @@ print(f"At alpha={ALPHA}, we expect ~{expected_false_positives:.2f} false positi
 print("Some of the 'significant' results found in Steps 4-5 are therefore likely to be noise, "
       "not real differences — correction is needed before acting on them.")
 print("Note: Bonferroni and FDR below are each applied separately within their own test family "
-      "(21 t-tests, 21 Fisher's exact tests) — that's why the correction counts are out of 21 "
-      "per family, not out of the combined 42. Each family is a distinct set of null hypotheses, "
-      "so correcting them jointly would conflate two different questions (mean ad exposure vs. "
-      "conversion rate) into one.")
+      "(10 t-tests, 10 Fisher's exact tests) — that's why the correction counts are out of 10 "
+      "per family, not out of the combined 20. Each family is a distinct set of null hypotheses, "
+      "so correcting them jointly would conflate two different questions (CPA vs. conversion rate).")
 
 
 def apply_corrections(df, label):
@@ -84,8 +83,8 @@ def apply_corrections(df, label):
     return df, n_uncorrected, n_bonf, n_fdr
 
 
-ttest_corrected, t_unc, t_bonf, t_fdr = apply_corrections(ttest_df, "T-TEST (total_ads by most_ads_day)")
-fisher_corrected, f_unc, f_bonf, f_fdr = apply_corrections(fisher_df, "FISHER'S EXACT (conversion by most_ads_day)")
+ttest_corrected, t_unc, t_bonf, t_fdr = apply_corrections(ttest_df, "T-TEST (CPA by Campaign_Type)")
+fisher_corrected, f_unc, f_bonf, f_fdr = apply_corrections(fisher_df, "FISHER'S EXACT (conversion rate by Campaign_Type)")
 
 ttest_corrected.to_csv("results/ttest_results_corrected.csv", index=False)
 fisher_corrected.to_csv("results/fisher_results_corrected.csv", index=False)
@@ -97,7 +96,7 @@ summary = pd.DataFrame(
         "Bonferroni": [t_bonf, f_bonf],
         "FDR (BH)": [t_fdr, f_fdr],
     },
-    index=["t-test (total_ads)", "Fisher's exact (conversion)"],
+    index=["t-test (CPA)", "Fisher's exact (conversion rate)"],
 )
 print()
 print("=" * 70)
@@ -109,11 +108,12 @@ summary.to_csv("results/correction_summary.csv")
 fig, ax = plt.subplots(figsize=(8, 5))
 x = np.arange(len(summary.columns))
 width = 0.35
-ax.bar(x - width / 2, summary.loc["t-test (total_ads)"], width, label="t-test (total_ads)", color="#2E86AB")
-ax.bar(x + width / 2, summary.loc["Fisher's exact (conversion)"], width, label="Fisher's exact (conversion)", color="#A23B72")
+ax.bar(x - width / 2, summary.loc["t-test (CPA)"], width, label="t-test (CPA)", color="#2E86AB")
+ax.bar(x + width / 2, summary.loc["Fisher's exact (conversion rate)"], width,
+       label="Fisher's exact (conversion rate)", color="#A23B72")
 ax.set_xticks(x)
 ax.set_xticklabels(summary.columns)
-ax.set_ylabel("Number of significant comparisons (out of 21)")
+ax.set_ylabel("Number of significant comparisons (out of 10)")
 ax.set_title("Effect of multiple comparisons correction")
 ax.legend()
 ax.grid(axis="y", alpha=0.3)
@@ -126,13 +126,14 @@ print()
 print("=" * 70)
 print("KEY INSIGHT")
 print("=" * 70)
-print(f"t-test family: {t_unc} of 21 comparisons looked 'significant' before correction, and {t_bonf} "
-      f"(Bonferroni) / {t_fdr} (FDR) still do after correction — sample sizes per day (77k-93k users) "
-      "are so large that even tiny, practically meaningless differences in mean ad exposure clear the "
-      "corrected p-value bar. Every single one of those comparisons had a 'negligible' Cohen's d "
-      "(|d| < 0.1, see ttest_comparisons output) — this is the textbook case of statistical significance without "
-      "practical significance, and correction alone does not catch it. Effect size has to be checked too.")
-print(f"Fisher's exact family: {f_unc} of 21 conversion-rate comparisons looked significant before "
-      f"correction; {f_bonf} survive Bonferroni and {f_fdr} survive FDR — almost unchanged, again because "
-      "the sample sizes are large. Unlike the t-test family, several of these rate differences are also "
-      "large in relative terms (10-35%), so they are more likely to be practically meaningful.")
+print(f"t-test family: {t_unc} of 10 CPA comparisons were significant before correction — CPA does "
+      "not differ meaningfully by Campaign_Type in this dataset at all; every Cohen's d was "
+      "negligible (|d| < 0.02, see ttest_comparisons output). This is a genuine null result, not a "
+      "false positive that correction needs to catch.")
+print(f"Fisher's exact family: {f_unc} of 10 conversion-rate comparisons looked significant before "
+      f"correction; {f_bonf} survive Bonferroni and {f_fdr} survive FDR — because clicks are "
+      "aggregated in the millions per group, even a ~0.1-0.9% relative difference clears the "
+      "corrected p-value bar. Every one of these differences is far below the 10% relative-"
+      "difference practical-meaningfulness screen used in fisher_exact_tests.py — this is the same "
+      "'statistically significant but not practically significant' pattern as the CPA family would "
+      "have shown if CPA had any real variation to detect.")

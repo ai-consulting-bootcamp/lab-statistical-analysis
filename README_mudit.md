@@ -1,9 +1,9 @@
-# Lab: Statistical Analysis — Marketing A/B Test & Ad-Delivery Timing
+# Lab: Statistical Analysis — Nykaa Campaign Performance (CPA & Conversion Rate by Campaign Type)
 
-Analysis of Kaggle's "Marketing A/B Testing" dataset (`data/marketing_AB.csv`, 588,101 users).
-Start with `lab_statistical_analysis_mudit/executive_memo.md` for findings and recommendations,
-or `lab_statistical_analysis_mudit/dataset_selection.md` for why the metrics here diverge from
-the lab's CPA/ROAS template (this dataset has no cost/revenue fields).
+Analysis of Kaggle's "Nykaa Campaign Data" dataset (`data/nykaa_campaign_data.csv`, 55,555
+campaigns). Start with `lab_statistical_analysis_mudit/executive_memo.md` for findings and
+recommendations, or `lab_statistical_analysis_mudit/dataset_selection.md` for the dataset choice
+and why `Campaign_Type` is used as the channel grouping variable.
 
 All deliverables live in `lab_statistical_analysis_mudit/`.
 
@@ -26,28 +26,29 @@ Run in this order — each script reads outputs saved by the previous one.
 
 | File / folder | What it's for |
 |---|---|
-| `lab_statistical_analysis_mudit/dataset_selection.md` | Dataset choice, source, and the CPA/ROAS data-gap decision |
+| `lab_statistical_analysis_mudit/dataset_selection.md` | Dataset choice, source, and why `Campaign_Type` is the grouping variable |
 | `lab_statistical_analysis_mudit/data_exploration.py` | Load, inspect, clean the raw CSV; saves `data/marketing_data.csv` |
-| `lab_statistical_analysis_mudit/key_metrics.py` | Group-level metrics (conversion rate, ad exposure) + overview/distribution plots |
-| `lab_statistical_analysis_mudit/ttest_comparisons.py` | Pairwise t-tests + Cohen's d on `total_ads` across day-of-week groups |
-| `lab_statistical_analysis_mudit/fisher_exact_tests.py` | Pairwise Fisher's exact tests on `converted`, plus the headline ad-vs-psa test |
+| `lab_statistical_analysis_mudit/key_metrics.py` | Group-level metrics (CPA, ROAS, CTR, conversion rate, profit) + overview/distribution plots |
+| `lab_statistical_analysis_mudit/ttest_comparisons.py` | Pairwise t-tests + Cohen's d on CPA across `Campaign_Type` groups |
+| `lab_statistical_analysis_mudit/fisher_exact_tests.py` | Pairwise Fisher's exact tests on conversion rate (conversions/clicks) across `Campaign_Type` groups |
 | `lab_statistical_analysis_mudit/multiple_comparisons_correction.py` | Bonferroni + Benjamini-Hochberg correction on both test families |
 | `lab_statistical_analysis_mudit/power_analysis.py` | Empirical power curves, minimum sample sizes, current-data-adequacy check |
-| `lab_statistical_analysis_mudit/business_recommendations.py` | Bootstrap CIs, composite ranking, ad-delivery weighting recommendation |
+| `lab_statistical_analysis_mudit/business_recommendations.py` | Bootstrap CIs, composite ranking, budget allocation exercise |
 | `lab_statistical_analysis_mudit/executive_memo.md` | **Findings, recommendations, statistical caveats — start here** |
 | `lab_statistical_analysis_mudit/reflection.md` | What surprised us, limitations, how to communicate this to stakeholders |
 | `lab_statistical_analysis_mudit/data/marketing_data.csv` | Cleaned dataset (output of `data_exploration.py`) |
 | `lab_statistical_analysis_mudit/figures/` | All saved plots (`.png`) |
 | `lab_statistical_analysis_mudit/results/` | All saved result tables (`.csv`) and per-script console logs (`.log`) |
-| `data/marketing_AB.csv` | Raw source dataset for this lab |
+| `data/nykaa_campaign_data.csv` | Raw source dataset for this lab |
 
 ## Setup assumptions
 
-- No cost, revenue, impression, or click data exists in the source file, so CPA, ROAS, and CTR
-  are not calculated anywhere in this analysis — see `dataset_selection.md` for the full
-  reasoning and the adapted metrics used instead (conversion rate, ad exposure).
-- The grouping variable used for pairwise comparisons is `most_ads_day` (7 groups), not a
-  marketing "channel" — this dataset's only real 2-group comparison is `test_group` (ad vs. psa),
-  used as the headline finding.
+- The grouping variable used for all pairwise comparisons is `Campaign_Type` (5 groups: Email,
+  Influencer, Paid Ads, SEO, Social Media) — see `dataset_selection.md` for why this was chosen
+  over the more granular but messier `Channel_Used` field.
+- `Acquisition_Cost` in the source file is cost-**per-acquisition** (CPA), not total campaign
+  spend — `Total_Cost = Acquisition_Cost × Conversions` is derived in `data_exploration.py` and
+  used for group-level ROAS/Profit in `key_metrics.py`.
+- Conversion rate is defined as `Conversions / Clicks`, per the lab's formula.
 - Random seeds are fixed (`np.random.default_rng(42)` / `(7)`) for reproducibility of the
   Monte Carlo power simulations and bootstrap confidence intervals.

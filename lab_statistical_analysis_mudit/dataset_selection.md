@@ -2,51 +2,65 @@
 
 ## Dataset
 
-- **Name:** Marketing A/B Testing
+- **Name:** Nykaa Campaign Data
 - **Source:** Kaggle
-- **URL:** https://www.kaggle.com/datasets/faviovaz/marketing-ab-testing
-- **File used:** `data/marketing_AB.csv` (provided directly for this lab; 588,101 rows, 7 columns)
+- **URL:** https://www.kaggle.com/datasets/ishitabahamnia/nykaa-campaign-data-csv
+- **File used:** `data/nykaa_campaign_data.csv` (provided directly for this lab; 55,555 rows, 16 columns)
 
 ## Why this dataset
 
-It's a real, publicly documented marketing experiment: users were shown either actual ad
-creative (`test group = "ad"`) or a public service announcement (`test group = "psa"`, the
-control), and their conversion outcome was tracked along with how many ads they were exposed
-to and when. That gives a genuine binary outcome (`converted`) and a genuine continuous
-exposure metric (`total ads`) to run statistical tests on — not synthetic data.
+Unlike the previous dataset used for this lab (Marketing A/B Testing — see git history), this one
+is campaign-level and includes real cost, revenue, and funnel data (impressions, clicks, leads,
+conversions, acquisition cost, revenue, ROI) across 5 campaign types. That means CPA, ROAS, CTR,
+and conversion rate — the actual metrics this lab is built around — can all be calculated directly
+from the source data, with no adaptation needed.
 
 ## Columns
 
 | Column | Type | Description |
 |---|---|---|
-| `user id` | int | Unique user identifier |
-| `test group` | categorical (2 levels: `ad`, `psa`) | Experiment arm the user was assigned to |
-| `converted` | bool | Whether the user converted (e.g., made a purchase) |
-| `total ads` | int | Number of ads shown to the user during the study |
-| `most ads day` | categorical (7 levels: Monday–Sunday) | Day of week on which the user was shown the most ads |
-| `most ads hour` | int (0–23) | Hour of day on which the user was shown the most ads |
+| `Campaign_ID` | string | Unique campaign identifier |
+| `Campaign_Type` | categorical (5 levels: Email, Influencer, Paid Ads, SEO, Social Media) | **Grouping variable used throughout this analysis** |
+| `Target_Audience` | categorical (5 levels) | Audience segment targeted |
+| `Duration` | int (5–30) | Campaign length in days |
+| `Channel_Used` | string | Platform(s) used (single or comma-separated combinations; 156 distinct raw values — see note below) |
+| `Impressions` | int | Ad impressions served |
+| `Clicks` | int | Ad clicks |
+| `Leads` | int | Leads generated |
+| `Conversions` | int | Conversions (sales) |
+| `Revenue` | int | Revenue generated ($) |
+| `Acquisition_Cost` | float | **Cost per acquisition (CPA)** — confirmed against the `ROI` column (see `data_exploration.py`); not a total campaign spend figure |
+| `ROI` | float | Return on investment, `(Revenue - Total_Cost) / Total_Cost` |
+| `Language` | categorical (4 levels) | Campaign language |
+| `Engagement_Score` | float | Engagement score (not used in this analysis) |
+| `Customer_Segment` | categorical (5 levels) | Customer segment (not used in this analysis) |
+| `Date` | date | Campaign date, `2024-07-01` to `2025-06-24` |
 
-## Known limitation vs. the lab's ideal dataset
+## Design decisions
 
-The lab's instructions describe a dataset with **cost, revenue, impressions, and clicks** per
-channel, so that CPA, ROAS, and CTR can be calculated directly. This dataset has **none of
-those fields** — it only has ad exposure counts and a conversion flag, at the individual-user
-level, with no monetary or per-channel spend/revenue data.
+- **Grouping variable ("channel"):** `Campaign_Type` — 5 clean, evenly-sized groups
+  (~11,100 campaigns each, no missing values). `Channel_Used` was considered instead, since it's
+  the more literal "channel" field, but it has 156 distinct raw values (many multi-channel
+  combinations like `"WhatsApp, Google"`) and would need non-trivial explosion/cleanup to use as a
+  grouping variable — `Campaign_Type` is the clean, lab-ready grouping variable and is used as the
+  channel-equivalent throughout.
+- **Continuous metric (t-tests, Step 4):** CPA (`Acquisition_Cost`), compared per-campaign across
+  `Campaign_Type` groups — this is a genuine per-row continuous metric, unlike the previous
+  dataset where a substitute had to be found.
+- **Binary outcome (Fisher's exact, Step 5):** conversion rate, aggregated as
+  `Conversions / Clicks` per group per the lab's formula.
+- **Derived metrics:** `Total_Cost = Acquisition_Cost × Conversions`, from which ROAS
+  (`Revenue / Total_Cost`), Profit (`Revenue - Total_Cost`), and Profit Margin are computed in
+  `key_metrics.py`. CTR (`Clicks / Impressions`) is also computed there.
+- **Not used:** `Channel_Used` (too granular/messy — noted above), `Target_Audience`,
+  `Language`, `Customer_Segment`, `Engagement_Score`, `Duration` — available for a follow-up
+  breakdown but out of scope for the primary channel comparison this lab asks for.
 
-**Decision (confirmed with the analyst before proceeding):** rather than inventing cost/revenue
-numbers that don't exist in the source data, the analysis is adapted to use what is genuinely
-present:
+## A note on what the analysis found
 
-- **Grouping variable (in place of "channel"):** `most ads day` — 7 distinct groups
-  (Monday–Sunday), which satisfies and exceeds the lab's "at least 3–5 groups" requirement.
-- **Continuous metric (in place of CPA/ROAS):** `total ads` — ad exposure per user, compared
-  across day-of-week groups with t-tests and Cohen's d.
-- **Binary outcome (as specified):** `converted` — compared across day-of-week groups with
-  Fisher's exact test, exactly as the lab describes for binary outcomes.
-- **Primary experimental comparison:** `test group` (`ad` vs. `psa`) — the actual designed
-  A/B test in this dataset, used as the headline business finding (does showing ads increase
-  conversion vs. a PSA control?).
-
-CPA, ROAS, and CTR are **not** calculated anywhere in this analysis because the underlying
-cost/revenue/impression data does not exist in the source file. This is called out again in
-`executive_memo.md` under Statistical Caveats.
+The values across `Campaign_Type` groups turned out to be extremely close (CPA within ~$7 of each
+other, ROAS within 0.04x) — the statistical tests in Steps 4-6 confirm this is not just an
+impression: CPA shows **no** significant differences at all (0 of 10 pairs), and while conversion
+rate differences are technically significant after correction, every one is under 1% relative and
+is only detectable because clicks are aggregated in the millions per group. This is a real,
+reportable finding in its own right (see `executive_memo.md`), not a failure of the analysis.

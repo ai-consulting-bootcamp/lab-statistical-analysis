@@ -1,8 +1,8 @@
 """
 Step 4: Compare Groups Using t-tests
 =======================================
-Pairwise independent t-tests on total_ads (continuous ad-exposure metric)
-across the 7 most_ads_day groups, with Cohen's d effect sizes.
+Pairwise independent t-tests on CPA (Acquisition_Cost, the primary cost-efficiency
+metric) across the 5 Campaign_Type groups, with Cohen's d effect sizes.
 """
 import itertools
 import os
@@ -20,14 +20,13 @@ os.makedirs("results", exist_ok=True)
 os.makedirs("figures", exist_ok=True)
 
 df = pd.read_csv("data/marketing_data.csv")
-day_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
-METRIC = "total_ads"
+METRIC = "Acquisition_Cost"  # CPA, per campaign
 
-# 1. Prepare data: no NaN/inf possible here (total_ads is a plain count), but
+# 1. Prepare data: no NaN/inf possible here (CPA is a plain cost figure), but
 #    filter defensively anyway per the lab's instructions.
-clean = df[[ "most_ads_day", METRIC]].replace([np.inf, -np.inf], np.nan).dropna()
-groups = [g for g in day_order if g in clean["most_ads_day"].unique()]
+clean = df[["Campaign_Type", METRIC]].replace([np.inf, -np.inf], np.nan).dropna()
+groups = sorted(clean["Campaign_Type"].unique())
 
 def cohens_d(a, b):
     pooled_std = np.sqrt((a.var(ddof=1) + b.var(ddof=1)) / 2)
@@ -45,8 +44,8 @@ def interpret_effect(d):
 
 results = []
 for group_a, group_b in itertools.combinations(groups, 2):
-    a = clean.loc[clean["most_ads_day"] == group_a, METRIC]
-    b = clean.loc[clean["most_ads_day"] == group_b, METRIC]
+    a = clean.loc[clean["Campaign_Type"] == group_a, METRIC]
+    b = clean.loc[clean["Campaign_Type"] == group_b, METRIC]
 
     t_stat, p_value = ttest_ind(a, b)
     mean_a, mean_b = a.mean(), b.mean()
@@ -71,8 +70,8 @@ for group_a, group_b in itertools.combinations(groups, 2):
         }
     )
     print(
-        f"{group_a:>9} vs {group_b:<9} | mean_a={mean_a:6.2f} mean_b={mean_b:6.2f} "
-        f"diff={diff:+6.2f} ({pct_diff:+6.2f}%) | t={t_stat:+7.3f} p={p_value:.4e} | "
+        f"{group_a:>12} vs {group_b:<12} | mean_a={mean_a:7.2f} mean_b={mean_b:7.2f} "
+        f"diff={diff:+7.2f} ({pct_diff:+6.2f}%) | t={t_stat:+7.3f} p={p_value:.4e} | "
         f"d={d:+.3f} ({effect})"
     )
 
@@ -91,7 +90,7 @@ for _, row in ttest_df.iterrows():
     p_matrix.loc[row["group_b"], row["group_a"]] = row["p_value"]
 np.fill_diagonal(p_matrix.values, 1.0)
 
-fig, ax = plt.subplots(figsize=(8, 7))
+fig, ax = plt.subplots(figsize=(7, 6))
 im = ax.imshow(p_matrix.values, cmap="RdYlGn_r", vmin=0, vmax=0.05 * 3)
 ax.set_xticks(range(n))
 ax.set_yticks(range(n))
@@ -105,7 +104,7 @@ for i in range(n):
                  color="white" if val < 0.05 else "black")
 cbar = fig.colorbar(im, ax=ax)
 cbar.set_label("p-value (red = significant at p<0.05)")
-ax.set_title("Pairwise t-test p-values: total_ads by most_ads_day")
+ax.set_title("Pairwise t-test p-values: CPA by Campaign_Type")
 fig.tight_layout()
 fig.savefig("figures/metric_comparison_heatmap.png", dpi=150)
 plt.close(fig)
