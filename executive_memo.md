@@ -44,6 +44,13 @@ confidence intervals.
   between two channels could easily go undetected with the data we have today.
 - To reliably detect a 5% CPA difference at 80% power, we'd need roughly **160 days** of
   campaign data per channel (vs. 90 today).
+- For the two pairs that looked significant *before* multiple-comparisons correction
+  (Email vs. Website, ~14.2% CPA gap; Email vs. YouTube, ~14.9% CPA gap), we have essentially
+  100% power at 90 days to detect a real gap of that size — so those two results were not
+  killed by low power, they were killed by correcting for the number of tests we ran. That
+  reinforces that they were most likely 2 of the ~2.25 false positives we'd statistically
+  expect from 45 comparisons at α=0.05, not genuine effects we're currently too underpowered
+  to see.
 
 ## Recommendations
 
@@ -51,14 +58,16 @@ confidence intervals.
 
 | Channel | Allocation | Amount | Why |
 |---|---|---|---|
-| Email | ~31% | ~$154K | Lowest CPA, strong ROAS, well-established channel |
-| Facebook | ~20% | ~$100K | Best ROAS, second-best CPA |
-| Google Ads | ~17% | ~$83K | Solid mid-pack performer, largest search-intent reach |
-| Instagram | ~13% | ~$63K | Reasonable CPA, lowest ROAS — monitor |
-| Website (owned) | ~10% | ~$50K | Weakest CPA — floor allocation to keep testing |
-| YouTube | ~10% | ~$50K | Weakest CPA — floor allocation to keep testing |
+| Email | 30.0% | $150,000 | Lowest CPA, strong ROAS, well-established channel (hit the 30% ceiling) |
+| Facebook | 20.2% | $101,205 | Best ROAS, second-best CPA |
+| Google Ads | 16.9% | $84,337 | Solid mid-pack performer, largest search-intent reach |
+| Instagram | 12.7% | $63,253 | Reasonable CPA, lowest ROAS — monitor |
+| Website (owned) | 10.1% | $50,602 | Weakest CPA — floor allocation to keep testing |
+| YouTube | 10.1% | $50,602 | Weakest CPA — floor allocation to keep testing |
 
-We applied an 8%–30% floor/ceiling per channel deliberately: **because none of the CPA/ROI
+We applied an 8%–30% floor/ceiling per channel deliberately, enforced via a constrained
+(water-filling) allocation so every channel's share is *exactly* within bounds — not just
+approximately, which a simple clip-and-renormalize can violate. **Because none of the CPA/ROI
 differences are statistically robust after correction, we should not fully defund any channel
 or over-concentrate spend on the current point-estimate "winner."** This allocation is a
 directional tilt, not a statistically proven optimum.

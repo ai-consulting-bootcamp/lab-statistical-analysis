@@ -42,6 +42,10 @@ def pairwise_ttests(data, metric):
     for a, b in itertools.combinations(channels, 2):
         va = clean.loc[clean["Channel"] == a, metric].values
         vb = clean.loc[clean["Channel"] == b, metric].values
+        # Welch's t-test (equal_var=False): channels have visibly different CPA/ROI
+        # variances (see Part 1 std-dev-by-channel output), so we don't assume equal
+        # variance. Welch's test is strictly more robust than Student's t-test here
+        # and converges to the same result when variances actually are equal.
         t_stat, p_val = ttest_ind(va, vb, equal_var=False)
         mean_a, mean_b = va.mean(), vb.mean()
         diff = mean_b - mean_a

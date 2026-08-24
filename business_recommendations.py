@@ -43,12 +43,49 @@ print("\nComposite ranking (lower score = better):\n", ranking)
 ranking.to_csv("outputs/composite_ranking.csv")
 
 # ---------------------------------------------------------------------------
-# Budget allocation proportional to inverse composite score, with floor/ceiling
+# Budget allocation proportional to inverse composite score, with a floor/ceiling
+# that must hold EXACTLY after normalization. A naive clip-then-renormalize can
+# push a clipped channel back outside its bound (e.g. clip to the 8% floor, then
+# renormalizing by dividing by a sum >1 pulls it back under 8%). We use a
+# "water-filling" pass instead: pin every channel currently outside its bound to
+# that bound, then redistribute the remaining budget proportionally among the
+# still-free channels, repeating until every channel is within [MIN, MAX].
 # ---------------------------------------------------------------------------
+def constrained_allocation(weights, lo, hi, tol=1e-9, max_iter=50):
+    weights = weights.copy().astype(float)
+    n = len(weights)
+    pinned = pd.Series(False, index=weights.index)
+    alloc = pd.Series(0.0, index=weights.index)
+    remaining_budget = 1.0
+
+    for _ in range(max_iter):
+        free = ~pinned
+        if free.sum() == 0:
+            break
+        w_free = weights[free]
+        share = w_free / w_free.sum() * remaining_budget
+        alloc[free] = share
+
+        # find any free channel that now violates its bound
+        below = free & (alloc < lo - tol)
+        above = free & (alloc > hi - tol) & (alloc > hi)
+        violators = below | above
+        if not violators.any():
+            break
+
+        alloc[below] = lo
+        alloc[above] = hi
+        pinned = pinned | violators
+        remaining_budget = 1.0 - alloc[pinned].sum()
+
+    assert abs(alloc.sum() - 1.0) < 1e-6, f"allocation does not sum to 1: {alloc.sum()}"
+    assert (alloc >= lo - 1e-6).all() and (alloc <= hi + 1e-6).all(), "bounds violated"
+    return alloc
+
+
 inv_score = 1 / ranking["composite_score"]
 raw_alloc_pct = inv_score / inv_score.sum()
-alloc_pct = raw_alloc_pct.clip(lower=MIN_ALLOC_PCT, upper=MAX_ALLOC_PCT)
-alloc_pct = alloc_pct / alloc_pct.sum()  # renormalize after clipping
+alloc_pct = constrained_allocation(raw_alloc_pct, MIN_ALLOC_PCT, MAX_ALLOC_PCT)
 alloc_df = pd.DataFrame({
     "channel": ranking.index,
     "composite_score": ranking["composite_score"].values,

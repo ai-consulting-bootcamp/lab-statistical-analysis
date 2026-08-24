@@ -17,15 +17,21 @@ RNG = np.random.default_rng(42)
 def empirical_power_cpa(true_diff_pct, base_cpa, n_days, n_sim=1000, alpha=ALPHA):
     """Simulate n_sim two-sample t-test experiments comparing daily CPA
     between channel A (mean=base_cpa) and channel B (mean=base_cpa*(1+true_diff_pct)).
-    Returns the proportion of simulations that correctly reject H0 (= power)."""
+    Returns the proportion of simulations that correctly reject H0 (= power).
+
+    Per the lab spec: std = base_cpa * 0.15, and values are capped at 50% of base_cpa.
+    That cap is a floor only (CPA can't sensibly go below half its baseline), not a
+    symmetric band -- we do not also cap the upside, since nothing in the spec caps
+    the upper tail and doing so would artificially suppress variance for the higher-mean group.
+    """
     std = base_cpa * 0.15
-    cap = base_cpa * 0.5
+    floor = base_cpa * 0.5
     rejections = 0
     for _ in range(n_sim):
         a = RNG.normal(base_cpa, std, n_days)
-        a = np.clip(a, base_cpa - cap, base_cpa + cap)
+        a = np.clip(a, floor, None)
         b = RNG.normal(base_cpa * (1 + true_diff_pct), std, n_days)
-        b = np.clip(b, base_cpa - cap, base_cpa + cap)
+        b = np.clip(b, floor, None)
         _, p = ttest_ind(a, b)
         if p < alpha:
             rejections += 1
@@ -95,29 +101,47 @@ print("\nMinimum sample size for 80% power:\n", min_n_df)
 min_n_df.to_csv("outputs/min_sample_size.csv", index=False)
 
 # ---------------------------------------------------------------------------
-# Assess adequacy for pairs that were significant after FDR correction
+# Assess adequacy for CPA pairs (the metric this power analysis is built around),
+# using each pair's *exact* observed effect size directly -- not snapped to the
+# nearest of the [5,10,15,20]% simulation grid -- and the smaller of the two
+# channel means as the baseline, per the lab spec.
 # ---------------------------------------------------------------------------
-fisher_results = pd.read_csv("outputs/fisher_exact_results.csv")
-sig_pairs = fisher_results[fisher_results["significant_fdr"] == True]
+cpa_results = pd.read_csv("outputs/ttest_cpa_results.csv")
+sig_cpa_fdr = cpa_results[cpa_results["significant_fdr"] == True]
+sig_cpa_uncorrected = cpa_results[cpa_results["significant_uncorrected"] == True]
 
-print("\n--- Data adequacy for FDR-significant conversion-rate pairs ---")
-adequacy_rows = []
-for _, r in sig_pairs.iterrows():
-    rate_a, rate_b = r["rate_a_%"] / 100, r["rate_b_%"] / 100
-    baseline = min(rate_a, rate_b)
-    pct_diff = abs(rate_b - rate_a) / baseline if baseline > 0 else np.nan
-    # crude mapping onto the CPA power-curve grid (same statistical logic, different metric)
-    nearest_es = min(effect_sizes, key=lambda e: abs(e - pct_diff))
-    power_90d = power_df[(power_df["effect_size_pct"] == nearest_es * 100) & (power_df["n_days"] == 90)]["power"].values[0]
-    adequacy_rows.append({
-        "pair": f"{r['group_a']} vs {r['group_b']}",
-        "observed_diff_pct_of_baseline": round(pct_diff * 100, 2),
-        "nearest_simulated_effect_size_pct": nearest_es * 100,
-        "approx_power_with_90days": round(power_90d, 3),
-        "note": "adequately powered" if power_90d >= TARGET_POWER else "under-powered at this effect size",
-    })
+print(f"\n--- CPA pairs significant after FDR correction: {len(sig_cpa_fdr)} ---")
+print("(Expected: 0, since Part 2-3 found no CPA/ROI pair survives correction.)")
+print(f"--- CPA pairs significant before correction (context only): {len(sig_cpa_uncorrected)} ---")
+
+def adequacy_for_pair(row, n_days_current=CURRENT_N_DAYS, n_sim=1000):
+    baseline = min(row["mean_a"], row["mean_b"])
+    diff = abs(row["mean_b"] - row["mean_a"])
+    observed_effect = diff / baseline if baseline > 0 else np.nan
+    power_now = empirical_power_cpa(observed_effect, baseline, n_days_current, n_sim=n_sim)
+    # find min days for 80% power at this *exact* observed effect size
+    min_days = None
+    for n in range(10, 401, 10):
+        if empirical_power_cpa(observed_effect, baseline, n, n_sim=300) >= TARGET_POWER:
+            min_days = n
+            break
+    return {
+        "pair": f"{row['group_a']} vs {row['group_b']}",
+        "baseline_cpa": round(baseline, 2),
+        "observed_diff_pct_of_baseline": round(observed_effect * 100, 3),
+        "power_with_90days": round(power_now, 3),
+        "min_days_for_80pct_power": min_days if min_days else ">400",
+        "note": "adequately powered at 90 days" if power_now >= TARGET_POWER else "under-powered at 90 days for this exact observed gap",
+    }
+
+adequacy_rows = [adequacy_for_pair(r) for _, r in sig_cpa_uncorrected.iterrows()]
 adequacy_df = pd.DataFrame(adequacy_rows)
-print(adequacy_df.to_string(index=False))
-adequacy_df.to_csv("outputs/power_adequacy_fdr_pairs.csv", index=False)
+if len(adequacy_df):
+    print("\nCPA adequacy (uncorrected-significant pairs, exact observed effect size):")
+    print(adequacy_df.to_string(index=False))
+else:
+    print("\nNo CPA pairs were significant even before correction -- no adequacy check to run;"
+          " the observed CPA gaps are too small relative to noise to test power against.")
+adequacy_df.to_csv("outputs/power_adequacy_cpa_pairs.csv", index=False)
 
 print("\n=== Part 4 complete ===")

@@ -59,16 +59,29 @@ clean = clean.rename(columns={"Channel_Used": "Channel", "Acquisition_Cost": "Co
 #   CTR               = Clicks / Impressions
 #   Profit            = Revenue - Cost
 #   Profit_Margin     = Profit / Revenue
+# NOTE on Conversions: estimated (not a raw column) as Clicks * Conversion_Rate / 100,
+# rounded to the nearest whole conversion. We do NOT clip to a minimum of 1 -- a genuine
+# zero-conversion campaign should stay zero, not be inflated into a "successful" one.
+# Zero-conversion campaigns naturally produce an infinite CPA (Cost / 0 conversions);
+# we replace those with NaN below and they are excluded from CPA comparisons rather
+# than being silently forced to some fake performance number.
+#
+# NOTE on Revenue/ROI: the raw dataset does not include a Revenue column, only ROI (%).
+# We assume the dataset's ROI is defined the standard way, ROI = (Revenue - Cost) / Cost,
+# which lets us back out Revenue = Cost * (1 + ROI/100). This is an assumption made
+# necessary by the dataset's fields, not a value given directly by the source -- flagged
+# here and in executive_memo.md so any reader knows how Revenue/ROAS were derived.
 clean["Conversions"] = (clean["Clicks"] * clean["Conversion_Rate"] / 100).round().astype(int)
-clean["Conversions"] = clean["Conversions"].clip(lower=1)  # avoid 0-conversion campaigns (division safety)
 clean["Revenue"] = clean["Cost"] * (1 + clean["ROI"] / 100)
-clean["CPA"] = clean["Cost"] / clean["Conversions"]
+clean["CPA"] = clean["Cost"] / clean["Conversions"]          # inf/NaN where Conversions == 0
 clean["ROAS"] = clean["Revenue"] / clean["Cost"]
 clean["CTR"] = clean["Clicks"] / clean["Impressions"]
 clean["Profit"] = clean["Revenue"] - clean["Cost"]
 clean["Profit_Margin"] = clean["Profit"] / clean["Revenue"]
 
-# Handle infinities defensively
+# Handle infinities (e.g. zero-conversion campaigns) defensively -- these become NaN and
+# are excluded by pandas/scipy in downstream aggregation and t-tests rather than distorting them.
+n_zero_conversion = int((clean["Conversions"] == 0).sum())
 clean = clean.replace([np.inf, -np.inf], np.nan)
 
 # Save prepared dataset
@@ -168,7 +181,39 @@ plt.close()
 print("Saved outputs/group_distributions.png")
 
 print("\n=== Part 1 complete ===")
-print("Best mean ROAS:", group_summary["mean_ROAS"].idxmax(), group_summary["mean_ROAS"].max())
-print("Best mean CPA (lowest):", group_summary["mean_CPA"].idxmin(), group_summary["mean_CPA"].min())
+best_roas = group_summary["mean_ROAS"].idxmax()
+best_cpa = group_summary["mean_CPA"].idxmin()
+worst_cpa = group_summary["mean_CPA"].idxmax()
+cpa_std = clean.groupby("Channel")["CPA"].std().sort_values(ascending=False)
+most_variable = cpa_std.index[0]
+
+print("Best mean ROAS:", best_roas, group_summary.loc[best_roas, "mean_ROAS"])
+print("Best mean CPA (lowest):", best_cpa, group_summary.loc[best_cpa, "mean_CPA"])
 print("Highest variability (CPA std):")
-print(clean.groupby("Channel")["CPA"].std().sort_values(ascending=False))
+print(cpa_std)
+print(f"Zero-conversion campaigns (excluded from CPA, kept in raw counts): {n_zero_conversion}")
+
+# ---------------------------------------------------------------------------
+# 7. Key insights (written takeaway, not just printed numbers)
+# ---------------------------------------------------------------------------
+insights = f"""KEY INSIGHTS -- Part 1 Exploration
+====================================
+- Groups: {len(group_summary)} channels ({', '.join(group_summary.index)}), each with
+  roughly {group_summary['n_campaigns'].min()}-{group_summary['n_campaigns'].max()} campaigns
+  (well above the 3-5 group / hundreds-per-group minimum the lab asks for).
+- Best point-estimate ROAS: {best_roas} ({group_summary.loc[best_roas, 'mean_ROAS']}x).
+- Best point-estimate CPA (lowest/cheapest): {best_cpa} (${group_summary.loc[best_cpa, 'mean_CPA']}).
+- Worst point-estimate CPA (most expensive): {worst_cpa} (${group_summary.loc[worst_cpa, 'mean_CPA']}).
+- Most variable channel by CPA std dev: {most_variable} (std=${cpa_std.iloc[0]:.2f}) -- this
+  channel's campaign-level performance is the least consistent, which matters for risk,
+  not just average return.
+- Zero-conversion campaigns: {n_zero_conversion} out of {len(clean)} -- these are excluded
+  from CPA/ROAS averages (division by zero) rather than forced to a fake minimum.
+- Caveat: these are point-estimate rankings only. Whether the CPA/ROAS gaps between
+  channels are statistically distinguishable (vs. noise) is tested in Part 2-3 --
+  do not act on this ranking alone.
+"""
+print(insights)
+with open("outputs/key_insights.md", "w") as f:
+    f.write(insights)
+print("Saved outputs/key_insights.md")
