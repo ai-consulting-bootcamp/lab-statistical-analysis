@@ -1,0 +1,9 @@
+pair,observed_diff_pct_of_baseline,nearest_simulated_effect_size_pct,approx_power_with_90days,note
+Email vs Facebook,1.04,5.0,0.602,under-powered at this effect size
+Email vs Website,0.92,5.0,0.602,under-powered at this effect size
+Facebook vs Google Ads,1.12,5.0,0.602,under-powered at this effect size
+Facebook vs Instagram,1.14,5.0,0.602,under-powered at this effect size
+Facebook vs YouTube,0.83,5.0,0.602,under-powered at this effect size
+Google Ads vs Website,1.0,5.0,0.602,under-powered at this effect size
+Instagram vs Website,1.02,5.0,0.602,under-powered at this effect size
+Website vs YouTube,0.71,5.0,0.602,under-powered at this effect size

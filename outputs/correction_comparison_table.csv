@@ -1,0 +1,4 @@
+test,uncorrected,bonferroni,fdr_bh
+CPA (t-test),2,0,0
+ROI (t-test),0,0,0
+Conversion rate (Fisher),8,8,8
