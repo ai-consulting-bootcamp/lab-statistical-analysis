@@ -1,0 +1,7 @@
+#!/bin/bash
+# Stream the datasets from Hugging Face (network, a few minutes)
+cd "$(dirname "$0")"
+PY=/opt/homebrew/Caskroom/miniconda/base/envs/bootcamp-env/bin/python
+[ -x "$PY" ] || PY=python3
+"$PY" fetch_dataset.py
+echo; echo "Press any key to close..."; read -n 1 -s
