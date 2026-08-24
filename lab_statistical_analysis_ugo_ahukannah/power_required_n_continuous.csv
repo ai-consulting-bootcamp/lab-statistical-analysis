@@ -1,0 +1,7 @@
+effect_d,label,n_per_group_uncorrected,n_per_group_bonferroni
+0.05,negligible,6281,11414
+0.1,negligible,1571,2856
+0.2,small,394,716
+0.3,small,176,320
+0.5,medium,64,117
+0.8,large,26,47
