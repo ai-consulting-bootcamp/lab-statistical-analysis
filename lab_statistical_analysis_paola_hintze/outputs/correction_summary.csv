@@ -1,0 +1,7 @@
+test_family,method,comparisons,significant_comparisons
+Daily CPA (Welch t-test),Uncorrected,21,15
+Daily CPA (Welch t-test),Bonferroni,21,11
+Daily CPA (Welch t-test),Benjamini-Hochberg FDR,21,14
+Conversion rate (Fisher),Uncorrected,21,14
+Conversion rate (Fisher),Bonferroni,21,10
+Conversion rate (Fisher),Benjamini-Hochberg FDR,21,14

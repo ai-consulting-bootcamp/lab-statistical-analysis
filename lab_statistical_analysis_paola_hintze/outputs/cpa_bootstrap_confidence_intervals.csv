@@ -1,0 +1,8 @@
+channel,conversion_positive_days,mean_daily_cpa,ci_95_lower,ci_95_upper,estimand
+Referral,81,77.99683127572017,67.8338683127572,88.59748868312752,Mean daily CPA conditional on at least one conversion
+Partnerships,9,176.60333333333335,169.06644444444444,183.8215833333333,Mean daily CPA conditional on at least one conversion
+Content,43,195.45162790697674,182.06555232558142,209.1648953488372,Mean daily CPA conditional on at least one conversion
+SEO,32,199.316875,185.6340859375,213.5620859375,Mean daily CPA conditional on at least one conversion
+LinkedIn Ads,6,215.78666666666666,205.33166666666668,224.1933333333333,Mean daily CPA conditional on at least one conversion
+Outbound Sales,3,230.66666666666666,211.30000000000004,254.39,Mean daily CPA conditional on at least one conversion
+Paid Search,39,265.73589743589736,247.48628205128202,284.1467179487179,Mean daily CPA conditional on at least one conversion
