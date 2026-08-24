@@ -1,23 +1,55 @@
-# In God we trust, everyone else bring the data
+# Marketing Channel Statistical Analysis Lab
 
-**Track:** Module 5 — Evaluation & strategy · **When:** Week 7, Day 5 · **Status:** Required
+## How to run
 
-This repository contains everything you need for this lab.
+```bash
+pip install numpy pandas matplotlib scipy   # scipy>=1.11 required for false_discovery_control
+python3 data_exploration.py        # Part 1: load, clean, explore, save marketing_data.csv
+python3 statistical_analysis.py    # Parts 2-3: t-tests, Fisher's exact, multiple comparisons correction
+python3 power_analysis.py          # Part 4: power curves, min sample size
+python3 business_recommendations.py # Part 5: bootstrap CIs, composite ranking, budget allocation
+```
 
-## Files
+Run in this order — later scripts read outputs written by earlier ones
+(`data/marketing_data.csv`, `outputs/fisher_exact_results.csv`).
 
-- [`instructions.md`](./instructions.md) — the lab instructions
-- [`rubric.md`](./rubric.md) — how your submission is graded; this is what the AI reviewer checks your PR against
+## File map
 
-## How to complete this lab
+| File | What it's for |
+|---|---|
+| `data_exploration.py` | Part 1: dataset loading, cleaning, metric derivation, group summary, exploratory charts |
+| `statistical_analysis.py` | Parts 2-3: pairwise t-tests (CPA, ROI) + Cohen's d, Fisher's exact tests on conversion rate, Bonferroni + FDR correction |
+| `power_analysis.py` | Part 4: empirical power simulation, power curves, minimum sample size table |
+| `business_recommendations.py` | Part 5: bootstrap confidence intervals, composite channel ranking, budget allocation |
+| `executive_memo.md` | Findings, budget recommendation, and statistical caveats for the CMO |
+| `reflection.md` | Reflection on surprises, correction impact, limitations, and communication approach |
+| `data/marketing_campaign_raw.csv` | Raw dataset as downloaded |
+| `data/marketing_data.csv` | Cleaned dataset with derived metrics (CPA, ROAS, CTR, Profit, etc.) |
+| `outputs/key_insights.md` | Short written takeaway from Part 1 exploration (best/worst CPA & ROAS, variability, zero-conversion note) |
+| `outputs/power_adequacy_cpa_pairs.csv` | CPA-specific power adequacy check, using each pair's exact observed effect size (not a snapped grid value) |
+| `outputs/` (rest) | All other generated tables (CSV) and charts (PNG) |
 
-1. **Fork** this repository.
-2. Do the work described in `instructions.md`, committing to your fork.
-3. Open a **pull request** back into this repository.
-4. You'll receive **AI feedback** on your PR based on `rubric.md`. Address any blocking feedback and push updates to the same PR.
+## Submission checklist
+Push **all** of the above to GitHub — not just the `.py` files. In particular
+`executive_memo.md`, `reflection.md`, `README.md`, `data/`, and `outputs/` all need to be
+committed for the deliverable list in the lab prompt (Data Exploration, Statistical Analysis,
+Power Analysis, Business Recommendations, Reflection) to be gradable. Rename the top-level
+folder to `lab_statistical_analysis_<your_name>` per the lab's submission format before
+pushing.
 
-## Submission hygiene
+## Dataset
 
-- Keep this repository scoped to this lab only — no unrelated projects or personal files.
-- Use clear, descriptive filenames.
-- Remove secrets, API keys, and tokens before committing.
+**Marketing Campaign Performance Dataset** — Kaggle, 22,029 individual campaign records,
+6 channels (Facebook, Google Ads, Instagram, Website, Email, YouTube), full calendar year 2023.
+- Kaggle: https://www.kaggle.com/datasets/manishabhatt22/marketing-campaign-performance-dataset
+- Chosen because it has a real grouping variable (channel) with 6 groups, thousands of
+  observations per group, and cost/conversion/ROI fields that map directly onto the CPA/ROAS
+  metrics the CMO scenario requires.
+
+## Setup assumptions
+- Conversions, Revenue, CPA, ROAS, CTR, Profit, and Profit Margin are all derived from the raw
+  Conversion_Rate / Acquisition_Cost / ROI / Clicks / Impressions columns (see comments in
+  `data_exploration.py` for the exact formulas).
+- "Attempts" for the Fisher's exact test = Clicks; "successes" = estimated Conversions.
+- Power analysis simulates CPA as normally distributed (15% coefficient of variation) — see
+  `power_analysis.py` docstring.
