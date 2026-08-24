@@ -1,0 +1,5 @@
+effect_size_pct,minimum_days,status
+5.0,180,Sufficient with current 90 days
+10.0,60,Sufficient with current 90 days
+15.0,30,Sufficient with current 90 days
+20.0,30,Sufficient with current 90 days
