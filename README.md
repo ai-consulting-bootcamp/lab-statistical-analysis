@@ -1,23 +1,33 @@
-# In God we trust, everyone else bring the data
+# In God we trust, everyone else bring the data — Paola Hintze
 
-**Track:** Module 5 — Evaluation & strategy · **When:** Week 7, Day 5 · **Status:** Required
+Completed marketing-channel statistical analysis for a fictional $500K monthly allocation decision. The submission uses a documented public Hugging Face dataset, filters one company to avoid mixing company effects, evaluates seven channels over 90 days, corrects 42 pairwise tests, performs empirical power analysis, and converts the evidence into a guardrailed test budget.
 
-This repository contains everything you need for this lab.
+## File map
 
-## Files
+All student work is in [`lab_statistical_analysis_paola_hintze/`](./lab_statistical_analysis_paola_hintze/):
 
-- [`instructions.md`](./instructions.md) — the lab instructions
-- [`rubric.md`](./rubric.md) — how your submission is graded; this is what the AI reviewer checks your PR against
+- [`README.md`](./lab_statistical_analysis_paola_hintze/README.md) — run instructions and detailed file map.
+- [`dataset_documentation.md`](./lab_statistical_analysis_paola_hintze/dataset_documentation.md) — source, license, selection rationale, data structure, and transformations.
+- [`data_exploration.py`](./lab_statistical_analysis_paola_hintze/data_exploration.py) — validation, cleaning, metrics, summary table, and exploratory charts.
+- [`statistical_analysis.py`](./lab_statistical_analysis_paola_hintze/statistical_analysis.py) — Welch t-tests, Cohen's d, Fisher tests, Bonferroni, and BH-FDR.
+- [`power_analysis.py`](./lab_statistical_analysis_paola_hintze/power_analysis.py) — empirical power, bootstrap confidence intervals, and constrained budget allocation.
+- [`analysis_report.md`](./lab_statistical_analysis_paola_hintze/analysis_report.md) — technical results and interpretation.
+- [`executive_memo.md`](./lab_statistical_analysis_paola_hintze/executive_memo.md) — client-facing recommendation with caveats.
+- [`reflection.md`](./lab_statistical_analysis_paola_hintze/reflection.md) — lessons and communication approach.
+- [`data/`](./lab_statistical_analysis_paola_hintze/data/) — public source files and prepared 630-row analysis dataset.
+- [`outputs/`](./lab_statistical_analysis_paola_hintze/outputs/) — all result tables and quality checks.
+- [`figures/`](./lab_statistical_analysis_paola_hintze/figures/) — seven analysis visualizations.
 
-## How to complete this lab
+The original [`instructions.md`](./instructions.md) and [`rubric.md`](./rubric.md) remain at repository root for traceability.
 
-1. **Fork** this repository.
-2. Do the work described in `instructions.md`, committing to your fork.
-3. Open a **pull request** back into this repository.
-4. You'll receive **AI feedback** on your PR based on `rubric.md`. Address any blocking feedback and push updates to the same PR.
+## Reproduce
 
-## Submission hygiene
+```bash
+cd lab_statistical_analysis_paola_hintze
+python -m venv .venv
+source .venv/bin/activate  # Windows Git Bash: source .venv/Scripts/activate
+pip install -r requirements.txt
+python run_all.py
+```
 
-- Keep this repository scoped to this lab only — no unrelated projects or personal files.
-- Use clear, descriptive filenames.
-- Remove secrets, API keys, and tokens before committing.
+The analysis is deterministic: simulations and bootstrap resampling use a fixed seed. No credentials are required.

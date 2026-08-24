@@ -1,0 +1,3 @@
+Total pairwise tests: 42
+Expected false positives at alpha=0.05 under all nulls: 2.10
+Bonferroni controls family-wise error; BH controls expected false discovery rate.

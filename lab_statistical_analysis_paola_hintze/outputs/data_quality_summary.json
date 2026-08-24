@@ -1,0 +1,31 @@
+{
+  "source_rows": 3780,
+  "source_companies": 6,
+  "source_channels": 7,
+  "missing_cells": 0,
+  "duplicate_company_date_channel_rows": 0,
+  "funnel_invariant_errors": 0,
+  "analysis_company": "VectorFlow",
+  "prepared_rows": 630,
+  "analysis_channels": 7,
+  "date_min": "2026-01-01",
+  "date_max": "2026-03-31",
+  "days_per_channel": {
+    "Content": 90,
+    "LinkedIn Ads": 90,
+    "Outbound Sales": 90,
+    "Paid Search": 90,
+    "Partnerships": 90,
+    "Referral": 90,
+    "SEO": 90
+  },
+  "daily_cpa_non_null_by_channel": {
+    "Content": 43,
+    "LinkedIn Ads": 6,
+    "Outbound Sales": 3,
+    "Paid Search": 39,
+    "Partnerships": 9,
+    "Referral": 81,
+    "SEO": 32
+  }
+}
