@@ -9,7 +9,6 @@ fields and how the grouping variable / metrics were adapted.
 """
 import os
 
-import numpy as np
 import pandas as pd
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))  # run correctly regardless of invocation directory
@@ -19,9 +18,22 @@ pd.set_option("display.max_columns", 20)
 
 RAW_PATH = "../data/marketing_AB.csv"
 CLEAN_PATH = "data/marketing_data.csv"
+SUMMARY_PATH = "results/data_exploration_summary.csv"
+
+os.makedirs("data", exist_ok=True)
+os.makedirs("results", exist_ok=True)
 
 # 1. Load ---------------------------------------------------------------
 df = pd.read_csv(RAW_PATH)
+
+EXPECTED_COLUMNS = {
+    "user id", "test group", "converted", "total ads", "most ads day", "most ads hour",
+}
+missing = EXPECTED_COLUMNS - set(df.columns)
+assert not missing, (
+    f"Expected column(s) missing from {RAW_PATH}: {sorted(missing)} — "
+    "the rename step below assumes these exact source names are present."
+)
 
 print("=" * 70)
 print("RAW DATA — shape, columns, dtypes")
@@ -96,8 +108,40 @@ print("Continuous metric: total_ads (ad exposure per user)")
 print("Binary outcome: converted")
 print()
 print("Overall conversion rate: {:.4%}".format(df["converted"].mean()))
+print()
+print("Date range: not available — this dataset has no date/timestamp column, only the "
+      "categorical most_ads_day / most_ads_hour fields (see dataset_selection.md).")
 
-# 5. Save ---------------------------------------------------------------
+# 5. Save quality-check summary -----------------------------------------------
+# A compact, reviewable record of the checks above (group sizes + data quality),
+# separate from the console log, so this deliverable doesn't require re-running the script.
+summary_df = pd.DataFrame(
+    {
+        "check": [
+            "rows",
+            "missing_values_total",
+            "duplicate_rows",
+            "duplicate_user_ids",
+            "date_range",
+            "overall_conversion_rate",
+        ],
+        "value": [
+            len(df),
+            int(df.isnull().sum().sum()),
+            int(df.duplicated().sum()),
+            int(df["user_id"].duplicated().sum()),
+            "not available (no date column)",
+            f"{df['converted'].mean():.4%}",
+        ],
+    }
+)
+group_counts = df["most_ads_day"].value_counts().sort_index().rename_axis("check").reset_index(name="value")
+group_counts["check"] = "group_count_" + group_counts["check"].astype(str)
+summary_df = pd.concat([summary_df, group_counts], ignore_index=True)
+summary_df.to_csv(SUMMARY_PATH, index=False)
+print(f"Saved exploration summary to {SUMMARY_PATH}")
+
+# 6. Save cleaned dataset -------------------------------------------------
 df.to_csv(CLEAN_PATH, index=False)
 print()
 print(f"Saved cleaned dataset to {CLEAN_PATH} ({len(df):,} rows)")

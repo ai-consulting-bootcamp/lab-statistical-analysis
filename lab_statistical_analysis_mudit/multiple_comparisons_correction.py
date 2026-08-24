@@ -16,6 +16,9 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))  # run correctly regardless
 
 pd.set_option("display.width", 120)
 
+os.makedirs("results", exist_ok=True)
+os.makedirs("figures", exist_ok=True)
+
 ALPHA = 0.05
 
 ttest_df = pd.read_csv("results/ttest_results.csv")
@@ -33,6 +36,11 @@ print(f"At alpha={ALPHA}, we expect ~{expected_false_positives:.2f} false positi
       f"even if none of the true underlying differences existed.")
 print("Some of the 'significant' results found in Steps 4-5 are therefore likely to be noise, "
       "not real differences — correction is needed before acting on them.")
+print("Note: Bonferroni and FDR below are each applied separately within their own test family "
+      "(21 t-tests, 21 Fisher's exact tests) — that's why the correction counts are out of 21 "
+      "per family, not out of the combined 42. Each family is a distinct set of null hypotheses, "
+      "so correcting them jointly would conflate two different questions (mean ad exposure vs. "
+      "conversion rate) into one.")
 
 
 def apply_corrections(df, label):
@@ -61,6 +69,17 @@ def apply_corrections(df, label):
     if n_fdr > 0:
         print("\nComparisons remaining significant after FDR:")
         print(df.loc[df["significant_fdr"], ["group_a", "group_b", "p_value", "p_value_fdr"]])
+
+    # Correction only ever removes significance relative to the uncorrected result (never adds
+    # it), so "changed status" means: significant uncorrected, but not after this method.
+    flipped_bonf = df.loc[(df["p_value"] < ALPHA) & ~df["significant_bonferroni"]]
+    flipped_fdr = df.loc[(df["p_value"] < ALPHA) & ~df["significant_fdr"]]
+    if len(flipped_bonf) > 0:
+        print("\nComparisons that lost significance under Bonferroni (were significant uncorrected):")
+        print(flipped_bonf[["group_a", "group_b", "p_value"]].to_string(index=False))
+    if len(flipped_fdr) > 0:
+        print("\nComparisons that lost significance under FDR (were significant uncorrected):")
+        print(flipped_fdr[["group_a", "group_b", "p_value", "p_value_fdr"]].to_string(index=False))
 
     return df, n_uncorrected, n_bonf, n_fdr
 

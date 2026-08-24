@@ -16,6 +16,9 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))  # run correctly regardless
 
 pd.set_option("display.width", 120)
 
+os.makedirs("results", exist_ok=True)
+os.makedirs("figures", exist_ok=True)
+
 df = pd.read_csv("data/marketing_data.csv")
 day_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 

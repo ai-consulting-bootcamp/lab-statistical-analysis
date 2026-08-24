@@ -18,6 +18,9 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))  # run correctly regardless
 
 pd.set_option("display.width", 120)
 
+os.makedirs("results", exist_ok=True)
+os.makedirs("figures", exist_ok=True)
+
 df = pd.read_csv("data/marketing_data.csv")
 day_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 df["most_ads_day"] = pd.Categorical(df["most_ads_day"], categories=day_order, ordered=True)
@@ -53,6 +56,9 @@ print("=" * 70)
 print("ARM SUMMARY — by test_group (ad vs. psa)")
 print("=" * 70)
 print(arm_summary)
+print()
+print("Note: conversion_rate is the main comparable metric in this lab — this dataset has no "
+      "cost, revenue, or impression data, so CPA, ROAS, and CTR are not available (see dataset_selection.md).")
 
 group_summary.to_csv("results/group_summary_by_day.csv")
 arm_summary.to_csv("results/arm_summary_ad_vs_psa.csv")

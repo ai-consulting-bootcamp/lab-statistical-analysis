@@ -24,6 +24,9 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))  # run correctly regardless
 pd.set_option("display.width", 120)
 rng = np.random.default_rng(42)
 
+os.makedirs("results", exist_ok=True)
+os.makedirs("figures", exist_ok=True)
+
 df = pd.read_csv("data/marketing_data.csv")
 
 BASE_TOTAL_ADS_MEAN = df["total_ads"].mean()
