@@ -1,0 +1,7 @@
+analysis,method,number_of_comparisons,alpha,significant_results
+CPA,Uncorrected,15,0.05,9
+CPA,Bonferroni,15,0.0033333333333333335,9
+CPA,Benjamini-Hochberg FDR,15,0.05,9
+Conversion Rate,Uncorrected,15,0.05,15
+Conversion Rate,Bonferroni,15,0.0033333333333333335,15
+Conversion Rate,Benjamini-Hochberg FDR,15,0.05,15
