@@ -1,0 +1,116 @@
+======================================================================
+THE MULTIPLE COMPARISONS PROBLEM
+======================================================================
+Total comparisons made: 21 (t-tests) + 21 (Fisher's exact) = 42
+At alpha=0.05, we expect ~2.10 false positives by chance alone, even if none of the true underlying differences existed.
+Some of the 'significant' results found in Steps 4-5 are therefore likely to be noise, not real differences — correction is needed before acting on them.
+
+======================================================================
+T-TEST (total_ads by most_ads_day) — 21 comparisons, Bonferroni alpha = 0.002381
+======================================================================
+Significant uncorrected (alpha=0.05): 19
+Significant after Bonferroni:          16
+Significant after FDR (BH):             19
+
+Comparisons remaining significant after Bonferroni:
+      group_a    group_b       p_value
+0      Monday    Tuesday  1.039409e-10
+1      Monday  Wednesday  4.369086e-04
+2      Monday   Thursday  1.557014e-18
+3      Monday     Friday  1.734659e-08
+5      Monday     Sunday  7.414233e-06
+8     Tuesday     Friday  1.390186e-33
+9     Tuesday   Saturday  2.477490e-10
+11  Wednesday   Thursday  2.518924e-07
+12  Wednesday     Friday  1.245191e-19
+13  Wednesday   Saturday  1.345734e-03
+15   Thursday     Friday  4.208794e-47
+16   Thursday   Saturday  2.509180e-18
+17   Thursday     Sunday  6.855312e-07
+18     Friday   Saturday  3.465439e-10
+19     Friday     Sunday  1.559055e-25
+20   Saturday     Sunday  2.493316e-05
+
+Comparisons remaining significant after FDR:
+      group_a    group_b       p_value   p_value_fdr
+0      Monday    Tuesday  1.039409e-10  3.118226e-10
+1      Monday  Wednesday  4.369086e-04  6.116721e-04
+2      Monday   Thursday  1.557014e-18  6.539457e-18
+3      Monday     Friday  1.734659e-08  3.642783e-08
+5      Monday     Sunday  7.414233e-06  1.197684e-05
+6     Tuesday  Wednesday  4.435958e-03  5.479713e-03
+7     Tuesday   Thursday  1.624644e-02  1.795659e-02
+8     Tuesday     Friday  1.390186e-33  1.459695e-32
+9     Tuesday   Saturday  2.477490e-10  6.503411e-10
+10    Tuesday     Sunday  1.455303e-02  1.697854e-02
+11  Wednesday   Thursday  2.518924e-07  4.808855e-07
+12  Wednesday     Friday  1.245191e-19  6.537254e-19
+13  Wednesday   Saturday  1.345734e-03  1.766275e-03
+15   Thursday     Friday  4.208794e-47  8.838467e-46
+16   Thursday   Saturday  2.509180e-18  8.782130e-18
+17   Thursday     Sunday  6.855312e-07  1.199680e-06
+18     Friday   Saturday  3.465439e-10  8.086025e-10
+19     Friday     Sunday  1.559055e-25  1.091338e-24
+20   Saturday     Sunday  2.493316e-05  3.739973e-05
+
+======================================================================
+FISHER'S EXACT (conversion by most_ads_day) — 21 comparisons, Bonferroni alpha = 0.002381
+======================================================================
+Significant uncorrected (alpha=0.05): 17
+Significant after Bonferroni:          17
+Significant after FDR (BH):             17
+
+Comparisons remaining significant after Bonferroni:
+      group_a    group_b       p_value
+0      Monday    Tuesday  5.802834e-04
+1      Monday  Wednesday  6.123826e-22
+2      Monday   Thursday  3.224614e-46
+3      Monday     Friday  3.604781e-43
+4      Monday   Saturday  1.621052e-50
+5      Monday     Sunday  2.764066e-25
+6     Tuesday  Wednesday  2.397478e-09
+7     Tuesday   Thursday  1.033859e-25
+8     Tuesday     Friday  5.860284e-23
+9     Tuesday   Saturday  7.099680e-29
+10    Tuesday     Sunday  2.749852e-11
+11  Wednesday   Thursday  5.976358e-06
+12  Wednesday     Friday  1.879586e-04
+13  Wednesday   Saturday  1.674344e-07
+17   Thursday     Sunday  7.351684e-05
+19     Friday     Sunday  1.571995e-03
+20   Saturday     Sunday  2.725690e-06
+
+Comparisons remaining significant after FDR:
+      group_a    group_b       p_value   p_value_fdr
+0      Monday    Tuesday  5.802834e-04  7.616219e-04
+1      Monday  Wednesday  6.123826e-22  1.607504e-21
+2      Monday   Thursday  3.224614e-46  3.385844e-45
+3      Monday     Friday  3.604781e-43  2.523347e-42
+4      Monday   Saturday  1.621052e-50  3.404209e-49
+5      Monday     Sunday  2.764066e-25  9.674230e-25
+6     Tuesday  Wednesday  2.397478e-09  5.034705e-09
+7     Tuesday   Thursday  1.033859e-25  4.342206e-25
+8     Tuesday     Friday  5.860284e-23  1.758085e-22
+9     Tuesday   Saturday  7.099680e-29  3.727332e-28
+10    Tuesday     Sunday  2.749852e-11  6.416321e-11
+11  Wednesday   Thursday  5.976358e-06  9.654117e-06
+12  Wednesday     Friday  1.879586e-04  2.631420e-04
+13  Wednesday   Saturday  1.674344e-07  3.196474e-07
+17   Thursday     Sunday  7.351684e-05  1.102753e-04
+19     Friday     Sunday  1.571995e-03  1.941876e-03
+20   Saturday     Sunday  2.725690e-06  4.769958e-06
+
+======================================================================
+SUMMARY: significant comparisons by correction method
+======================================================================
+                             Uncorrected  Bonferroni  FDR (BH)
+t-test (total_ads)                    19          16        19
+Fisher's exact (conversion)           17          17        17
+
+Saved figures/correction_comparison.png
+
+======================================================================
+KEY INSIGHT
+======================================================================
+t-test family: 19 of 21 comparisons looked 'significant' before correction, and 16 (Bonferroni) / 19 (FDR) still do after correction — sample sizes per day (77k-93k users) are so large that even tiny, practically meaningless differences in mean ad exposure clear the corrected p-value bar. Every single one of those comparisons had a 'negligible' Cohen's d (|d| < 0.1, see ttest_comparisons output) — this is the textbook case of statistical significance without practical significance, and correction alone does not catch it. Effect size has to be checked too.
+Fisher's exact family: 17 of 21 conversion-rate comparisons looked significant before correction; 17 survive Bonferroni and 17 survive FDR — almost unchanged, again because the sample sizes are large. Unlike the t-test family, several of these rate differences are also large in relative terms (10-35%), so they are more likely to be practically meaningful.

@@ -1,0 +1,53 @@
+======================================================================
+SIGNIFICANT FINDINGS AFTER FDR CORRECTION
+======================================================================
+
+Conversion-rate pairs significant after FDR: 17 of 21
+  group_a   group_b higher_rate_group  difference  p_value_fdr
+   Monday   Tuesday            Monday   -0.002971     0.000762
+   Monday Wednesday            Monday   -0.007870     0.000000
+   Monday  Thursday            Monday   -0.011241     0.000000
+   Monday    Friday            Monday   -0.010600     0.000000
+   Monday  Saturday            Monday   -0.011761     0.000000
+   Monday    Sunday            Monday   -0.008336     0.000000
+  Tuesday Wednesday           Tuesday   -0.004898     0.000000
+  Tuesday  Thursday           Tuesday   -0.008269     0.000000
+  Tuesday    Friday           Tuesday   -0.007628     0.000000
+  Tuesday  Saturday           Tuesday   -0.008790     0.000000
+  Tuesday    Sunday           Tuesday   -0.005365     0.000000
+Wednesday  Thursday         Wednesday   -0.003371     0.000010
+Wednesday    Friday         Wednesday   -0.002730     0.000263
+Wednesday  Saturday         Wednesday   -0.003891     0.000000
+ Thursday    Sunday            Sunday    0.002905     0.000110
+   Friday    Sunday            Sunday    0.002264     0.001942
+ Saturday    Sunday            Sunday    0.003425     0.000005
+
+total_ads pairs significant after FDR: 19 of 21 (all have negligible Cohen's d — see ttest_comparisons/multiple_comparisons_correction output; not practically meaningful)
+
+Headline experimental finding (ad vs. psa): conversion rate 2.5547% (ad) vs 1.7854% (psa), a -30.1% relative difference, p=1.05e-14, odds ratio=1.44.
+
+======================================================================
+BOOTSTRAP 95% CONFIDENCE INTERVALS BY most_ads_day
+======================================================================
+most_ads_day     n  mean_total_ads  total_ads_ci_lower  total_ads_ci_upper  conversion_rate  conversion_rate_ci_lower  conversion_rate_ci_upper
+      Monday 87073         25.3285             25.0010             25.6450           0.0328                    0.0316                    0.0339
+     Tuesday 77479         23.9255             23.6486             24.2252           0.0298                    0.0287                    0.0310
+   Wednesday 80908         24.5392             24.2107             24.8425           0.0249                    0.0239                    0.0261
+    Thursday 82982         23.4289             23.1517             23.7099           0.0216                    0.0207                    0.0225
+      Friday 92608         26.6121             26.3092             26.9335           0.0222                    0.0213                    0.0231
+    Saturday 81660         25.2277             24.9615             25.5290           0.0211                    0.0201                    0.0220
+      Sunday 85391         24.4037             24.1598             24.6678           0.0245                    0.0234                    0.0255
+
+======================================================================
+COMPOSITE RANKING & AD-DELIVERY WEIGHTING RECOMMENDATION
+======================================================================
+most_ads_day  conversion_rate  mean_total_ads     n  rank  composite_score  allocation_pct  illustrative_allocation_usd
+      Monday           0.0328         25.3285 87073     1           0.3508          0.2500                     125000.0
+     Tuesday           0.0298         23.9255 77479     2           0.2680          0.2500                     125000.0
+   Wednesday           0.0249         24.5392 80908     3           0.1326          0.1357                      67826.0
+      Sunday           0.0245         24.4037 85391     4           0.1215          0.1243                      62174.0
+      Friday           0.0222         26.6121 92608     5           0.0580          0.0800                      40000.0
+    Thursday           0.0216         23.4289 82982     6           0.0414          0.0800                      40000.0
+    Saturday           0.0211         25.2277 81660     7           0.0276          0.0800                      40000.0
+
+NOTE: this dataset has no per-channel cost/revenue data, so the table above allocates a *day-of-week ad delivery schedule weight* (a real, actionable lever — e.g. Google/Meta Ads dayparting bid adjustments), not a literal channel budget split. The $500K figure from the lab scenario is applied only as an illustrative example of how the weighting would translate to a budget number, and should not be read as a validated allocation of real ad spend by channel.

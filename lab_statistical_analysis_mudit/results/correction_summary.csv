@@ -1,0 +1,3 @@
+,Uncorrected,Bonferroni,FDR (BH)
+t-test (total_ads),19,16,19
+Fisher's exact (conversion),17,17,17

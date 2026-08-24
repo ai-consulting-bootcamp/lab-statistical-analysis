@@ -1,0 +1,9 @@
+metric,effect_size_pct,min_n_users,achieved_power,current_min_group_n,current_data_sufficient
+total_ads,0.05,,,77479,True
+total_ads,0.1,,,77479,True
+total_ads,0.15,5000.0,0.9766666666666667,77479,True
+total_ads,0.2,2000.0,0.92,77479,True
+conversion_rate,0.05,,,77479,True
+conversion_rate,0.1,100000.0,0.9333333333333333,77479,False
+conversion_rate,0.15,50000.0,0.9466666666666667,77479,True
+conversion_rate,0.2,20000.0,0.8566666666666667,77479,True
