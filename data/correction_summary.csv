@@ -1,0 +1,3 @@
+metric,n_comparisons,uncorrected_sig,bonferroni_sig,fdr_sig
+CPA (t-test),6,0,0,0
+Conversion rate (Fisher's exact),6,6,6,6
