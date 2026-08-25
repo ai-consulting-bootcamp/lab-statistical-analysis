@@ -1,0 +1,38 @@
+======================================================================
+CONVERSION SUMMARY BY Campaign_Type
+======================================================================
+               conversions  total_clicks  non_conversions    rate
+Campaign_Type                                                    
+Email             11425766      51664577         40238811  0.2212
+Influencer        11563919      52444314         40880395  0.2205
+Paid Ads          11425573      52199354         40773781  0.2189
+SEO               11369989      51615614         40245625  0.2203
+Social Media      11595675      52521898         40926223  0.2208
+
+       Email vs Influencer   | rate_a=22.1153% rate_b=22.0499% diff=-0.0654% ( -0.30%) | OR=1.004 p=8.9210e-16
+       Email vs Paid Ads     | rate_a=22.1153% rate_b=21.8883% diff=-0.2269% ( -1.03%) | OR=1.013 p=1.7701e-171
+       Email vs SEO          | rate_a=22.1153% rate_b=22.0282% diff=-0.0871% ( -0.39%) | OR=1.005 p=1.4122e-26
+       Email vs Social Media | rate_a=22.1153% rate_b=22.0778% diff=-0.0375% ( -0.17%) | OR=1.002 p=4.0053e-06
+  Influencer vs Paid Ads     | rate_a=22.0499% rate_b=21.8883% diff=-0.1616% ( -0.73%) | OR=1.009 p=1.2796e-88
+  Influencer vs SEO          | rate_a=22.0499% rate_b=22.0282% diff=-0.0217% ( -0.10%) | OR=1.001 p=7.5771e-03
+  Influencer vs Social Media | rate_a=22.0499% rate_b=22.0778% diff=+0.0279% ( +0.13%) | OR=0.998 p=5.7059e-04
+    Paid Ads vs SEO          | rate_a=21.8883% rate_b=22.0282% diff=+0.1399% ( +0.64%) | OR=0.992 p=2.1959e-66
+    Paid Ads vs Social Media | rate_a=21.8883% rate_b=22.0778% diff=+0.1894% ( +0.87%) | OR=0.989 p=3.6592e-121
+         SEO vs Social Media | rate_a=22.0282% rate_b=22.0778% diff=+0.0496% ( +0.23%) | OR=0.997 p=1.0403e-09
+
+Total comparisons: 10 | Significant at alpha=0.05 (uncorrected): 10
+
+Significant pairs (uncorrected) — rate difference and a rough practical-meaningfulness screen:
+   group_a      group_b  rate_a  rate_b  pct_difference  p_value  practically_meaningful
+     Email     Paid Ads  0.2212  0.2189         -1.0262   0.0000                   False
+  Paid Ads Social Media  0.2189  0.2208          0.8655   0.0000                   False
+Influencer     Paid Ads  0.2205  0.2189         -0.7327   0.0000                   False
+  Paid Ads          SEO  0.2189  0.2203          0.6389   0.0000                   False
+     Email          SEO  0.2212  0.2203         -0.3938   0.0000                   False
+     Email   Influencer  0.2212  0.2205         -0.2956   0.0000                   False
+       SEO Social Media  0.2203  0.2208          0.2251   0.0000                   False
+     Email Social Media  0.2212  0.2208         -0.1695   0.0000                   False
+Influencer Social Media  0.2205  0.2208          0.1265   0.0006                   False
+Influencer          SEO  0.2205  0.2203         -0.0984   0.0076                   False
+
+Saved figures/rate_comparison.png

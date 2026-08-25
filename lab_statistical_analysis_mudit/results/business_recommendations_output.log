@@ -1,0 +1,41 @@
+======================================================================
+SIGNIFICANT FINDINGS AFTER FDR CORRECTION
+======================================================================
+
+CPA pairs significant after FDR: 0 of 10
+None. CPA does not differ meaningfully by Campaign_Type — a genuine null result (every uncorrected p-value was already > 0.05; see ttest_comparisons output).
+
+Conversion-rate pairs significant after FDR: 10 of 10 (all have sub-1% relative differences — statistically significant only because clicks are aggregated in the millions per group; see multiple_comparisons_correction output. Not practically meaningful.)
+   group_a      group_b higher_rate_group  pct_difference  p_value_fdr
+     Email   Influencer             Email       -0.295632     0.000000
+     Email     Paid Ads             Email       -1.026162     0.000000
+     Email          SEO             Email       -0.393771     0.000000
+     Email Social Media             Email       -0.169516     0.000005
+Influencer     Paid Ads        Influencer       -0.732696     0.000000
+Influencer          SEO        Influencer       -0.098430     0.007577
+Influencer Social Media      Social Media        0.126490     0.000634
+  Paid Ads          SEO               SEO        0.638947     0.000000
+  Paid Ads Social Media      Social Media        0.865527     0.000000
+       SEO Social Media      Social Media        0.225141     0.000000
+
+======================================================================
+BOOTSTRAP 95% CONFIDENCE INTERVALS BY Campaign_Type
+======================================================================
+Campaign_Type     n  mean_cpa  cpa_ci_lower  cpa_ci_upper  mean_conversion_rate  conversion_rate_ci_lower  conversion_rate_ci_upper
+        Email 11112  380.1304      369.7695      390.7854                0.2208                    0.2191                    0.2224
+   Influencer 11134  375.4855      364.9392      385.5038                0.2201                    0.2185                    0.2217
+     Paid Ads 11116  379.1251      369.2115      389.8712                0.2181                    0.2166                    0.2197
+          SEO 11079  378.7388      369.0679      388.4799                0.2205                    0.2188                    0.2220
+ Social Media 11114  373.2634      363.7733      383.0509                0.2192                    0.2176                    0.2208
+
+======================================================================
+COMPOSITE RANKING & BUDGET ALLOCATION RECOMMENDATION
+======================================================================
+Campaign_Type    cpa  roas  conversion_rate  cpa_rank  roas_rank  composite_rank_score  composite_score  allocation_pct  illustrative_allocation_usd
+ Social Media 166.89  2.97             0.22       1.0        1.0                  1.00           0.4575          0.3000                     150000.0
+          SEO 169.29  2.96             0.22       3.0        2.5                  2.75           0.1664          0.2189                     109434.0
+   Influencer 169.15  2.95             0.22       2.0        4.0                  3.00           0.1525          0.2006                     100314.0
+     Paid Ads 170.16  2.96             0.22       5.0        2.5                  3.75           0.1220          0.1605                      80252.0
+        Email 169.70  2.93             0.22       4.0        5.0                  4.50           0.1017          0.1200                      60000.0
+
+CAVEAT: the composite ranking above orders channels by CPA/ROAS even though none of the underlying CPA differences are statistically significant (0 of 10 pairs, see Step 4/6) and the conversion-rate differences, while technically significant after FDR, are all well under 1% relative and driven by sample size, not a real effect (see Step 6 key insight). This allocation is therefore a near-even split with only cosmetic tilting — treat it as 'no statistical basis to prefer one Campaign_Type over another', not a confident reallocation.

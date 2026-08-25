@@ -1,0 +1,65 @@
+======================================================================
+THE MULTIPLE COMPARISONS PROBLEM
+======================================================================
+Total comparisons made: 10 (t-tests) + 10 (Fisher's exact) = 20
+At alpha=0.05, we expect ~1.00 false positives by chance alone, even if none of the true underlying differences existed.
+Some of the 'significant' results found in Steps 4-5 are therefore likely to be noise, not real differences — correction is needed before acting on them.
+Note: Bonferroni and FDR below are each applied separately within their own test family (10 t-tests, 10 Fisher's exact tests) — that's why the correction counts are out of 10 per family, not out of the combined 20. Each family is a distinct set of null hypotheses, so correcting them jointly would conflate two different questions (CPA vs. conversion rate).
+
+======================================================================
+T-TEST (CPA by Campaign_Type) — 10 comparisons, Bonferroni alpha = 0.005000
+======================================================================
+Significant uncorrected (alpha=0.05): 0
+Significant after Bonferroni:          0
+Significant after FDR (BH):             0
+
+======================================================================
+FISHER'S EXACT (conversion rate by Campaign_Type) — 10 comparisons, Bonferroni alpha = 0.005000
+======================================================================
+Significant uncorrected (alpha=0.05): 10
+Significant after Bonferroni:          9
+Significant after FDR (BH):             10
+
+Comparisons remaining significant after Bonferroni:
+      group_a       group_b        p_value
+0       Email    Influencer   8.921015e-16
+1       Email      Paid Ads  1.770113e-171
+2       Email           SEO   1.412155e-26
+3       Email  Social Media   4.005307e-06
+4  Influencer      Paid Ads   1.279563e-88
+6  Influencer  Social Media   5.705895e-04
+7    Paid Ads           SEO   2.195885e-66
+8    Paid Ads  Social Media  3.659241e-121
+9         SEO  Social Media   1.040268e-09
+
+Comparisons remaining significant after FDR:
+      group_a       group_b        p_value    p_value_fdr
+0       Email    Influencer   8.921015e-16   1.486836e-15
+1       Email      Paid Ads  1.770113e-171  1.770113e-170
+2       Email           SEO   1.412155e-26   2.824309e-26
+3       Email  Social Media   4.005307e-06   5.006633e-06
+4  Influencer      Paid Ads   1.279563e-88   4.265211e-88
+5  Influencer           SEO   7.577133e-03   7.577133e-03
+6  Influencer  Social Media   5.705895e-04   6.339884e-04
+7    Paid Ads           SEO   2.195885e-66   5.489712e-66
+8    Paid Ads  Social Media  3.659241e-121  1.829620e-120
+9         SEO  Social Media   1.040268e-09   1.486097e-09
+
+Comparisons that lost significance under Bonferroni (were significant uncorrected):
+   group_a group_b  p_value
+Influencer     SEO 0.007577
+
+======================================================================
+SUMMARY: significant comparisons by correction method
+======================================================================
+                                  Uncorrected  Bonferroni  FDR (BH)
+t-test (CPA)                                0           0         0
+Fisher's exact (conversion rate)           10           9        10
+
+Saved figures/correction_comparison.png
+
+======================================================================
+KEY INSIGHT
+======================================================================
+t-test family: 0 of 10 CPA comparisons were significant before correction — CPA does not differ meaningfully by Campaign_Type in this dataset at all; every Cohen's d was negligible (|d| < 0.02, see ttest_comparisons output). This is a genuine null result, not a false positive that correction needs to catch.
+Fisher's exact family: 10 of 10 conversion-rate comparisons looked significant before correction; 9 survive Bonferroni and 10 survive FDR — because clicks are aggregated in the millions per group, even a ~0.1-0.9% relative difference clears the corrected p-value bar. Every one of these differences is far below the 10% relative-difference practical-meaningfulness screen used in fisher_exact_tests.py — this is the same 'statistically significant but not practically significant' pattern as the CPA family would have shown if CPA had any real variation to detect.

@@ -1,0 +1,13 @@
+       Email vs Influencer   | mean_a= 380.13 mean_b= 375.49 diff=  -4.64 ( -1.22%) | t= +0.648 p=5.1704e-01 | d=-0.009 (negligible)
+       Email vs Paid Ads     | mean_a= 380.13 mean_b= 379.13 diff=  -1.01 ( -0.26%) | t= +0.136 p=8.9169e-01 | d=-0.002 (negligible)
+       Email vs SEO          | mean_a= 380.13 mean_b= 378.74 diff=  -1.39 ( -0.37%) | t= +0.191 p=8.4833e-01 | d=-0.003 (negligible)
+       Email vs Social Media | mean_a= 380.13 mean_b= 373.26 diff=  -6.87 ( -1.81%) | t= +0.972 p=3.3118e-01 | d=-0.013 (negligible)
+  Influencer vs Paid Ads     | mean_a= 375.49 mean_b= 379.13 diff=  +3.64 ( +0.97%) | t= -0.493 p=6.2216e-01 | d=+0.007 (negligible)
+  Influencer vs SEO          | mean_a= 375.49 mean_b= 378.74 diff=  +3.25 ( +0.87%) | t= -0.447 p=6.5493e-01 | d=+0.006 (negligible)
+  Influencer vs Social Media | mean_a= 375.49 mean_b= 373.26 diff=  -2.22 ( -0.59%) | t= +0.314 p=7.5330e-01 | d=-0.004 (negligible)
+    Paid Ads vs SEO          | mean_a= 379.13 mean_b= 378.74 diff=  -0.39 ( -0.10%) | t= +0.052 p=9.5887e-01 | d=-0.001 (negligible)
+    Paid Ads vs Social Media | mean_a= 379.13 mean_b= 373.26 diff=  -5.86 ( -1.55%) | t= +0.804 p=4.2115e-01 | d=-0.011 (negligible)
+         SEO vs Social Media | mean_a= 378.74 mean_b= 373.26 diff=  -5.48 ( -1.45%) | t= +0.763 p=4.4561e-01 | d=-0.010 (negligible)
+
+Total comparisons: 10 | Significant at alpha=0.05 (uncorrected): 0
+Saved figures/metric_comparison_heatmap.png
