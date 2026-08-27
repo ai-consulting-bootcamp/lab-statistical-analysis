@@ -1,0 +1,59 @@
+{
+  "rows": 190,
+  "months": [
+    "July",
+    "August",
+    "September",
+    "October",
+    "November"
+  ],
+  "ad_groups": 40,
+  "overall": {
+    "impressions": 2674699.0,
+    "clicks": 924503.0,
+    "conversions": 95996.0,
+    "cost": 635372.0,
+    "revenue": 561960.0,
+    "ctr": 0.3456474915495164,
+    "conversion_rate": 0.10383524985857266,
+    "cpc": 0.6872579104664884,
+    "cpa": 6.6187341139214135,
+    "revenue_per_conversion": 5.853993916413184,
+    "profit": -73412.0,
+    "roas": 0.8844582386381521,
+    "roi": -0.11554176136184786,
+    "profit_margin": -0.13063563242935441
+  },
+  "kruskal": {
+    "statistic": 11.052823828791388,
+    "p_value": 0.0039802449577925085
+  },
+  "conversion_chi_square": {
+    "statistic": 43.404514843194995,
+    "p_value": 3.7568975921547217e-10,
+    "cramers_v": 0.006851935888122952
+  },
+  "budget_total": 500000,
+  "allocation": {
+    "One-to-one": 200000,
+    "Exact": 200000,
+    "Phrase": 100000
+  },
+  "decisions": {
+    "One-to-one": "Maintain",
+    "Exact": "Optimise/Test",
+    "Phrase": "Reduce/Pause"
+  },
+  "base_sensitivity": {
+    "scenario": "Base",
+    "cpc_multiplier": 1.0,
+    "conversion_rate_multiplier": 1.0,
+    "revenue_per_conversion_multiplier": 1.0,
+    "budget": 500000,
+    "estimated_clicks": 708977.0522336697,
+    "estimated_conversions": 72564.99305632088,
+    "estimated_revenue": 437343.4937126835,
+    "estimated_profit": -62656.5062873165,
+    "estimated_roas": 0.874686987425367
+  }
+}
