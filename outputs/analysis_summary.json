@@ -33,6 +33,18 @@
     "p_value": 3.7568975921547217e-10,
     "cramers_v": 0.006851935888122952
   },
+  "cpa_comparisons": {
+    "total": 3,
+    "significant_uncorrected": 2,
+    "significant_bonferroni": 1,
+    "significant_fdr": 2
+  },
+  "conversion_comparisons": {
+    "total": 3,
+    "significant_uncorrected": 2,
+    "significant_bonferroni": 2,
+    "significant_fdr": 2
+  },
   "budget_total": 500000,
   "allocation": {
     "One-to-one": 200000,

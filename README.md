@@ -24,7 +24,8 @@ The public file does not independently verify the company's identity, original s
 
 ```text
 data/
-  shopping_mall_paid_search.csv        # single required source file
+  shopping_mall_paid_search.csv        # unchanged source file
+  marketing_data.csv                   # prepared data with recalculated KPIs
 notebooks/
   data_exploration.ipynb               # validation, engineering, EDA, funnel KPIs
   statistical_analysis.ipynb           # inference, decisions, budget, sensitivity
@@ -52,7 +53,7 @@ All dependencies in `requirements.txt` are directly used by the analysis, notebo
 
 ### Reproducible dataset download
 
-The lab keeps only the required CSV. To reproduce the download:
+The lab keeps the source CSV and the prepared CSV required by the rubric. To reproduce the source download:
 
 ```bash
 conda run -n bootcamp-env python -c "import kagglehub; print(kagglehub.dataset_download('marceaxl82/shopping-mall-paid-search-campaign-dataset'))"
@@ -108,13 +109,17 @@ This meets the three-group requirement and avoids outcome-based selection. Devic
 
 The analysis uses a 5% significance threshold. A p-value below that threshold means the observed gap would be unusual if the groups were truly alike; it does not tell us how valuable the gap is or prove that one group caused it.
 
-ROI is highly skewed, so Kruskal–Wallis first checks whether the three ROI distributions differ without assuming a bell-shaped curve. Mann–Whitney then compares pairs using ranks. Welch's t-test is included because the lab requires a comparison of means and it tolerates unequal variance. Hedges' g reports the size of that mean difference on a standard scale.
+The required CPA analysis uses pairwise independent Welch t-tests, which compare mean CPA while allowing unequal variance. Cohen's d reports the size of each CPA difference using the formula specified in the lab. One-to-one has a lower mean CPA than Exact and Phrase after FDR correction.
+
+ROI is highly skewed, so Kruskal–Wallis checks whether the three ROI distributions differ without assuming a bell-shaped curve. Mann–Whitney then compares pairs using ranks. ROI is retained as an additional analysis rather than a substitute for CPA.
 
 For conversions, chi-square asks whether conversion and match type are related overall. Fisher's exact test compares each pair using conversions and non-converting clicks. Benjamini–Hochberg false discovery rate (FDR) correction reduces the risk of false positives when several pairs are tested; the stricter Bonferroni correction is also shown.
 
-A 2,000-sample ad-group bootstrap estimates ROI uncertainty by repeatedly resampling whole ad groups. Its 95% confidence intervals show the range of results compatible with that resampling process. They are uncertainty estimates, not future guarantees.
+A 1,000-sample bootstrap estimates the confidence interval for mean CPA in each match type. A separate 2,000-sample ad-group bootstrap estimates ROI uncertainty while keeping repeated monthly rows together.
 
-The power analysis plans a future randomized test at 80% statistical power—the chance of detecting a specified effect if it is real. The daily windows are prospective capacity scenarios, not invented historical observations.
+The required empirical power analysis simulates CPA differences of 5%, 10%, 15% and 20% across 30, 60, 90, 120 and 180 days. The additional conversion-rate section plans a future randomized test. These are prospective capacity scenarios, not invented historical observations.
+
+At 90 days, simulated power is 61.2% for a 5% CPA difference and at least 99.3% for differences of 10% or more. The two CPA pairs that remain significant after FDR have 100% simulated power at 90 days under the lab assumptions.
 
 ## Marketing funnel and decisions
 
@@ -137,6 +142,8 @@ Across the portfolio there were 2,674,699 impressions, 924,503 clicks and 95,996
 | One-to-one | 72,388 | $6.39 | 0.895 | −10.5% | −13.7% to −7.6% | Maintain |
 | Exact | 15,038 | $7.00 | 0.886 | −11.4% | −26.1% to −5.2% | Optimise/Test |
 | Phrase | 8,570 | $7.86 | 0.812 | −18.8% | −31.1% to −11.4% | Reduce/Pause |
+
+The required t-tests compare monthly ad-group CPA observations rather than the aggregate ratios above. Mean row-level CPA was $6.67 for One-to-one, $7.99 for Exact and $8.89 for Phrase. After FDR correction, One-to-one remained lower than Exact by $1.32 (Cohen's d 0.37, small) and lower than Phrase by $2.21 (Cohen's d 0.57, medium). Exact versus Phrase was not significant.
 
 Conversion rates differed globally (χ² = 43.40, p < 0.001), meaning the pattern would be unlikely if all three rates were the same. The size of the relationship was tiny, however: Cramér's V, an effect-size measure, was only 0.0069. One-to-one exceeded Exact by 0.41 percentage points and Phrase by 0.57 points; Exact versus Phrase was not distinguishable after correction.
 

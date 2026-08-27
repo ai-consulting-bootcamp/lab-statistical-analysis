@@ -93,6 +93,9 @@ The first table separates fields supplied by the publisher from fields calculate
         code("""
 raw = pd.read_csv(DATA_PATH)
 df = prepare_data(DATA_PATH)
+PREPARED_DATA_PATH = PROJECT_ROOT / "data" / "marketing_data.csv"
+df.to_csv(PREPARED_DATA_PATH, index=False)
+print("Prepared dataset saved to:", PREPARED_DATA_PATH.relative_to(PROJECT_ROOT))
 
 dictionary = pd.DataFrame([
     ("ad_group", "Source", "Anonymized structural ad-group name"),
@@ -240,6 +243,7 @@ for ax, (metric, title, fmt, prefix) in zip(axes.flat, plot_specs):
                     ha="center", va="bottom" if value >= 0 else "top", fontsize=9)
 fig.tight_layout()
 fig.savefig(OUTPUT_DIR / "group_kpis.png", dpi=180, bbox_inches="tight")
+fig.savefig(OUTPUT_DIR / "group_metrics_overview.png", dpi=180, bbox_inches="tight")
 plt.show()
 """),
         code("""
@@ -254,6 +258,7 @@ for ax, metric, label in zip(axes, ["conversion_rate", "cpa", "roi"], ["Conversi
     if metric == "roi": ax.axhline(0, color="red", ls="--", lw=1)
 fig.tight_layout()
 fig.savefig(OUTPUT_DIR / "metric_distributions.png", dpi=180, bbox_inches="tight")
+fig.savefig(OUTPUT_DIR / "group_distributions.png", dpi=180, bbox_inches="tight")
 plt.show()
 """),
         code("""
@@ -334,6 +339,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy import stats
+from matplotlib.ticker import PercentFormatter
 
 for candidate in [Path.cwd(), *Path.cwd().parents]:
     if (candidate / "src" / "marketing_analysis.py").exists():
@@ -382,23 +388,109 @@ Exact and Phrase clearly fail the normality check (both p-values are far below 0
 For the marketing team, that is a warning not to let a few unusually strong monthly rows define the story. Rank-based tests and ad-group resampling are more suitable for the main interpretation. Welch's test is still reported so the required mean comparison remains visible.
 """),
         md("""
+## Required CPA Pairwise Comparisons
+
+The lab requires independent t-tests on row-level CPA for every match-type pair. CPA rows with zero conversions are undefined and excluded. Welch's version is used because it does not require equal variances. Cohen's d reports the size of each difference using the lab formula; the sign follows `group B − group A`.
+"""),
+        code("""
+def interpret_cohens_d(value):
+    magnitude = abs(value)
+    if magnitude < 0.2:
+        return "negligible"
+    if magnitude < 0.5:
+        return "small"
+    if magnitude < 0.8:
+        return "medium"
+    return "large"
+
+cpa_rows = []
+for group_a, group_b in itertools.combinations(MATCH_ORDER, 2):
+    values_a = df.loc[df["match_type"].eq(group_a), "cpa"].replace([np.inf, -np.inf], np.nan).dropna().to_numpy()
+    values_b = df.loc[df["match_type"].eq(group_b), "cpa"].replace([np.inf, -np.inf], np.nan).dropna().to_numpy()
+    test = stats.ttest_ind(values_a, values_b, equal_var=False)
+    mean_a, mean_b = values_a.mean(), values_b.mean()
+    difference = mean_b - mean_a
+    pooled_std = np.sqrt((values_a.var(ddof=1) + values_b.var(ddof=1)) / 2)
+    cohens_d = difference / pooled_std if pooled_std else np.nan
+    cpa_rows.append({
+        "group_a": group_a, "group_b": group_b,
+        "n_a": len(values_a), "n_b": len(values_b),
+        "mean_cpa_a": mean_a, "mean_cpa_b": mean_b,
+        "difference_b_minus_a": difference,
+        "percentage_difference": difference / mean_a * 100 if mean_a else np.nan,
+        "t_statistic": test.statistic, "p_value": test.pvalue,
+        "significant_uncorrected": test.pvalue < ALPHA,
+        "cohens_d": cohens_d,
+        "effect_size_interpretation": interpret_cohens_d(cohens_d),
+    })
+
+cpa_tests = pd.DataFrame(cpa_rows)
+cpa_comparisons = len(cpa_tests)
+cpa_alpha_bonferroni = ALPHA / cpa_comparisons
+cpa_tests["alpha_bonferroni"] = cpa_alpha_bonferroni
+cpa_tests["p_value_bonferroni"] = np.minimum(cpa_tests["p_value"] * cpa_comparisons, 1)
+cpa_tests["significant_bonferroni"] = cpa_tests["p_value"] < cpa_alpha_bonferroni
+cpa_tests["p_value_fdr"] = benjamini_hochberg(cpa_tests["p_value"])
+cpa_tests["significant_fdr"] = cpa_tests["p_value_fdr"] < ALPHA
+
+display(cpa_tests)
+print(f"CPA comparisons: {cpa_comparisons}; expected false positives at alpha=.05: {cpa_comparisons * ALPHA:.2f}")
+cpa_tests.to_csv(OUTPUT_DIR / "cpa_pairwise_tests.csv", index=False)
+"""),
+        md("""
+One-to-one has a lower mean CPA than Exact by $1.32 (19.8%) and Phrase by $2.21 (33.2%). Both comparisons remain significant after FDR. The Cohen's d effects are small for Exact and medium for Phrase. Exact versus Phrase is not significant and has a negligible effect.
+
+This supports maintaining One-to-one and reducing Phrase exposure. It does not show that changing match type will cause CPA to fall, because the groups were not randomized.
+"""),
+        code("""
+cpa_p_matrix = pd.DataFrame(1.0, index=MATCH_ORDER, columns=MATCH_ORDER)
+for row in cpa_tests.itertuples():
+    cpa_p_matrix.loc[row.group_a, row.group_b] = row.p_value
+    cpa_p_matrix.loc[row.group_b, row.group_a] = row.p_value
+
+fig, ax = plt.subplots(figsize=(7, 6))
+sns.heatmap(cpa_p_matrix, annot=True, fmt=".4f", cmap="RdYlGn", vmin=0, vmax=1,
+            square=True, linewidths=.5, cbar_kws={"label": "CPA t-test p-value"}, ax=ax)
+ax.set_title("Pairwise CPA p-values by match type")
+ax.set_xlabel("Match type"); ax.set_ylabel("Match type")
+fig.tight_layout()
+fig.savefig(OUTPUT_DIR / "metric_comparison_heatmap.png", dpi=180, bbox_inches="tight")
+plt.show()
+"""),
+        md("""
+### Bootstrap confidence intervals for mean CPA
+
+The bootstrap resamples the available CPA observations 1,000 times. The interval shows how much the estimated mean CPA moves under repeated resampling.
+"""),
+        code("""
+def bootstrap_ci(data, n_bootstrap=1000, ci_level=0.95):
+    values = pd.Series(data).replace([np.inf, -np.inf], np.nan).dropna().to_numpy()
+    rng = np.random.default_rng(RNG_SEED)
+    means = np.array([rng.choice(values, size=len(values), replace=True).mean() for _ in range(n_bootstrap)])
+    tail = (1 - ci_level) / 2
+    return np.quantile(means, [tail, 1 - tail])
+
+cpa_ci_rows = []
+for group in MATCH_ORDER:
+    values = df.loc[df["match_type"].eq(group), "cpa"]
+    ci_low, ci_high = bootstrap_ci(values)
+    cpa_ci_rows.append({"match_type": group, "mean_cpa": values.replace([np.inf, -np.inf], np.nan).mean(),
+                        "ci_95_low": ci_low, "ci_95_high": ci_high})
+cpa_bootstrap_ci = pd.DataFrame(cpa_ci_rows)
+display(cpa_bootstrap_ci)
+cpa_bootstrap_ci.to_csv(OUTPUT_DIR / "cpa_bootstrap_ci.csv", index=False)
+"""),
+        md("""
 ## Does ROI Differ by Match Type?
 
 Kruskal–Wallis first asks whether the three ROI distributions differ somewhere. It compares their ranks rather than assuming a bell-shaped distribution. If the global result flags a difference, Mann–Whitney tests compare each pair using the same rank-based logic.
 
-Welch's t-test answers a different question: do the average ROI values differ? It allows unequal variances, but unusual values can still influence the mean. Hedges' g is the accompanying effect size; values near zero indicate a small standardized mean difference.
+Welch's t-test answers a different question: do the average ROI values differ? It allows unequal variances, but unusual values can still influence the mean. This ROI section is retained as an extension; Cohen's d is reported in the required CPA section above.
 """),
         code("""
 roi_groups = [df.loc[df["match_type"].eq(g), "roi"].dropna() for g in MATCH_ORDER]
 kruskal = stats.kruskal(*roi_groups)
 print(f"Kruskal–Wallis H={kruskal.statistic:.4f}, p={kruskal.pvalue:.4g}")
-
-def hedges_g(x, y):
-    x, y = np.asarray(x), np.asarray(y)
-    pooled = np.sqrt(((len(x)-1)*x.var(ddof=1) + (len(y)-1)*y.var(ddof=1)) / (len(x)+len(y)-2))
-    d = (x.mean() - y.mean()) / pooled if pooled else np.nan
-    correction = 1 - 3 / (4*(len(x)+len(y))-9)
-    return correction * d
 
 rows = []
 for a, b in itertools.combinations(MATCH_ORDER, 2):
@@ -408,7 +500,7 @@ for a, b in itertools.combinations(MATCH_ORDER, 2):
     mw = stats.mannwhitneyu(x, y, alternative="two-sided")
     rows.append({"comparison": f"{a} vs {b}", "group_a": a, "group_b": b,
                  "n_a": len(x), "n_b": len(y), "mean_diff_roi": x.mean()-y.mean(),
-                 "median_diff_roi": x.median()-y.median(), "hedges_g": hedges_g(x,y),
+                 "median_diff_roi": x.median()-y.median(),
                  "welch_t": welch.statistic, "welch_p": welch.pvalue,
                  "mann_whitney_u": mw.statistic, "mann_whitney_p": mw.pvalue})
 continuous_tests = pd.DataFrame(rows)
@@ -424,7 +516,7 @@ continuous_tests.to_csv(OUTPUT_DIR / "continuous_pairwise_tests.csv", index=Fals
 
 Kruskal–Wallis produced H = 11.05 and p = 0.004. In plain language, the rank pattern is unlikely to look this different if all three match types shared the same ROI distribution.
 
-After FDR correction, Mann–Whitney flags One-to-one versus Exact (adjusted p = 0.037) and One-to-one versus Phrase (adjusted p = 0.004). The stricter Bonferroni correction retains only One-to-one versus Phrase. Exact versus Phrase is not distinguishable in this test. All Welch p-values are above 0.45, and Hedges' g ranges only from −0.05 to −0.12, so the mean differences are small relative to the noisy row-level spread.
+After FDR correction, Mann–Whitney flags One-to-one versus Exact (adjusted p = 0.037) and One-to-one versus Phrase (adjusted p = 0.004). The stricter Bonferroni correction retains only One-to-one versus Phrase. Exact versus Phrase is not distinguishable in this test. All Welch p-values are above 0.45, so the mean differences are not clear relative to the noisy row-level spread.
 
 In practical terms, the typical rank ordering differs most clearly between One-to-one and Phrase. The evidence is not strong enough to claim stable mean ROI differences across every pair, and it cannot show that match type caused the pattern.
 """),
@@ -484,6 +576,7 @@ Cramér's V is the global effect size: it indicates how strong the association i
         code("""
 counts = summary.set_index("match_type")[["clicks", "conversions"]].copy()
 counts["non_converting_clicks"] = counts["clicks"] - counts["conversions"]
+display(counts.rename(columns={"clicks": "total_attempts"}))
 contingency = counts.loc[MATCH_ORDER, ["conversions", "non_converting_clicks"]].to_numpy()
 chi2, chi_p, dof, expected = stats.chi2_contingency(contingency)
 n_total = contingency.sum()
@@ -498,14 +591,29 @@ for a, b in itertools.combinations(MATCH_ORDER, 2):
     rate_a, rate_b = ca/(ca+na), cb/(cb+nb)
     risk_diff = rate_a-rate_b
     se = np.sqrt(rate_a*(1-rate_a)/(ca+na) + rate_b*(1-rate_b)/(cb+nb))
-    conversion_rows.append({"comparison": f"{a} vs {b}", "rate_a": rate_a, "rate_b": rate_b,
-                            "risk_difference": risk_diff, "risk_difference_ci_low": risk_diff-1.96*se,
-                            "risk_difference_ci_high": risk_diff+1.96*se,
-                            "odds_ratio": odds_ratio, "fisher_p": p})
+    conversion_rows.append({
+        "comparison": f"{a} vs {b}", "group_a": a, "group_b": b,
+        "conversions_a": ca, "attempts_a": ca + na,
+        "conversions_b": cb, "attempts_b": cb + nb,
+        "rate_a": rate_a, "rate_b": rate_b,
+        "difference_b_minus_a": rate_b - rate_a,
+        "percentage_difference": (rate_b - rate_a) / rate_a * 100 if rate_a else np.nan,
+        "risk_difference_a_minus_b": risk_diff,
+        "risk_difference_ci_low": risk_diff-1.96*se,
+        "risk_difference_ci_high": risk_diff+1.96*se,
+        "odds_ratio": odds_ratio, "p_value": p,
+        "significant_uncorrected": p < ALPHA,
+    })
 conversion_tests = pd.DataFrame(conversion_rows)
-conversion_tests["fisher_p_fdr"] = benjamini_hochberg(conversion_tests["fisher_p"])
-conversion_tests["fisher_p_bonferroni"] = np.minimum(conversion_tests["fisher_p"]*len(conversion_tests),1)
+conversion_comparisons = len(conversion_tests)
+conversion_alpha_bonferroni = ALPHA / conversion_comparisons
+conversion_tests["alpha_bonferroni"] = conversion_alpha_bonferroni
+conversion_tests["p_value_bonferroni"] = np.minimum(conversion_tests["p_value"] * conversion_comparisons, 1)
+conversion_tests["significant_bonferroni"] = conversion_tests["p_value"] < conversion_alpha_bonferroni
+conversion_tests["p_value_fdr"] = benjamini_hochberg(conversion_tests["p_value"])
+conversion_tests["significant_fdr"] = conversion_tests["p_value_fdr"] < ALPHA
 display(conversion_tests)
+print(f"Conversion-rate comparisons: {conversion_comparisons}; expected false positives at alpha=.05: {conversion_comparisons * ALPHA:.2f}")
 conversion_tests.to_csv(OUTPUT_DIR / "conversion_pairwise_tests.csv", index=False)
 """),
         md("""
@@ -516,6 +624,61 @@ The global chi-square result is 43.40 with p < 0.001, so the rates are not ident
 One-to-one converted at 10.50%, compared with 10.09% for Exact and 9.93% for Phrase. The differences are 0.41 and 0.57 percentage points respectively, and both remain significant after FDR and Bonferroni correction. Exact versus Phrase differs by only 0.16 points; its confidence interval crosses zero and its adjusted p-value is not significant.
 
 For the marketing team, the relevant point is that One-to-one has a consistent but modest conversion advantage. The click volume makes that small gap easy to detect statistically. It may matter at scale, but it does not outweigh negative ROI and does not prove that moving traffic into One-to-one will create the same lift.
+"""),
+        code("""
+rate_plot = summary.sort_values("conversion_rate", ascending=True)
+fig, ax = plt.subplots(figsize=(8, 5))
+bars = ax.barh(
+    rate_plot["match_type"].astype(str),
+    rate_plot["conversion_rate"],
+    color="#4C78A8",
+)
+ax.bar_label(
+    bars,
+    labels=[f"{value:.2%}" for value in rate_plot["conversion_rate"]],
+    padding=4,
+)
+ax.set_title("Observed conversion rate by match type")
+ax.set_xlabel("Conversion rate"); ax.set_ylabel("Match type")
+ax.xaxis.set_major_formatter(PercentFormatter(1.0))
+fig.tight_layout()
+fig.savefig(OUTPUT_DIR / "rate_comparison.png", dpi=180, bbox_inches="tight")
+plt.show()
+"""),
+        md("""
+## Multiple-Comparison Corrections
+
+There are three CPA comparisons and three conversion-rate comparisons, six in total. At an uncorrected 5% threshold, the expected number of false positives is 0.30 across the full set. Bonferroni uses a stricter threshold; FDR adjusts p-values while retaining more power.
+"""),
+        code("""
+total_comparisons = cpa_comparisons + conversion_comparisons
+expected_false_positives = total_comparisons * ALPHA
+correction_summary = pd.DataFrame([
+    {"metric_family": "CPA", "method": "Uncorrected", "significant_count": int(cpa_tests["significant_uncorrected"].sum()), "total_comparisons": cpa_comparisons},
+    {"metric_family": "CPA", "method": "Bonferroni", "significant_count": int(cpa_tests["significant_bonferroni"].sum()), "total_comparisons": cpa_comparisons},
+    {"metric_family": "CPA", "method": "FDR", "significant_count": int(cpa_tests["significant_fdr"].sum()), "total_comparisons": cpa_comparisons},
+    {"metric_family": "Conversion rate", "method": "Uncorrected", "significant_count": int(conversion_tests["significant_uncorrected"].sum()), "total_comparisons": conversion_comparisons},
+    {"metric_family": "Conversion rate", "method": "Bonferroni", "significant_count": int(conversion_tests["significant_bonferroni"].sum()), "total_comparisons": conversion_comparisons},
+    {"metric_family": "Conversion rate", "method": "FDR", "significant_count": int(conversion_tests["significant_fdr"].sum()), "total_comparisons": conversion_comparisons},
+])
+correction_summary["expected_false_positives_at_0_05"] = correction_summary["total_comparisons"] * ALPHA
+print(f"Total comparisons: {total_comparisons}; expected false positives at alpha=.05: {expected_false_positives:.2f}")
+display(correction_summary)
+correction_summary.to_csv(OUTPUT_DIR / "multiple_comparison_summary.csv", index=False)
+
+fig, ax = plt.subplots(figsize=(9, 5))
+sns.barplot(data=correction_summary, x="method", y="significant_count", hue="metric_family",
+            order=["Uncorrected", "Bonferroni", "FDR"], ax=ax)
+ax.set_title("Significant pairwise results after correction")
+ax.set_xlabel("Correction method"); ax.set_ylabel("Number of significant comparisons")
+ax.set_ylim(0, max(correction_summary["total_comparisons"]) + .5)
+ax.legend(title="Metric family")
+fig.tight_layout()
+fig.savefig(OUTPUT_DIR / "correction_comparison.png", dpi=180, bbox_inches="tight")
+plt.show()
+"""),
+        md("""
+CPA has two significant pairs before correction, one after Bonferroni and two after FDR. Conversion rate has two under all three methods. The corrections do not reverse the marketing conclusion: One-to-one remains the strongest relative group, Phrase remains the weakest, and negative ROI still blocks a Scale recommendation.
 """),
         md("""
 ## Turning Evidence into a Marketing Decision
@@ -607,6 +770,18 @@ analysis_summary = {
     "overall": {k: float(overall[k]) for k in ["impressions","clicks","conversions","cost","revenue","ctr","conversion_rate","cpc","cpa","revenue_per_conversion","profit","roas","roi","profit_margin"]},
     "kruskal": {"statistic": float(kruskal.statistic), "p_value": float(kruskal.pvalue)},
     "conversion_chi_square": {"statistic": float(chi2), "p_value": float(chi_p), "cramers_v": float(cramers_v)},
+    "cpa_comparisons": {
+        "total": int(cpa_comparisons),
+        "significant_uncorrected": int(cpa_tests["significant_uncorrected"].sum()),
+        "significant_bonferroni": int(cpa_tests["significant_bonferroni"].sum()),
+        "significant_fdr": int(cpa_tests["significant_fdr"].sum()),
+    },
+    "conversion_comparisons": {
+        "total": int(conversion_comparisons),
+        "significant_uncorrected": int(conversion_tests["significant_uncorrected"].sum()),
+        "significant_bonferroni": int(conversion_tests["significant_bonferroni"].sum()),
+        "significant_fdr": int(conversion_tests["significant_fdr"].sum()),
+    },
     "budget_total": int(allocation["allocation"].sum()),
     "allocation": {str(row.match_type): int(row.allocation) for row in allocation.itertuples()},
     "decisions": {str(row.match_type): row.decision for row in decision.itertuples()},
@@ -621,7 +796,7 @@ print(json.dumps(analysis_summary, indent=2))
 
 The statistical tests answer a useful but limited question: which historical patterns are too consistent to dismiss as random noise under the model? They do not decide where the next dollar should go.
 
-For this campaign, the conversion advantage for One-to-one is real enough to investigate but small in percentage-point terms. The negative ROI intervals are the stronger commercial signal. Maintain One-to-one, optimise Exact and reduce Phrase exposure while the team fixes measurement and runs prospective tests. Do not scale any group until marginal revenue covers media cost under an agreed business definition.
+For this campaign, One-to-one has a lower mean CPA than Exact and Phrase after FDR correction. Its conversion advantage is also consistent but small in percentage-point terms. The negative ROI intervals remain the stronger commercial constraint. Maintain One-to-one, optimise Exact and reduce Phrase exposure while the team fixes measurement and runs prospective tests. Do not scale any group until marginal revenue covers media cost under an agreed business definition.
 """),
     ]
     write_notebook("statistical_analysis.ipynb", cells)
@@ -661,6 +836,7 @@ import sys
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from scipy import stats
 from scipy.stats import norm
 
 for candidate in [Path.cwd(), *Path.cwd().parents]:
@@ -677,14 +853,123 @@ OUTPUT_DIR = PROJECT_ROOT / "outputs"; OUTPUT_DIR.mkdir(exist_ok=True)
 df = prepare_data(DATA_PATH)
 overall = aggregate_performance(df.assign(portfolio="All"), "portfolio").iloc[0]
 BASELINE_RATE = overall["conversion_rate"]
+BASE_CPA = overall["cpa"]
 HISTORICAL_DAYS = 153  # July 1 through November 30, 2021
 CLICKS_PER_CALENDAR_DAY = overall["clicks"] / HISTORICAL_DAYS
+RNG_SEED = 42
 ALPHA = 0.05; POWER = 0.80
 Z_ALPHA = norm.ppf(1-ALPHA/2); Z_POWER = norm.ppf(POWER)
 print(f"Historical baseline conversion rate: {BASELINE_RATE:.3%}")
+print(f"Historical aggregate CPA: ${BASE_CPA:.2f}")
 print(f"Observed aggregate clicks / 153 calendar days: {CLICKS_PER_CALENDAR_DAY:,.1f}")
 """),
-        md("## Traffic Needed for Target Conversion Lifts"),
+        md("""
+## Required Empirical Power Analysis for CPA
+
+The simulation asks how often an independent t-test would detect a true CPA difference under the lab assumptions. Channel A is centered on the historical CPA. Channel B is 5%, 10%, 15% or 20% higher. Both use a standard deviation equal to 15% of base CPA, with simulated values floored at 50% of base CPA.
+"""),
+        code("""
+def empirical_power_cpa(true_diff_pct, base_cpa, n_days, n_sim=1000, alpha=0.05):
+    seed = RNG_SEED + int(round(true_diff_pct * 10_000)) * 1_000 + int(n_days)
+    rng = np.random.default_rng(seed)
+    standard_deviation = base_cpa * 0.15
+    minimum_cpa = base_cpa * 0.50
+    significant_results = 0
+    for _ in range(n_sim):
+        channel_a = np.maximum(rng.normal(base_cpa, standard_deviation, n_days), minimum_cpa)
+        channel_b = np.maximum(
+            rng.normal(base_cpa * (1 + true_diff_pct), standard_deviation, n_days),
+            minimum_cpa,
+        )
+        p_value = stats.ttest_ind(channel_a, channel_b, equal_var=True).pvalue
+        significant_results += p_value < alpha
+    return significant_results / n_sim
+
+effect_sizes = [0.05, 0.10, 0.15, 0.20]
+sample_sizes = [30, 60, 90, 120, 180]
+cpa_power_rows = []
+for effect_size in effect_sizes:
+    for n_days in sample_sizes:
+        cpa_power_rows.append({
+            "effect_size_pct": int(effect_size * 100),
+            "n_days": n_days,
+            "power": empirical_power_cpa(effect_size, BASE_CPA, n_days),
+        })
+cpa_power = pd.DataFrame(cpa_power_rows)
+display(cpa_power.pivot(index="n_days", columns="effect_size_pct", values="power"))
+cpa_power.to_csv(OUTPUT_DIR / "cpa_power_results.csv", index=False)
+
+fig, ax = plt.subplots(figsize=(9, 5))
+for effect_size, group in cpa_power.groupby("effect_size_pct"):
+    ax.plot(group["n_days"], group["power"], marker="o", label=f"{effect_size}% CPA difference")
+ax.axhline(.80, color="black", linestyle="--", label="80% target")
+ax.set_title("Empirical power to detect CPA differences")
+ax.set_xlabel("Days per group"); ax.set_ylabel("Power")
+ax.set_ylim(0, 1.03); ax.grid(alpha=.3); ax.legend()
+fig.tight_layout()
+fig.savefig(OUTPUT_DIR / "power_analysis_cpa.png", dpi=180, bbox_inches="tight")
+plt.show()
+"""),
+        md("""
+### Minimum sample size and current-data adequacy
+
+The next table finds the first tested duration that reaches 80% power for each planned effect. It also checks whether 90 days would be sufficient under the same simulation assumptions.
+"""),
+        code("""
+minimum_rows = []
+for effect_size in [5, 10, 15, 20]:
+    effect_results = cpa_power.loc[cpa_power["effect_size_pct"].eq(effect_size)].sort_values("n_days")
+    qualifying = effect_results.loc[effect_results["power"].ge(.80), "n_days"]
+    power_at_90 = effect_results.loc[effect_results["n_days"].eq(90), "power"].iloc[0]
+    minimum_rows.append({
+        "effect_size_pct": effect_size,
+        "minimum_tested_days_for_80_power": int(qualifying.iloc[0]) if not qualifying.empty else np.nan,
+        "power_at_90_days": power_at_90,
+        "is_90_days_sufficient": power_at_90 >= .80,
+    })
+cpa_minimum_days = pd.DataFrame(minimum_rows)
+display(cpa_minimum_days)
+cpa_minimum_days.to_csv(OUTPUT_DIR / "cpa_minimum_sample_size.csv", index=False)
+
+cpa_tests_path = OUTPUT_DIR / "cpa_pairwise_tests.csv"
+if not cpa_tests_path.exists():
+    raise FileNotFoundError("Run statistical_analysis.ipynb before power_analysis.ipynb")
+cpa_tests = pd.read_csv(cpa_tests_path)
+significant_cpa_pairs = cpa_tests.loc[cpa_tests["significant_fdr"]].copy()
+adequacy_rows = []
+for row in significant_cpa_pairs.itertuples():
+    observed_difference = abs(row.percentage_difference) / 100
+    baseline = min(row.mean_cpa_a, row.mean_cpa_b)
+    power_90 = empirical_power_cpa(observed_difference, baseline, 90)
+    estimated_days = 90
+    if power_90 < .80:
+        estimated_days = np.nan
+        for candidate_days in range(100, 721, 10):
+            if empirical_power_cpa(observed_difference, baseline, candidate_days) >= .80:
+                estimated_days = candidate_days
+                break
+    adequacy_rows.append({
+        "comparison": f"{row.group_a} vs {row.group_b}",
+        "observed_cpa_difference_pct": abs(row.percentage_difference),
+        "power_at_90_days": power_90,
+        "estimated_days_for_80_power": estimated_days,
+        "additional_days_needed": max(0, estimated_days - 90) if pd.notna(estimated_days) else np.nan,
+        "is_90_days_sufficient": power_90 >= .80,
+    })
+cpa_data_adequacy = pd.DataFrame(adequacy_rows, columns=[
+    "comparison", "observed_cpa_difference_pct", "power_at_90_days",
+    "estimated_days_for_80_power", "additional_days_needed", "is_90_days_sufficient"
+])
+if cpa_data_adequacy.empty:
+    print("No CPA pair remains significant after FDR; no pair-specific adequacy assessment is forced.")
+else:
+    display(cpa_data_adequacy)
+cpa_data_adequacy.to_csv(OUTPUT_DIR / "cpa_data_adequacy.csv", index=False)
+"""),
+        md("""
+The power results are planning aids, not evidence that the monthly rows are daily observations. The pair-specific table is limited to CPA differences that survived FDR in the statistical notebook.
+"""),
+        md("## Additional Extension: Traffic Needed for Conversion-Rate Lifts"),
         code("""
 def required_n_per_arm(p1, p2, alpha=.05, power=.80):
     z_alpha = norm.ppf(1-alpha/2); z_power = norm.ppf(power)

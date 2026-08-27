@@ -1,5 +1,12 @@
 # Executive memo: Shopping Mall Paid Search
 
+| Field | Detail |
+|---|---|
+| Date | 27 August 2026 |
+| Analyst | Gretel Ceballos |
+| Dataset | Shopping Mall Paid Search Campaign Dataset, Marcello D. (`marceaxl82`) |
+| Period | July–November 2021 |
+
 **To:** Marketing leadership; **Subject:** Where to maintain, optimise and reduce paid-search spend
 
 ## Recommendation
@@ -16,9 +23,13 @@ Reported revenue was $561,960 against $635,372 of media cost. That leaves a $73,
 
 One-to-one was the strongest relative group. It delivered 72,388 conversions at a $6.39 CPA, with ROAS of 0.895 and ROI of −10.5%. Exact was close on ROAS but had a $7.00 CPA and −11.4% ROI. Phrase was weakest at a $7.86 CPA, 0.812 ROAS and −18.8% ROI.
 
+The required monthly ad-group t-tests support that ordering. Mean row-level CPA for One-to-one was $1.32 lower than Exact and $2.21 lower than Phrase. Both differences remain significant after FDR correction; the effect is small against Exact and medium against Phrase. Exact versus Phrase is not significant.
+
 The conversion-rate test found a statistically detectable difference across the three groups: One-to-one was 0.41 percentage points above Exact and 0.57 points above Phrase. A p-value below 0.001 means a gap this consistent would be unusual if the rates were truly identical. It does not mean the gap is large. The effect-size measure, Cramér's V, was only 0.0069, which confirms that the overall relationship is very small.
 
 The profitability evidence is more relevant to the budget decision. A bootstrap—repeatedly resampling whole ad groups to measure uncertainty—kept the 95% ROI interval below zero for every match type. In practical terms, none of the groups has convincing evidence of positive historical profitability. One-to-one looks better than Phrase, but the data does not support calling it a profitable winner.
+
+The CPA power simulation shows that 90 days are sufficient for the two observed CPA gaps that remain significant after FDR. They are large differences, about 19.8% and 33.2%, and simulated power at 90 days is 100% under the lab assumptions. The same 90-day window has only 61.2% power for a smaller 5% CPA difference; among the tested durations, 180 days are needed to exceed the 80% target. The current data is adequate for the large observed gaps, not for ruling out smaller differences.
 
 ## Budget and guardrails
 
