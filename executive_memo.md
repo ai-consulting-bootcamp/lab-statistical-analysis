@@ -1,4 +1,4 @@
-# Executive memo: Shopping Mall Paid Search
+# Executive Memo: Shopping Mall Paid Search
 
 | Field | Detail |
 |---|---|
@@ -7,44 +7,121 @@
 | Dataset | Shopping Mall Paid Search Campaign Dataset, Marcello D. (`marceaxl82`) |
 | Period | July–November 2021 |
 
-**To:** Marketing leadership; **Subject:** Where to maintain, optimise and reduce paid-search spend
+**To:** Marketing Leadership  
+**Subject:** Paid search performance and $500K budget recommendation
 
-## Recommendation
+## Executive Summary
 
-Do not scale the campaign on the strength of the historical conversion numbers alone. Maintain One-to-one, optimise Exact and reduce Phrase while the team fixes measurement and tests changes prospectively.
+The campaign is generating significant traffic and conversion volume, but the current economics do not support scaling spend without further optimisation.
 
-If a $500,000 planning envelope is required, allocate $200,000 to One-to-one, $200,000 to Exact and $100,000 to Phrase. Release it in stages. All three groups had negative historical ROI, so the allocation is a controlled learning plan, not a forecast of profitable return.
+Across the five-month period, the campaign generated 95,996 conversions from $635,372 in media spend. Reported revenue was $561,960, resulting in a ROAS of 0.884 and ROI of -11.55%.
 
-## What the data says
+One-to-one is the strongest match type on both scale and acquisition efficiency. Exact performs relatively close and is worth optimising. Phrase has the weakest economics and should receive less budget until traffic quality and conversion performance improve.
 
-The dataset contains 190 monthly ad-group records from July to November 2021. The campaign generated 2.67 million impressions, 924,503 clicks and 95,996 conversions. Recalculated CTR was 34.56%, conversion rate 10.38%, CPC $0.69 and CPA $6.62.
+For a $500,000 planning envelope, I would allocate:
 
-Reported revenue was $561,960 against $635,372 of media cost. That leaves a $73,412 loss, ROAS of 0.884 and ROI of −11.55%. The published conversion-rate field did not match conversions divided by clicks in 160 rows, so every KPI in the analysis was recalculated from the underlying counts.
+| Match type | Budget | Recommendation |
+|---|---:|---|
+| One-to-one | $200,000 | Maintain |
+| Exact | $200,000 | Optimise and test |
+| Phrase | $100,000 | Reduce and review |
 
-One-to-one was the strongest relative group. It delivered 72,388 conversions at a $6.39 CPA, with ROAS of 0.895 and ROI of −10.5%. Exact was close on ROAS but had a $7.00 CPA and −11.4% ROI. Phrase was weakest at a $7.86 CPA, 0.812 ROAS and −18.8% ROI.
+I would release this budget progressively rather than commit the full amount upfront. None of the three groups currently demonstrates positive historical ROI.
 
-The required monthly ad-group t-tests support that ordering. Mean row-level CPA for One-to-one was $1.32 lower than Exact and $2.21 lower than Phrase. Both differences remain significant after FDR correction; the effect is small against Exact and medium against Phrase. Exact versus Phrase is not significant.
+## Campaign Performance
 
-The conversion-rate test found a statistically detectable difference across the three groups: One-to-one was 0.41 percentage points above Exact and 0.57 points above Phrase. A p-value below 0.001 means a gap this consistent would be unusual if the rates were truly identical. It does not mean the gap is large. The effect-size measure, Cramér's V, was only 0.0069, which confirms that the overall relationship is very small.
+The campaign generated:
 
-The profitability evidence is more relevant to the budget decision. A bootstrap—repeatedly resampling whole ad groups to measure uncertainty—kept the 95% ROI interval below zero for every match type. In practical terms, none of the groups has convincing evidence of positive historical profitability. One-to-one looks better than Phrase, but the data does not support calling it a profitable winner.
+- 2.67M impressions
+- 924,503 clicks
+- 95,996 conversions
+- 34.56% CTR
+- 10.38% conversion rate
+- $0.69 CPC
+- $6.62 CPA
 
-The CPA power simulation shows that 90 days are sufficient for the two observed CPA gaps that remain significant after FDR. They are large differences, about 19.8% and 33.2%, and simulated power at 90 days is 100% under the lab assumptions. The same 90-day window has only 61.2% power for a smaller 5% CPA difference; among the tested durations, 180 days are needed to exceed the 80% target. The current data is adequate for the large observed gaps, not for ruling out smaller differences.
+Before analysing performance, I recalculated the main KPIs from the underlying impressions, clicks, conversions, cost and revenue. The conversion-rate field provided in the dataset did not match `Conversions / Clicks` in 160 of 190 records, so the published ratios were not used as analytical inputs.
 
-## Budget and guardrails
+### Performance by Match Type
 
-The allocation rule combines CPA, ROAS and the amount of conversion evidence. A 40% cap prevents the high-volume One-to-one group from absorbing most of the budget, while a 20% floor preserves a controlled learning budget for Phrase.
+| Match type | Conversions | CPA | ROAS | ROI | Recommendation |
+|---|---:|---:|---:|---:|---|
+| One-to-one | 72,388 | $6.39 | 0.895 | -10.5% | Maintain |
+| Exact | 15,038 | $7.00 | 0.886 | -11.4% | Optimise/Test |
+| Phrase | 8,570 | $7.86 | 0.812 | -18.8% | Reduce/Pause |
 
-At unchanged historical CPC, conversion rate and revenue per conversion, the $500,000 scenario estimates approximately $437,000 in revenue and a $63,000 loss. A downside case—CPC up 10%, conversion rate down 10% and revenue per conversion down 10%—widens the modeled loss to about $178,000. The upside case turns positive only when all three drivers improve together. These are sensitivities, not guaranteed forecasts, and they do not account for auction saturation.
+### One-to-one: protect the strongest base
 
-Release each tranche only if marginal ROAS and ROI improve. Monitor CPA, revenue per conversion, conversion quality and volume alongside ROAS. Before treating any group as break-even, reconcile the definition of revenue and add product margin; this dataset cannot provide a true business break-even CPA.
+One-to-one generated most of the campaign's conversions while maintaining the lowest CPA and strongest relative ROAS.
 
-## Next 90 days
+The statistical comparison supports the observed CPA advantage. Across monthly ad-group observations, its mean CPA was $1.32 lower than Exact and $2.21 lower than Phrase after FDR correction.
 
-During the first 30 days, audit conversion tracking, search terms, mobile landing pages, attribution and revenue mapping. Reduce weak Phrase exposure and keep One-to-one within the 40% cap.
+However, its ROI was still negative. I would therefore protect its role in the media mix rather than aggressively scale it.
 
-By day 60, run a properly randomized creative or landing-page test with one primary outcome and a pre-calculated sample size. Separate device reporting and add negative keywords based on the search-term review.
+### Exact: optimise before deciding whether to scale
 
-By day 90, reallocate only where the test shows an incremental improvement large enough to matter commercially. Add margin, new-customer status, attribution lag and auction-level data to the reporting model.
+Exact has a higher CPA than One-to-one, but its ROAS is relatively close.
 
-This analysis is observational. It identifies where to look and what to test; it does not prove that changing match type will cause the historical differences to repeat.
+The CPA difference against One-to-one is statistically detectable, although the effect size is small. This makes Exact a better optimisation candidate than a straightforward budget-cut candidate.
+
+I would investigate search terms, creative, landing-page performance and device differences, then test whether its acquisition economics can be improved before changing its share materially.
+
+### Phrase: reduce exposure while investigating traffic quality
+
+Phrase has the highest CPA and lowest ROAS of the three groups. It also has the most negative historical ROI.
+
+The evidence supports reducing its exposure, but not assuming that match type itself caused the result. Search terms, intent, bids, landing pages and other campaign differences are not available in the dataset.
+
+I would retain a smaller controlled budget while investigating those factors rather than eliminate the group solely from this historical analysis.
+
+## What the Statistical Analysis Changed
+
+The statistical analysis was used to test whether the differences visible in the marketing KPIs were strong enough to support the budget decision.
+
+The CPA analysis confirms that One-to-one has a meaningful advantage over Phrase and a smaller advantage over Exact. Exact and Phrase are not statistically distinguishable on CPA after correction.
+
+Conversion rates also differ statistically, but the effect is very small. With more than 924,000 clicks, small differences can be detected even when their commercial importance is limited. For that reason, conversion-rate significance alone is not enough to justify moving budget.
+
+Bootstrap confidence intervals also keep historical ROI below zero across all three match types. This is why the recommendation prioritises controlled optimisation rather than scaling the apparent winner.
+
+Multiple-comparison corrections were applied to reduce the risk of treating chance differences as meaningful. The CPA power analysis also indicates that a 90-day test is sufficient for differences similar to the larger CPA gaps observed here, but would have only 61.2% power to detect a smaller 5% difference.
+
+## $500K Budget Recommendation
+
+I would start with:
+
+- $200K One-to-one
+- $200K Exact
+- $100K Phrase
+
+This is a planning allocation, not a prediction that $500K will generate a positive return.
+
+If historical performance remained unchanged, the model estimates approximately $437K in reported revenue from the $500K spend, a loss of approximately $63K.
+
+For that reason, I would release budget in stages and monitor CPA, revenue per conversion, ROAS, ROI and conversion quality before increasing spend.
+
+One-to-one provides the strongest current base. Exact retains enough budget to optimise and test. Phrase is limited while the team investigates why its acquisition economics are weaker.
+
+## Next 90 Days
+
+**Days 1-30**
+
+Audit conversion tracking, search terms, attribution, mobile landing pages and revenue mapping. Reduce weak Phrase exposure and identify optimisation opportunities in Exact.
+
+**Days 31-60**
+
+Run a randomized test on one variable at a time, such as creative or landing page. Define the primary KPI and required sample size before launching the test.
+
+**Days 61-90**
+
+Reallocate incremental budget only where the test demonstrates an improvement that is both statistically supported and commercially meaningful.
+
+Add product margin, new-customer status and better attribution data before setting a true break-even CPA or profitability target.
+
+## Limitations
+
+This is an observational analysis, not a randomized experiment, so the results identify performance patterns rather than causal effects.
+
+The dataset covers five months and does not include product margin, LTV, search-term detail, bids, attribution rules or incremental revenue. Historical performance may also change as spend scales.
+
+ROAS below 1 shows that reported revenue did not cover media spend during the observed period, but a true business break-even CPA cannot be calculated without contribution-margin data.

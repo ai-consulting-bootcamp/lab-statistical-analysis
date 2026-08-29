@@ -1,17 +1,77 @@
 # Reflection
 
-The first thing that changed my approach was a basic reconciliation check. The source already had columns for CTR, conversion rate and CPC, so it would have been easy to use them and move on. CTR was fine, but `Conv Rate` did not match `Conversions / Clicks` in 160 of 190 rows. I stopped treating the published ratios as authoritative and recalculated every KPI from the counts. That was the most important data decision in the project.
+## What statistics added to my marketing analysis
 
-I used match type as the main comparison because it was clearly encoded in the ad-group names and produced three groups with enough records. I considered device and intent family too. Device worked as a useful secondary view, but intent families were unevenly represented. More importantly, I did not want to choose groups after seeing which ones had the best ROAS. Defining them structurally kept the comparison honest.
+The marketing KPIs already gave me a first view of performance.
 
-The ROI data was awkward in a useful way. Exact and Phrase had positive means but negative medians because a few extreme monthly records pulled the averages upward. A standard comparison of means did not capture that well. I kept Welch's t-test because it was required, but I relied more on rank-based tests and a bootstrap that resampled whole ad groups. The results did not all tell exactly the same story, which was a good reminder to look at the question each method answers rather than searching for one preferred p-value.
+One to one had the highest conversion volume and lowest CPA. Exact was less efficient but remained relatively close. Phrase had the highest CPA and weakest ROAS and ROI.
 
-The conversion analysis created a different problem. With more than 924,000 clicks, the tests could flag small rate differences very easily. One-to-one was only 0.41 percentage points above Exact and 0.57 points above Phrase. Those gaps could matter at high volume, but the effect-size measure was tiny and all three groups still had negative ROI. That was the clearest example of the difference between statistical significance and a useful marketing decision.
+The statistical analysis helped me go one step further: **were these differences consistent enough to support the initial performance analysis, or could they simply be variation in the data?**
 
-The correction methods also gave a useful contrast. FDR retained the One-to-one CPA differences against Exact and Phrase, while Bonferroni retained only the Phrase comparison. That did not change the recommendation, but it made the evidence against Exact less definitive. The power simulation added another limit: 90 days were enough for the large observed CPA gaps, but only delivered 61.2% power for a smaller 5% difference.
+## A significant result is not always an important result
 
-I initially found the budget recommendation uncomfortable because the historical base case loses money. That discomfort is appropriate. Instead of disguising it, I treated $500,000 as a planning envelope, used concentration limits and showed the loss in the base and downside scenarios. The recommendation is not “spend this and expect a return.” It is “if this budget must be planned, stage it, keep learning, and stop adding money when marginal economics fail.”
+This was one of the most useful lessons from the analysis.
 
-The data has hard limits. It covers five monthly periods, repeats the same ad groups, misses ten possible ad-group/month combinations and provides no search terms, bids, attribution rules, product margin, LTV or new-customer flag. `Revenue` and `Sale Amount` are both present without enough accounting detail to calculate a true break-even CPA. The publisher describes the campaign as real and anonymized, but I cannot verify that independently.
+The campaign had more than 924,000 clicks. With that amount of data, even small differences in conversion rate can be statistically significant.
 
-I would improve the study with a narrower, randomized test. I would choose one change—such as ad copy or a landing page—assign eligible traffic before outcomes occur, define one primary metric and calculate the sample size in advance. I would also connect conversions to gross-margin contribution and keep an untouched control group. That would answer an incremental question. This project can only diagnose historical patterns and help decide what to test next.
+That does not necessarily mean they are important enough to change a marketing decision.
+
+In this case, the differences in conversion rate were statistically significant, but their size was very small. I would therefore not move budget based on the p value alone.
+
+I would also consider CPA, ROAS, ROI, conversion volume and the commercial impact of the difference.
+
+## CPA gave stronger evidence
+
+The CPA analysis supported what I could already see in the campaign performance.
+
+One to one had a lower CPA than both Exact and Phrase. After correcting for the fact that I was making several comparisons, the differences remained statistically significant.
+
+But the size of those differences also mattered.
+
+The advantage over Exact was relatively small, while the advantage over Phrase was larger.
+
+That gave me a more useful conclusion than simply saying that One to one performed better. **The data also showed where that advantage was stronger and where the difference was less clear.**
+
+## Checking the data came first
+
+Before running the statistical analysis, I checked whether the marketing metrics provided in the dataset were consistent.
+
+The published conversion rate did not match `Conversions / Clicks` in 160 of 190 records.
+
+I therefore recalculated the KPIs from impressions, clicks, conversions, cost and revenue before using them in the analysis.
+
+This reinforced something simple but important: **a sophisticated analysis does not help if the metrics behind it are wrong.**
+
+## Statistics supported the decision, they did not make it
+
+My final recommendation was:
+
+| Match type | Action | Why |
+|---|---|---|
+| One to one | Maintain | Strongest volume and acquisition efficiency |
+| Exact | Optimise and test | Performance remains relatively close and there is room to improve |
+| Phrase | Reduce | Highest CPA and weakest return |
+
+I would not automatically move more budget to One to one just because it was the strongest group.
+
+All three match types still had negative historical ROI. The better decision is to protect the strongest area, improve the areas with potential and reduce exposure where the economics are weakest.
+
+The statistics gave me stronger evidence for that recommendation, but the decision still required marketing and commercial judgement.
+
+## What I would test next
+
+The analysis uses historical campaign data. It can show differences in performance, but it cannot prove what caused them.
+
+The next step would be a controlled A/B test.
+
+I would test one variable at a time, such as the creative or landing page. I would randomly divide eligible traffic between a control and a new version, choose the main KPI before starting and calculate how much data the test needs.
+
+I would then let the test reach the planned sample before making a decision.
+
+I would only recommend moving additional budget if the new version produced an improvement that was both statistically supported and large enough to matter commercially.
+
+## Main takeaway
+
+**Marketing KPIs show me what is happening. Statistical analysis helps me understand how much confidence I can place in the differences I see.**
+
+For me, that is the practical value of adding statistics to marketing analysis.
