@@ -4,7 +4,7 @@
 
 The marketing KPIs already gave me a first view of performance.
 
-One to one had the highest conversion volume and lowest CPA. Exact was less efficient but remained relatively close. Phrase had the highest CPA and weakest ROAS and ROI.
+One-to-one had the highest conversion volume and lowest CPA. Exact was less efficient but remained relatively close. Phrase had the highest CPA and weakest ROAS and ROI.
 
 The statistical analysis helped me go one step further: **were these differences consistent enough to support the initial performance analysis, or could they simply be variation in the data?**
 
@@ -24,13 +24,13 @@ I would also consider CPA, ROAS, ROI, conversion volume and the commercial impac
 
 The CPA analysis supported what I could already see in the campaign performance.
 
-One to one had a lower CPA than both Exact and Phrase. After correcting for the fact that I was making several comparisons, the differences remained statistically significant.
+One-to-one had a lower CPA than both Exact and Phrase. After FDR correction, both differences remained statistically significant. The stricter Bonferroni correction retained only the difference against Phrase.
 
 But the size of those differences also mattered.
 
 The advantage over Exact was relatively small, while the advantage over Phrase was larger.
 
-That gave me a more useful conclusion than simply saying that One to one performed better. **The data also showed where that advantage was stronger and where the difference was less clear.**
+That gave me a more useful conclusion than simply saying that One-to-one performed better. **The data also showed where that advantage was stronger and where the difference was less clear.**
 
 ## Checking the data came first
 
@@ -48,11 +48,11 @@ My final recommendation was:
 
 | Match type | Action | Why |
 |---|---|---|
-| One to one | Maintain | Strongest volume and acquisition efficiency |
+| One-to-one | Maintain | Strongest volume and acquisition efficiency |
 | Exact | Optimise and test | Performance remains relatively close and there is room to improve |
 | Phrase | Reduce | Highest CPA and weakest return |
 
-I would not automatically move more budget to One to one just because it was the strongest group.
+I would not automatically move more budget to One-to-one just because it was the strongest group.
 
 All three match types still had negative historical ROI. The better decision is to protect the strongest area, improve the areas with potential and reduce exposure where the economics are weakest.
 

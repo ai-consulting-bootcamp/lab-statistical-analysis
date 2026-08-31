@@ -79,8 +79,9 @@ DATA_PATH = PROJECT_ROOT / "data" / "shopping_mall_paid_search.csv"
 OUTPUT_DIR = PROJECT_ROOT / "outputs"
 OUTPUT_DIR.mkdir(exist_ok=True)
 sns.set_theme(style="whitegrid", context="notebook")
+np.random.seed(42)
 pd.set_option("display.max_columns", 50)
-print("Project root:", PROJECT_ROOT)
+print("Project root located successfully.")
 print("Data source:", DATA_PATH.relative_to(PROJECT_ROOT))
 """),
         md("""

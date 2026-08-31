@@ -30,11 +30,11 @@ The campaign generated strong traffic and conversion volume, but reported revenu
 
 | Match type | Conversions | CPA | ROAS | ROI | Recommendation |
 |---|---:|---:|---:|---:|---|
-| One to one | 72,388 | $6.39 | 0.895 | -10.5% | Maintain |
+| One-to-one | 72,388 | $6.39 | 0.895 | -10.5% | Maintain |
 | Exact | 15,038 | $7.00 | 0.886 | -11.4% | Optimise and test |
 | Phrase | 8,570 | $7.86 | 0.812 | -18.8% | Reduce |
 
-One to one provides the strongest current base, combining the largest conversion volume with the lowest CPA.
+One-to-one provides the strongest current base, combining the largest conversion volume with the lowest CPA.
 
 Exact performs relatively close and remains a good candidate for optimisation and testing.
 
@@ -44,7 +44,7 @@ Phrase has the weakest acquisition economics and should receive less budget whil
 
 The campaign KPIs showed the initial performance pattern. Statistical testing helped determine how much confidence I could place in those differences.
 
-The CPA advantage of One to one over Exact and Phrase remained statistically significant after correcting for multiple comparisons. The difference against Exact was relatively small, while the difference against Phrase was larger.
+The CPA advantage of One-to-one over Exact and Phrase remained statistically significant after FDR correction. The stricter Bonferroni correction retained only the difference against Phrase. The difference against Exact was relatively small, while the difference against Phrase was larger.
 
 Conversion rate differences were also statistically significant, but their size was very small. This is important because a large dataset can make small differences statistically detectable without making them commercially important.
 
@@ -60,7 +60,7 @@ The conversion rate provided in the original dataset did not match `Conversions 
 
 | Match type | Budget | Action |
 |---|---:|---|
-| One to one | $200,000 | Maintain |
+| One-to-one | $200,000 | Maintain |
 | Exact | $200,000 | Optimise and test |
 | Phrase | $100,000 | Reduce |
 | **Total** | **$500,000** | |
@@ -99,7 +99,7 @@ Create the environment and install the project dependencies:
 conda create -n bootcamp-env python=3.11
 conda activate bootcamp-env
 pip install -r requirements.txt
-````
+```
 
 Run the notebooks in this order:
 
