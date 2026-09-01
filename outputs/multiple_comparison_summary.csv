@@ -1,0 +1,7 @@
+metric_family,method,significant_count,total_comparisons,expected_false_positives_at_0_05
+CPA,Uncorrected,2,3,0.15000000000000002
+CPA,Bonferroni,1,3,0.15000000000000002
+CPA,FDR,2,3,0.15000000000000002
+Conversion rate,Uncorrected,2,3,0.15000000000000002
+Conversion rate,Bonferroni,2,3,0.15000000000000002
+Conversion rate,FDR,2,3,0.15000000000000002
