@@ -1,0 +1,13 @@
+group_a,group_b,observed_diff_pct,n_days_available,power_at_available_n,min_days_needed_for_80pct
+Google Search,LinkedIn,907.748309,760,1.0,10
+LinkedIn,Meta,74.964275,760,1.0,10
+LinkedIn,TikTok,72.955107,760,1.0,10
+LinkedIn,Snapchat,72.042736,760,1.0,10
+Google Display,Google Search,74.065725,811,1.0,10
+Google Display,LinkedIn,161.352219,760,1.0,10
+Google Search,Snapchat,181.738858,930,1.0,10
+Google Search,TikTok,172.54445,1012,1.0,10
+Google Search,Meta,152.297092,1064,1.0,10
+Google Display,Meta,34.568578,811,1.0,10
+Google Display,TikTok,29.317572,811,1.0,10
+Google Display,Snapchat,26.933070000000004,811,1.0,10

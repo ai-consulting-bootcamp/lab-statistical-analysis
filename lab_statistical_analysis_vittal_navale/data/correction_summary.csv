@@ -1,0 +1,3 @@
+metric,uncorrected,bonferroni,fdr_bh,total_comparisons
+CPA (t-test),12,12,12,15
+Conversion Rate (Fisher),15,15,15,15
