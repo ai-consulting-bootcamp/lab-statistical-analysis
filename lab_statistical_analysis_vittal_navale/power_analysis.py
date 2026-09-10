@@ -20,18 +20,23 @@ GROUP_COL = "channel"
 ALPHA = 0.05
 
 
-def empirical_power_cpa(true_diff_pct, base_cpa, n_days, n_sim=1000, alpha=0.05):
+def empirical_power_cpa(true_diff_pct, base_cpa, n_days, n_sim=1000, alpha=0.05, std_pct=0.15):
     """Estimate power to detect a true_diff_pct difference in mean CPA
-    between two channels, each with n_days of daily observations."""
-    std = base_cpa * 0.15
-    cap = base_cpa * 0.5
+    between two channels, each with n_days of daily observations.
+
+    Per the lab spec, values are capped at 50% of base_cpa -- a floor only,
+    preventing the normal draw from producing unrealistic near-zero/negative
+    CPA days. There is no upper cap (the lab spec only mentions capping at
+    50% of base, not bounding the top of the distribution)."""
+    std = base_cpa * std_pct
+    floor = base_cpa * 0.5
     rejections = 0
     for _ in range(n_sim):
         a = rng.normal(base_cpa, std, n_days)
-        a = np.clip(a, base_cpa - cap, base_cpa + cap)
+        a = np.clip(a, floor, None)
         mean_b = base_cpa * (1 + true_diff_pct)
         b = rng.normal(mean_b, std, n_days)
-        b = np.clip(b, mean_b - cap, mean_b + cap)
+        b = np.clip(b, floor, None)
         _, p = stats.ttest_ind(a, b, equal_var=False)
         if p < alpha:
             rejections += 1
@@ -105,6 +110,16 @@ for eff in effect_sizes:
 min_days_df = pd.DataFrame(min_days_rows)
 min_days_df.to_csv("data/min_sample_size_recommendations.csv", index=False)
 
+# Explicit detectability summary at the lab's reference 90-day window
+power_at_90 = power_df[power_df["n_days"] == CURRENT_DAYS_BASELINE].sort_values("effect_size_pct")
+detectable = power_at_90[power_at_90["power"] >= TARGET_POWER]["effect_size_pct"].tolist()
+not_detectable = power_at_90[power_at_90["power"] < TARGET_POWER]["effect_size_pct"].tolist()
+print(f"\n=== Detectability at {CURRENT_DAYS_BASELINE} Days (80% power target) ===")
+if detectable:
+    print("  Reliably detectable (power >= 80%): " + ", ".join(f"{e*100:.0f}%" for e in detectable))
+if not_detectable:
+    print("  NOT reliably detectable (power < 80%): " + ", ".join(f"{e*100:.0f}%" for e in not_detectable))
+
 # ---------------------------------------------------------------------------
 # 3. Assess adequacy of ACTUAL historical data for the pairs found
 #    significant after FDR correction in statistical_analysis.py
@@ -120,13 +135,15 @@ for _, row in sig_pairs.iterrows():
     n_available = int(min(row["n_a"], row["n_b"]))
     power_at_available = empirical_power_cpa(observed_diff_pct, baseline, n_available, n_sim=500, alpha=ALPHA)
 
+    # Always search for the minimum days needed for 80% power (even when
+    # n_available already clears the bar) so this column is consistently an
+    # integer day count, never a bool mixed in with ints.
     min_days_needed = None
-    if power_at_available < TARGET_POWER:
-        for n_days in finer_days:
-            p = empirical_power_cpa(observed_diff_pct, baseline, n_days, n_sim=300, alpha=ALPHA)
-            if p >= TARGET_POWER:
-                min_days_needed = n_days
-                break
+    for n_days in finer_days:
+        p = empirical_power_cpa(observed_diff_pct, baseline, n_days, n_sim=300, alpha=ALPHA)
+        if p >= TARGET_POWER:
+            min_days_needed = n_days
+            break
 
     adequacy_rows.append(
         dict(
@@ -135,7 +152,7 @@ for _, row in sig_pairs.iterrows():
             observed_diff_pct=observed_diff_pct * 100,
             n_days_available=n_available,
             power_at_available_n=power_at_available,
-            min_days_needed_for_80pct=min_days_needed if min_days_needed else power_at_available >= TARGET_POWER,
+            min_days_needed_for_80pct=min_days_needed if min_days_needed is not None else ">400",
         )
     )
     note = "adequate" if power_at_available >= TARGET_POWER else f"needs ~{min_days_needed} days"
