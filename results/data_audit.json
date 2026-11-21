@@ -1,0 +1,66 @@
+{
+  "source": "https://huggingface.co/datasets/jason1966/alinaboulsi_digital-marketing-performance-dataset/resolve/main/digital_marketing_dataset_30k.csv",
+  "sha256": "eee26f2a6f90534f64686db4bb6794094fffbbcecb3e718539a7d4de9edb01dc",
+  "raw_rows": 30000,
+  "license": "Source license unverified / stated unknown",
+  "synthetic": true,
+  "filter": "Sales objective only, because revenue is not meaningful for all awareness/traffic objectives",
+  "date_format": "DD/MM/YYYY",
+  "dropped_invalid": 0,
+  "clean_rows": 5453,
+  "observed_platform_count": 6,
+  "observed_platforms": [
+    "Google Display",
+    "Google Search",
+    "LinkedIn",
+    "Meta",
+    "Snapchat",
+    "TikTok"
+  ],
+  "window_fallback": "None",
+  "grouping_strategy": "Six actual platforms; one split into two observed, mutually exclusive placement segments (seven allocation groups, NOT seven platforms)",
+  "split_platform": "Meta",
+  "split_placement": "Feed",
+  "derived_segment_names": [
+    "Meta | Feed",
+    "Meta | other placements"
+  ],
+  "analysis_rows": 305,
+  "unique_channels": 7,
+  "channels": [
+    "Google Display",
+    "Google Search",
+    "LinkedIn",
+    "Meta | Feed",
+    "Meta | other placements",
+    "Snapchat",
+    "TikTok"
+  ],
+  "date_min": "2025-10-03",
+  "date_max": "2025-12-31",
+  "active_days_by_channel": {
+    "Google Display": 29,
+    "Google Search": 51,
+    "LinkedIn": 54,
+    "Meta | Feed": 35,
+    "Meta | other placements": 37,
+    "Snapchat": 45,
+    "TikTok": 54
+  },
+  "source_rows_in_window": 453,
+  "run_date_utc": "2026-11-21",
+  "analysis_type": "Externally downloaded, publisher-described SYNTHETIC dataset",
+  "budget_usd": 500000,
+  "test_families": [
+    "daily_cpa",
+    "daily_roas",
+    "fisher_conversion"
+  ],
+  "family_comparison_count": {
+    "daily_cpa": 21,
+    "daily_roas": 21,
+    "fisher_conversion": 21
+  },
+  "data_independence_warning": "Campaign-day rows share context and are not random assignments; daily Welch/Fisher do not imply causality.",
+  "note": "Sales-only filtered; zero-conversion days omitted from daily CPA tests; selection bias possible."
+}

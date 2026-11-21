@@ -1,0 +1,5 @@
+effect_size_pct,minimum_tested_days_for_80pct_power,n_90_days_sufficient
+5.0,180,False
+10.0,60,True
+15.0,30,True
+20.0,30,True

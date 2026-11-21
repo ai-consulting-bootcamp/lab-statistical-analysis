@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+.pytest_cache/
+.ipynb_checkpoints/
+data/digital_marketing_dataset_30k.csv
+*.log
