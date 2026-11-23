@@ -1,5 +1,0 @@
-effect_size_pct,observed_days_per_campaign,minimum_days_per_arm_reference,additional_days_vs_observed,observed_status_under_model,day_90_status_under_model,simulated_power_at_minimum,simulated_power_at_observed_days,simulated_power_at_90_days,minimum_days_per_arm_bonferroni,minimum_days_per_arm_high_cv,high_cv_scenario
-5,30,143,113,insufficient,insufficient,0.804125,0.241375,0.607125,274,1006,0.4
-10,30,37,7,insufficient,sufficient,0.810625,0.72325,0.9945,71,253,0.4
-15,30,17,0,sufficient,sufficient,0.8065,0.972625,1.0,33,113,0.4
-20,30,10,0,sufficient,sufficient,0.79625,0.9995,1.0,20,64,0.4

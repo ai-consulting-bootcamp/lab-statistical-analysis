@@ -147,10 +147,11 @@ def plot_comparisons(cpa, totals, correction):
     norm = BoundaryNorm([0, ALPHA / len(cpa), ALPHA, 1.0001], cmap.N)
     sns.heatmap(matrix, annot=annotations, fmt="", square=True, linewidths=0.6,
                 cmap=cmap, norm=norm, cbar=False, ax=ax)
-    ax.set(title="Daily CPA pairwise Welch tests",
-           xlabel="Campaign • Dark < Bonferroni threshold • Light < 0.05 • Gray ≥ 0.05", ylabel="Campaign")
+    ax.set(title="Step 4 — Primary CPA comparison: two-sided Welch tests",
+           xlabel=f"Raw p-values; colors use CPA-family thresholds (Bonferroni α={ALPHA / len(cpa):.4f}, α=0.05)",
+           ylabel="Campaign")
     fig.colorbar(plt.cm.ScalarMappable(norm=norm, cmap=cmap), ax=ax,
-                 ticks=[ALPHA / len(cpa), ALPHA, 1], label="Raw p-value")
+                 ticks=[ALPHA / len(cpa), ALPHA, 1], label="Raw p-value (CPA family)")
     save_plot(fig, "metric_comparison_heatmap.png")
 
     ordered = totals.sort_values("conversion_rate")
@@ -266,8 +267,25 @@ def main():
     agreement["fisher_bh"] = fisher["significant_fdr"]
     agreement.to_csv(TABLES / "conversion_test_agreement.csv", index=False)
     print(totals.round(5).to_string())
-    for family, frame in families.items():
-        print(f"\n{family}\n{frame.to_string(index=False)}")
+    primary_cpa_columns = [
+        "campaign_a", "campaign_b", "n_a", "n_b", "mean_a", "mean_b",
+        "difference_b_minus_a", "difference_pct_of_a", "t_statistic", "p_value",
+        "cohens_d", "significant_raw", "significant_bonferroni", "p_value_fdr", "significant_fdr",
+    ]
+    paired_cpa_columns = [
+        "campaign_a", "campaign_b", "paired_days", "paired_t_statistic", "paired_p_value",
+        "paired_significant_raw", "paired_significant_bonferroni", "paired_p_value_fdr", "paired_significant_fdr",
+    ]
+    print("\nStep 4 - Primary CPA comparison")
+    print("Two-sided Welch t-tests; one observation is one campaign-day CPA ratio (daily transformed display cost / credited conversions). "
+          "Each valid day has equal weight in the comparison of means.")
+    print(cpa[primary_cpa_columns].to_string(index=False))
+    print("\nStep 4 sensitivity check - same-day paired CPA t-tests (not the primary deliverable)")
+    print(cpa[paired_cpa_columns].to_string(index=False))
+    print("\nDaily conversion-rate comparisons - two-sided Welch tests (separate from Step 4 CPA)")
+    print(rate.to_string(index=False))
+    print("\nPooled conversion-rate comparisons - two-sided Fisher exact tests (separate from Step 4 CPA)")
+    print(fisher.to_string(index=False))
     expected = correction["expected_raw_false_positives_if_all_null"].sum()
     print(f"\nThe all-null benchmark gives {expected:.2f} expected nominal false positives across "
           "the three primary families. The realized false discovery count is unknown.")

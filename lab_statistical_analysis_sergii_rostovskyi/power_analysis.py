@@ -1,7 +1,7 @@
 from itertools import product
 from math import ceil
 
-from data_exploration import DATA, TABLES, FIGURES, save_plot
+from data_exploration import DATA, TABLES, save_plot
 from statistical_analysis import ALPHA
 
 import matplotlib.pyplot as plt
@@ -15,13 +15,15 @@ STANDARD_CV = 0.15
 EFFECTS = [0.05, 0.10, 0.15, 0.20]
 
 
-def empirical_power_cpa(true_diff_pct, base_cpa, n_days, n_sim=1000, alpha=0.05, *, cv=0.15):
+def empirical_power_cpa(true_diff_pct, base_cpa, n_days, n_sim=1000, alpha=0.05, *, cv=STANDARD_CV):
     rng = np.random.default_rng(271_828 + n_days)
     sample_shape = (n_sim, n_days)
     sd = base_cpa * cv
-    floor = base_cpa * 0.50
-    a = np.maximum(rng.normal(base_cpa, sd, sample_shape), floor)
-    b = np.maximum(rng.normal(base_cpa * (1 + true_diff_pct), sd, sample_shape), floor)
+    mean_a = base_cpa
+    mean_b = base_cpa * (1 + true_diff_pct)
+    half_width = 0.50 * base_cpa
+    a = np.clip(rng.normal(mean_a, sd, sample_shape), mean_a - half_width, mean_a + half_width)
+    b = np.clip(rng.normal(mean_b, sd, sample_shape), mean_b - half_width, mean_b + half_width)
     results = ttest_ind(a, b, axis=1, equal_var=False)
     return float((results.pvalue < alpha).mean())
 
@@ -31,7 +33,10 @@ def reference_power(n_days, relative_difference, alpha=ALPHA, cv=STANDARD_CV):
     dof = 2 * n_days - 2
     critical = t.isf(alpha / 2, dof)
     noncentrality = relative_difference / cv * np.sqrt(n_days / 2)
-    return nct.cdf(-critical, dof, noncentrality) + nct.sf(critical, dof, noncentrality)
+    power = nct.cdf(-critical, dof, noncentrality) + nct.sf(critical, dof, noncentrality)
+    if not np.isfinite(power) and noncentrality > critical + 10:
+        return 1.0
+    return power
 
 
 def minimum_days(relative_difference, alpha=ALPHA, cv=STANDARD_CV):
@@ -51,13 +56,19 @@ def plan_sample_sizes(base_cpa, observed_days, bonf_alpha, higher_cv):
     rows = []
     for effect in EFFECTS:
         required = minimum_days(effect)
+        empirical_at_minimum = empirical_power_cpa(effect, base_cpa, required, 8000)
         rows.append({
             "effect_size_pct": round(effect * 100), "observed_days_per_campaign": observed_days,
             "minimum_days_per_arm_reference": required,
             "additional_days_vs_observed": max(0, required - observed_days),
             "observed_status_under_model": "sufficient" if required <= observed_days else "insufficient",
             "day_90_status_under_model": "sufficient" if required <= 90 else "insufficient",
-            "simulated_power_at_minimum": empirical_power_cpa(effect, base_cpa, required, 8000),
+            "empirical_power_at_reference_minimum": empirical_at_minimum,
+            "empirical_at_reference_minimum_status": (
+                "at or above 80% (calculated)"
+                if empirical_at_minimum >= TARGET
+                else "below 80% (calculated)"
+            ),
             "simulated_power_at_observed_days": empirical_power_cpa(effect, base_cpa, observed_days, 8000),
             "simulated_power_at_90_days": empirical_power_cpa(effect, base_cpa, 90, 8000),
             "minimum_days_per_arm_bonferroni": minimum_days(effect, alpha=bonf_alpha),
@@ -75,15 +86,24 @@ def assess_cpa_pairs(pairs):
         n_days = min(row.n_a, row.n_b)
         required = minimum_days(effect)
         power_now = empirical_power_cpa(effect, lower, n_days, 8000)
+        power_at_reference_minimum = empirical_power_cpa(effect, lower, required, 8000)
         rows.append({
             "campaign_a": row.campaign_a, "campaign_b": row.campaign_b,
             "baseline_mean_cpa": lower, "effect_pct_vs_lower_cpa": effect * 100,
             "p_value_fdr": row.p_value_fdr, "current_days_per_arm": n_days,
-            "conditional_power_current_days": power_now,
-            "conditional_power_at_90_days": empirical_power_cpa(effect, lower, 90, 8000),
+            "empirical_power_current_days": power_now,
+            "empirical_power_at_90_days": empirical_power_cpa(effect, lower, 90, 8000),
             "reference_days_for_80_pct": required,
+            "empirical_power_at_reference_days": power_at_reference_minimum,
+            "empirical_at_reference_days_status": (
+                "at or above 80% (calculated)" if power_at_reference_minimum >= TARGET
+                else "below 80% (calculated)"
+            ),
             "additional_days_vs_current": max(0, required - n_days),
-            "assessment": "at least 80% in model" if power_now >= TARGET else "below 80% in model",
+            "current_empirical_assessment": (
+                "at or above 80% (calculated)" if power_now >= TARGET
+                else "below 80% (calculated)"
+            ),
         })
     return pd.DataFrame(rows)
 
@@ -95,7 +115,7 @@ def plot_power(curves, observed_days):
         ax.plot(group["n_days"], group["power"], marker="o", linewidth=2, color=color, label=f"{effect:g}% CPA gap")
     ax.axhline(TARGET, color="#1c2b33", linestyle="--", linewidth=1, label="80% target")
     ax.axvline(observed_days, color="#6e777a", linestyle=":", linewidth=1.1, label=f"{observed_days} observed days")
-    ax.set(title="Power to detect a difference in mean daily CPA",
+    ax.set(title="Empirical power to detect a difference in mean daily CPA",
            xlabel="Independent days per arm", ylabel="Simulated power", ylim=(0, 1.04))
     ax.set_yticks(np.linspace(0, 1, 6), labels=[f"{x:.0%}" for x in np.linspace(0, 1, 6)])
     ax.set_xticks(sorted(curves["n_days"].unique()))
@@ -114,7 +134,7 @@ def main():
     curves = pd.DataFrame([
         {"effect_size_pct": round(effect * 100), "n_days": n_days,
          "power": empirical_power_cpa(effect, base_cpa, n_days, 8000)}
-        for effect, n_days in product(EFFECTS, [15, 30, 60, 90, 120, 180])
+        for effect, n_days in product(EFFECTS, [30, 60, 90, 120, 180])
     ])
     plan = plan_sample_sizes(base_cpa, observed_days, ALPHA / len(pairs), higher_cv)
     pairs_power = assess_cpa_pairs(pairs)
@@ -122,10 +142,11 @@ def main():
     curves.to_csv(TABLES / "power_curves.csv", index=False)
     plan.to_csv(TABLES / "power_sample_size.csv", index=False)
     pairs_power.to_csv(TABLES / "power_current_pairs.csv", index=False)
-    print("Simulated power by effect and days per arm")
+    print("Empirical power by effect and days per arm (8,000 seeded simulations per cell)")
     print(curves.pivot(index="n_days", columns="effect_size_pct", values="power").round(3).to_string())
-    print("\nSample size planning\n" + plan.round(3).to_string(index=False))
-    print("\nConditional planning estimates for BH-significant CPA pairs")
+    print("\n80% minimum days are equal-variance noncentral-t reference-model estimates; empirical power at those sizes is reported separately.\n"
+          + plan.round(3).to_string(index=False))
+    print("\nPer-pair CPA assessment: reference-model estimates and empirical power are separate columns.")
     print(pairs_power.round(3).to_string(index=False))
     sns.set_theme(style="whitegrid", context="notebook")
     plot_power(curves, observed_days)
