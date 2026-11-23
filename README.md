@@ -1,23 +1,30 @@
-# In God we trust, everyone else bring the data
+# Lab — In God we trust, everyone else bring the data
 
-**Track:** Module 5 — Evaluation & strategy · **When:** Week 7, Day 5 · **Status:** Required
+Statistical analysis of 6 marketing channels to decide how to split a $500K monthly budget: t-tests, Cohen's d, Fisher's exact test, multiple-comparison correction (Bonferroni / Benjamini-Hochberg), power analysis, bootstrap confidence intervals and an executive memo.
 
-This repository contains everything you need for this lab.
+**Start here:** [`lab_proof.md`](lab_proof.md)
 
-## Files
+## How to run
+1. Install the libraries (Python 3.10+, SciPy 1.11+ is needed for `false_discovery_control`):
+   ```
+   pip install numpy pandas matplotlib seaborn scipy jupyter
+   ```
+2. Keep `marketing_campaign.csv` in the same folder as the notebook.
+3. Open `lab_statistical_analysis.ipynb` and run all cells top to bottom (Kernel → Restart & Run All). It takes about 20 seconds.
+4. All charts, the cleaned data and the memo are written to `outputs/`.
 
-- [`instructions.md`](./instructions.md) — the lab instructions
-- [`rubric.md`](./rubric.md) — how your submission is graded; this is what the AI reviewer checks your PR against
-
-## How to complete this lab
-
-1. **Fork** this repository.
-2. Do the work described in `instructions.md`, committing to your fork.
-3. Open a **pull request** back into this repository.
-4. You'll receive **AI feedback** on your PR based on `rubric.md`. Address any blocking feedback and push updates to the same PR.
-
-## Submission hygiene
-
-- Keep this repository scoped to this lab only — no unrelated projects or personal files.
-- Use clear, descriptive filenames.
-- Remove secrets, API keys, and tokens before committing.
+## File map
+| File | What it is |
+|---|---|
+| `lab_statistical_analysis.ipynb` | The completed lab notebook (all TODOs and written answers) |
+| `marketing_campaign.csv` | Input data: 22,029 campaigns, 6 channels, 2023 ([source](https://github.com/AnithaInsights/marketing-campaign-performance-analysis), a copy of the [Kaggle Marketing Campaign Performance dataset](https://www.kaggle.com/datasets/manishabhatt22/marketing-campaign-performance-dataset)) |
+| `lab_proof.md` | Entry point: workflow, one run, evidence, final output, a limitation |
+| `reflection.md` | Reflection questions |
+| `outputs/marketing_data.csv` | Cleaned data: one row per channel per day |
+| `outputs/group_metrics_overview.png` | CPA, ROAS, conversion rate, conversions, cost, profit per channel |
+| `outputs/group_distributions.png` | Histograms and box plots of daily CPA and conversion rate |
+| `outputs/metric_comparison_heatmap.png` | p-values of the pairwise CPA t-tests |
+| `outputs/rate_comparison.png` | Conversion rate per channel |
+| `outputs/correction_comparison.png` | Significant results before/after Bonferroni and BH |
+| `outputs/power_analysis_cpa.png` | Power curves for 5–20% CPA differences |
+| `outputs/executive_memo.md` | Final recommendation for the CMO |
