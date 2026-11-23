@@ -1,23 +1,32 @@
-# In God we trust, everyone else bring the data
+# Statistical Analysis Lab: Marketing Channel Budget Allocation
 
-**Track:** Module 5 — Evaluation & strategy · **When:** Week 7, Day 5 · **Status:** Required
+**Lab:** "In God we trust, everyone else bring the data" · **Author:** Barsha Mishra
 
-This repository contains everything you need for this lab.
+The CMO wants to split a **$500K monthly budget** across marketing channels. This lab tests, with statistical rigour, whether any channel is really better, using t-tests, Fisher's exact test, Cohen's d, multiple comparisons correction (Bonferroni, Benjamini-Hochberg), power analysis and bootstrap confidence intervals. The narrative and key findings are in `outputs/executive_memo.md`.
 
-## Files
+## Dataset
+- **Kaggle: Marketing Campaign Performance Dataset** (manishabhatt22): https://www.kaggle.com/datasets/manishabhatt22/marketing-campaign-performance-dataset
+- 200,000 campaign rows, aggregated to **6 channels × 365 days** (2021)
+- Assumptions: `conversions = Conversion_Rate × Clicks`, `revenue = cost × (1 + ROI)`, `cost = Acquisition_Cost`
 
-- [`instructions.md`](./instructions.md) — the lab instructions
-- [`rubric.md`](./rubric.md) — how your submission is graded; this is what the AI reviewer checks your PR against
+## How to run
+1. Download `marketing_campaign_dataset.csv` from Kaggle and place it in this folder. The raw file is not committed, because of its size and Kaggle's terms; the cleaned version is in `outputs/marketing_data.csv`.
+2. Install the packages: `pip install numpy pandas matplotlib seaborn scipy` (SciPy **1.11+** is needed for `false_discovery_control`).
+3. Open `marketing_channel_statistical_analysis.ipynb` and run all cells top to bottom (the power analysis takes about 1 minute).
 
-## How to complete this lab
-
-1. **Fork** this repository.
-2. Do the work described in `instructions.md`, committing to your fork.
-3. Open a **pull request** back into this repository.
-4. You'll receive **AI feedback** on your PR based on `rubric.md`. Address any blocking feedback and push updates to the same PR.
-
-## Submission hygiene
-
-- Keep this repository scoped to this lab only — no unrelated projects or personal files.
-- Use clear, descriptive filenames.
-- Remove secrets, API keys, and tokens before committing.
+## File map
+| File / folder | What it is |
+|---|---|
+| `lab_proof.md` | **Entry point:** workflow, one run with input, evidence, final output, one limitation |
+| `marketing_channel_statistical_analysis.ipynb` | Full analysis: data exploration (Part 1), statistical tests (Part 2), corrections (Part 3), power analysis (Part 4), recommendations (Part 5) |
+| `reflection.md` | Answers to the 4 reflection questions |
+| `outputs/marketing_data.csv` | Cleaned dataset: one row per channel per day |
+| `outputs/executive_memo.md` | Executive memo to the CMO with findings, recommendations and caveats |
+| `outputs/budget_allocation.csv` | Composite score and budget allocation table (vs equal split) |
+| `outputs/cpa_confidence_intervals.csv` | 95% bootstrap confidence intervals for daily CPA per channel |
+| `outputs/group_metrics_overview.png` | CPA, ROAS, conversion rate, conversions, cost and profit per channel |
+| `outputs/group_distributions.png` | Histograms and box plots of daily CPA and conversion rate |
+| `outputs/metric_comparison_heatmap.png` | Pairwise CPA p-values (colour turns at 0.05) |
+| `outputs/rate_comparison.png` | Conversion rate by channel |
+| `outputs/correction_comparison.png` | Significant results before and after Bonferroni / BH correction |
+| `outputs/power_analysis_cpa.png` | Power curves for 5-20% CPA differences |
