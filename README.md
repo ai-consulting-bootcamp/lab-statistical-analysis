@@ -1,23 +1,32 @@
-# In God we trust, everyone else bring the data
+# Marketing campaign performance and budget analysis
 
-**Track:** Module 5 — Evaluation & strategy · **When:** Week 7, Day 5 · **Status:** Required
+Sergii Rostovskyi · 23 November 2026
 
-This repository contains everything you need for this lab.
+| File or folder | Contents |
+| --- | --- |
+| [executive_memo.md](executive_memo.md) | Findings, confidence intervals, power estimates, and the $500,000 budget scenario |
+| [dataset_documentation.md](dataset_documentation.md) | Dataset selection, attribution, validation, metric definitions, and analytical assumptions |
+| [data_exploration.py](data_exploration.py) | Raw-data preparation, campaign summaries, and distribution plots |
+| [statistical_analysis.py](statistical_analysis.py) | Welch and paired t-tests, Fisher tests, effect sizes, multiplicity adjustments, bootstrap intervals, and allocation |
+| [power_analysis.py](power_analysis.py) | CPA power simulation, minimum sample sizes, and data adequacy |
+| [data/](data/) | Prepared campaign-day CSV and source audit |
+| [tables/](tables/) | Full result tables, confidence intervals, statistical findings, and budget allocation |
+| [figures/](figures/) | Six exported figures |
+| [reflection.md](reflection.md) | Interpretation and communication takeaways |
 
-## Files
+## Reproduction
 
-- [`instructions.md`](./instructions.md) — the lab instructions
-- [`rubric.md`](./rubric.md) — how your submission is graded; this is what the AI reviewer checks your PR against
+The analysis uses Python 3.11 or later. The prepared CSV supports offline analysis with the dependencies installed. No credentials are required.
 
-## How to complete this lab
+~~~console
+python -m pip install -r requirements.txt
+python data_exploration.py
+python statistical_analysis.py
+python power_analysis.py
+~~~
 
-1. **Fork** this repository.
-2. Do the work described in `instructions.md`, committing to your fork.
-3. Open a **pull request** back into this repository.
-4. You'll receive **AI feedback** on your PR based on `rubric.md`. Address any blocking feedback and push updates to the same PR.
+The optional source build uses the original Hugging Face archive documented in [dataset_documentation.md](dataset_documentation.md).
 
-## Submission hygiene
-
-- Keep this repository scoped to this lab only — no unrelated projects or personal files.
-- Use clear, descriptive filenames.
-- Remove secrets, API keys, and tokens before committing.
+~~~console
+python data_exploration.py --raw /path/to/criteo_attribution_dataset.tsv.gz
+~~~

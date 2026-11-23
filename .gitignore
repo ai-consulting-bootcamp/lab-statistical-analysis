@@ -1,0 +1,29 @@
+# Local secrets
+.env
+.envrc
+/.streamlit/secrets.toml
+
+# Python environments and bytecode
+.venv/
+__pycache__/
+*.py[codz]
+
+# Test artifacts
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Python packaging
+/build/
+/dist/
+*.egg-info/
+
+# Local project backups
+/tmp/backup-*/
+
+# Notebook and local runtime artifacts
+.ipynb_checkpoints/
+.jupyter/
+.env.*
+!.env.example
