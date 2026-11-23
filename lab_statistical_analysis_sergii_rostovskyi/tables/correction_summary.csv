@@ -1,0 +1,4 @@
+family,tests,expected_raw_false_positives_if_all_null,raw,bonferroni,benjamini_hochberg
+Daily CPA (Welch),21,1.05,21,20,21
+Daily CVR (Welch),21,1.05,20,20,20
+Pooled CVR (Fisher),21,1.05,20,20,20
