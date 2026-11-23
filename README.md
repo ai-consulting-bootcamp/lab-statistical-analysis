@@ -1,23 +1,57 @@
-# In God we trust, everyone else bring the data
+# Marketing Channel Statistical Analysis
 
-**Track:** Module 5 — Evaluation & strategy · **When:** Week 7, Day 5 · **Status:** Required
+Analysis of four marketing channel categories for a proposed
+monthly budget of USD 500,000.
 
-This repository contains everything you need for this lab.
+Start with [lab_proof.md](lab_proof.md) for the run evidence,
+main results and limitations.
 
-## Files
+## File map
 
-- [`instructions.md`](./instructions.md) — the lab instructions
-- [`rubric.md`](./rubric.md) — how your submission is graded; this is what the AI reviewer checks your PR against
+| File or folder | Purpose |
+| --- | --- |
+| instructions.md | Original lab instructions |
+| rubric.md | Original grading criteria |
+| lab_proof.md | Submission evidence and results |
+| lab_statistical_analysis_STUDENT.ipynb | Completed analysis with saved outputs |
+| Marketing.csv | Original downloaded dataset |
+| outputs/ | Prepared data, result tables, six charts and executive memo |
 
-## How to complete this lab
+## How to run
 
-1. **Fork** this repository.
-2. Do the work described in `instructions.md`, committing to your fork.
-3. Open a **pull request** back into this repository.
-4. You'll receive **AI feedback** on your PR based on `rubric.md`. Address any blocking feedback and push updates to the same PR.
+1. Use Python 3.11 and a Jupyter environment.
+2. Install the packages below if needed.
+3. Keep Marketing.csv next to the notebook.
+4. Open the notebook and select the Python environment.
+5. Restart the kernel and run all cells from top to bottom.
 
-## Submission hygiene
+Installation command:
 
-- Keep this repository scoped to this lab only — no unrelated projects or personal files.
-- Use clear, descriptive filenames.
-- Remove secrets, API keys, and tokens before committing.
+    python -m pip install numpy pandas matplotlib seaborn "scipy>=1.11" ipykernel
+
+The notebook creates the outputs folder and saves the results.
+No API keys are required.
+
+## Dataset
+
+Source: [Digital Marketing Metrics & KPIs to Measure — Kaggle](https://www.kaggle.com/datasets/sinderpreet/analyze-the-marketing-spending)
+
+The original file contains 308 campaign-day records from
+1–28 February 2021. The analysis groups campaigns into four
+categories, producing 112 channel-day records.
+
+The original business source, real or synthetic status,
+currency and attribution rules were not independently verified.
+
+## Analysis
+
+The notebook includes marketing metrics, Welch's t-tests,
+Cohen's d, Fisher's exact tests, Bonferroni and BH corrections,
+power simulations, bootstrap intervals and a budget scenario.
+
+See [the executive memo](outputs/executive_memo.md)
+for recommendations and statistical caveats.
+
+## Optional work
+
+The optional reflection was not completed.

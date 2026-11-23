@@ -1,0 +1,4 @@
+family,tests,Bonferroni alpha,uncorrected,Bonferroni,BH-FDR
+CPA (t-test),6,0.008333333333333333,6,6,6
+Conv. rate (t-test),6,0.008333333333333333,6,4,6
+Conv. rate (Fisher),6,0.008333333333333333,6,5,6

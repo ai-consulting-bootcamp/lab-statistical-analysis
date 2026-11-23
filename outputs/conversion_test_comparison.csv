@@ -1,0 +1,7 @@
+group_a,group_b,p_value_welch,significant_welch,p_value_fisher,significant_fisher,agreement
+influencer,media,0.035918854337726264,True,0.0160602009989027,True,True
+influencer,search,1.0025634767153134e-08,True,4.7154460384988344e-36,True,True
+influencer,social,3.2088758434918613e-13,True,7.071416476074064e-210,True,True
+media,search,0.005402761626924249,True,6.057998749694781e-21,True,True
+media,social,2.720736742204705e-05,True,1.2745863852264579e-113,True,True
+search,social,0.018448939030343347,True,4.269765682651116e-18,True,True

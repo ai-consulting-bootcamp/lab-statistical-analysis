@@ -1,0 +1,5 @@
+effect_size_pct,smallest_tested_days_for_80pct,power_at_28_days,status_at_28_days
+5.0,180,0.193,insufficient
+10.0,60,0.669,insufficient
+15.0,28,0.958,sufficient
+20.0,28,0.997,sufficient
