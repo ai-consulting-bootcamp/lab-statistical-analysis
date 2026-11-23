@@ -1,0 +1,7 @@
+group_a,group_b,observed_gap_pct,days_per_group_used,scenario_power,smallest_tested_days_for_80pct
+influencer,media,13.085976782811349,27,0.883,27
+influencer,search,55.03405897651968,27,1.0,27
+influencer,social,93.00569367230335,28,1.0,28
+media,search,37.09397344135093,27,1.0,27
+media,social,70.67164219926471,27,1.0,27
+search,social,24.492446980011387,27,1.0,27
