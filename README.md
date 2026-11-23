@@ -1,4 +1,4 @@
-# In God we trust, everyone else bring the data
+# LAB | Marketing Channel Performance: EDA and Statistical Testing
 
 **Track:** Module 5 — Evaluation & strategy · **When:** Week 7, Day 5 · **Status:** Required
 
