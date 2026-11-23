@@ -1,4 +1,4 @@
-# LAB | Marketing Channel Performance: EDA and Statistical Testing
+# LAB | Marketing Channel Performance: EDA and Statistical A/B Testing
 
 **Track:** Module 5 — Evaluation & strategy · **When:** Week 7, Day 5 · **Status:** Required
 
