@@ -1,0 +1,5 @@
+effect_size_pct,minimum_days_needed,current_90_day_status
+5,180,insufficient
+10,60,sufficient
+15,30,sufficient
+20,30,sufficient

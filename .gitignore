@@ -1,0 +1,27 @@
+# Local environment and secrets
+.env
+.env.*
+*.env
+.secrets/
+secrets/
+credentials/
+
+# API keys, tokens, and certificates
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+
+# Python environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Editor and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
