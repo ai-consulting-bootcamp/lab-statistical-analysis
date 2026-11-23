@@ -1,0 +1,4 @@
+cohens_d,interpretation,required_n_per_group_for_80pct_power
+0.2,small,394
+0.5,medium,64
+0.8,large,26
