@@ -1,0 +1,80 @@
+CPA: Email vs Facebook: mean 285.07 vs 285.57 (+0.17%), p=0.7808, d=0.021 (negligible)
+CPA: Email vs Google Ads: mean 285.07 vs 286.80 (+0.61%), p=0.3377, d=0.071 (negligible)
+CPA: Email vs Instagram: mean 285.07 vs 286.93 (+0.65%), p=0.3233, d=0.073 (negligible)
+CPA: Email vs Website: mean 285.07 vs 283.62 (-0.51%), p=0.4223, d=-0.059 (negligible)
+CPA: Email vs YouTube: mean 285.07 vs 286.44 (+0.48%), p=0.4587, d=0.055 (negligible)
+CPA: Facebook vs Google Ads: mean 285.57 vs 286.80 (+0.43%), p=0.4811, d=0.052 (negligible)
+CPA: Facebook vs Instagram: mean 285.57 vs 286.93 (+0.48%), p=0.457, d=0.055 (negligible)
+CPA: Facebook vs Website: mean 285.57 vs 283.62 (-0.68%), p=0.2685, d=-0.082 (negligible)
+CPA: Facebook vs YouTube: mean 285.57 vs 286.44 (+0.31%), p=0.6264, d=0.036 (negligible)
+CPA: Google Ads vs Instagram: mean 286.80 vs 286.93 (+0.04%), p=0.9455, d=0.005 (negligible)
+CPA: Google Ads vs Website: mean 286.80 vs 283.62 (-1.11%), p=0.07498, d=-0.132 (negligible)
+CPA: Google Ads vs YouTube: mean 286.80 vs 286.44 (-0.12%), p=0.8445, d=-0.015 (negligible)
+CPA: Instagram vs Website: mean 286.93 vs 283.62 (-1.15%), p=0.07578, d=-0.132 (negligible)
+CPA: Instagram vs YouTube: mean 286.93 vs 286.44 (-0.17%), p=0.7987, d=-0.019 (negligible)
+CPA: Website vs YouTube: mean 283.62 vs 286.44 (+1.00%), p=0.1237, d=0.114 (negligible)
+-> 15 comparisons, 0 significant at alpha=0.05
+
+ROAS: Email vs Facebook: mean 6.00 vs 6.03 (+0.48%), p=0.04866, d=0.146 (negligible)
+ROAS: Email vs Google Ads: mean 6.00 vs 6.01 (+0.14%), p=0.5466, d=0.045 (negligible)
+ROAS: Email vs Instagram: mean 6.00 vs 5.99 (-0.16%), p=0.5248, d=-0.047 (negligible)
+ROAS: Email vs Website: mean 6.00 vs 6.01 (+0.21%), p=0.3923, d=0.063 (negligible)
+ROAS: Email vs YouTube: mean 6.00 vs 6.00 (+0.04%), p=0.8601, d=0.013 (negligible)
+ROAS: Facebook vs Google Ads: mean 6.03 vs 6.01 (-0.33%), p=0.1409, d=-0.109 (negligible)
+ROAS: Facebook vs Instagram: mean 6.03 vs 5.99 (-0.63%), p=0.006174, d=-0.203 (small)
+ROAS: Facebook vs Website: mean 6.03 vs 6.01 (-0.26%), p=0.2626, d=-0.083 (negligible)
+ROAS: Facebook vs YouTube: mean 6.03 vs 6.00 (-0.43%), p=0.07197, d=-0.133 (negligible)
+ROAS: Google Ads vs Instagram: mean 6.01 vs 5.99 (-0.30%), p=0.1893, d=-0.097 (negligible)
+ROAS: Google Ads vs Website: mean 6.01 vs 6.01 (+0.07%), p=0.7691, d=0.022 (negligible)
+ROAS: Google Ads vs YouTube: mean 6.01 vs 6.00 (-0.10%), p=0.6749, d=-0.031 (negligible)
+ROAS: Instagram vs Website: mean 5.99 vs 6.01 (+0.37%), p=0.1221, d=0.115 (negligible)
+ROAS: Instagram vs YouTube: mean 5.99 vs 6.00 (+0.20%), p=0.4098, d=0.061 (negligible)
+ROAS: Website vs YouTube: mean 6.01 vs 6.00 (-0.17%), p=0.4962, d=-0.050 (negligible)
+-> 15 comparisons, 2 significant at alpha=0.05
+
+            Conversions    Clicks  Non_Conversions      Rate
+Channel                                                     
+Email           1485425  18493963         17008538  0.080319
+Facebook        1446338  18037947         16591609  0.080183
+Google Ads      1468717  18340807         16872090  0.080079
+Instagram       1462938  18316654         16853716  0.079869
+Website         1477660  18414628         16936968  0.080244
+YouTube         1463649  18350407         16886758  0.079761 
+
+Conversion: Email 8.0319% vs Facebook 8.0183% (-0.17%), OR=1.0018, p=0.1294
+Conversion: Email 8.0319% vs Google Ads 8.0079% (-0.30%), OR=1.0033, p=0.007278
+Conversion: Email 8.0319% vs Instagram 7.9869% (-0.56%), OR=1.0061, p=4.885e-07
+Conversion: Email 8.0319% vs Website 8.0244% (-0.09%), OR=1.0010, p=0.3981
+Conversion: Email 8.0319% vs YouTube 7.9761% (-0.70%), OR=1.0076, p=4.258e-10
+Conversion: Facebook 8.0183% vs Google Ads 8.0079% (-0.13%), OR=1.0014, p=0.2487
+Conversion: Facebook 8.0183% vs Instagram 7.9869% (-0.39%), OR=1.0043, p=0.0004902
+Conversion: Facebook 8.0183% vs Website 8.0244% (+0.08%), OR=0.9992, p=0.5
+Conversion: Facebook 8.0183% vs YouTube 7.9761% (-0.53%), OR=1.0058, p=2.713e-06
+Conversion: Google Ads 8.0079% vs Instagram 7.9869% (-0.26%), OR=1.0029, p=0.01916
+Conversion: Google Ads 8.0079% vs Website 8.0244% (+0.21%), OR=0.9978, p=0.06614
+Conversion: Google Ads 8.0079% vs YouTube 7.9761% (-0.40%), OR=1.0043, p=0.0003818
+Conversion: Instagram 7.9869% vs Website 8.0244% (+0.47%), OR=0.9949, p=2.892e-05
+Conversion: Instagram 7.9869% vs YouTube 7.9761% (-0.14%), OR=1.0015, p=0.2269
+Conversion: Website 8.0244% vs YouTube 7.9761% (-0.60%), OR=1.0066, p=6.892e-08
+-> 15 comparisons, 9 significant at alpha=0.05
+
+Total comparisons (CPA + conversion rate): 30. Expected false positives by chance at alpha=0.05: 1.50
+
+CPA t-tests: uncorrected 0 | Bonferroni (alpha=0.00333) 0 | FDR 0 (of 15)
+ROAS t-tests: uncorrected 2 | Bonferroni (alpha=0.00333) 0 | FDR 0 (of 15)
+Conversion-rate Fisher tests: uncorrected 9 | Bonferroni (alpha=0.00333) 7 | FDR 9 (of 15)
+   still significant after FDR: Email vs Google Ads (adj. p=0.01365)
+   still significant after FDR: Email vs Instagram (adj. p=2.442e-06)
+   still significant after FDR: Email vs YouTube (adj. p=6.387e-09)
+   still significant after FDR: Facebook vs Instagram (adj. p=0.00105)
+   still significant after FDR: Facebook vs YouTube (adj. p=1.017e-05)
+   still significant after FDR: Google Ads vs Instagram (adj. p=0.03193)
+   still significant after FDR: Google Ads vs YouTube (adj. p=0.0009544)
+   still significant after FDR: Instagram vs Website (adj. p=8.675e-05)
+   still significant after FDR: Website vs YouTube (adj. p=5.169e-07)
+
+                           Uncorrected (alpha=0.05)  Bonferroni  FDR (Benjamini-Hochberg)  Comparisons
+CPA (t-test)                                     0           0                         0           15
+Conversion rate (Fisher)                         9           7                         9           15
+
+Saved results/*.csv and figures/.

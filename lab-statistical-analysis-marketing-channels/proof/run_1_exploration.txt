@@ -1,0 +1,60 @@
+=== Raw data ===
+Shape: (200000, 16)
+Columns: ['Campaign_ID', 'Company', 'Campaign_Type', 'Target_Audience', 'Duration', 'Channel_Used', 'Conversion_Rate', 'Acquisition_Cost', 'ROI', 'Location', 'Language', 'Clicks', 'Impressions', 'Engagement_Score', 'Customer_Segment', 'Date']
+   Campaign_ID              Company Campaign_Type Target_Audience Duration Channel_Used  Conversion_Rate Acquisition_Cost   ROI     Location Language  Clicks  Impressions  Engagement_Score     Customer_Segment        Date
+0            1  Innovate Industries         Email       Men 18-24  30 days   Google Ads             0.04       $16,174.00  6.29      Chicago  Spanish     506         1922                 6    Health & Wellness  2021-01-01
+1            2       NexGen Systems         Email     Women 35-44  60 days   Google Ads             0.12       $11,566.00  5.61     New York   German     116         7523                 7         Fashionistas  2021-01-02
+2            3    Alpha Innovations    Influencer       Men 25-34  30 days      YouTube             0.07       $10,200.00  7.18  Los Angeles   French     584         7698                 1  Outdoor Adventurers  2021-01-03
+
+Missing values per column:
+ Campaign_ID         0
+Company             0
+Campaign_Type       0
+Target_Audience     0
+Duration            0
+Channel_Used        0
+Conversion_Rate     0
+Acquisition_Cost    0
+ROI                 0
+Location            0
+Language            0
+Clicks              0
+Impressions         0
+Engagement_Score    0
+Customer_Segment    0
+Date                0
+
+Rows removed in cleaning: 0 of 200000
+
+=== Structure ===
+Groups (channels): ['Email', 'Facebook', 'Google Ads', 'Instagram', 'Website', 'YouTube']
+Campaigns per channel:
+ Channel
+Email         33599
+Google Ads    33438
+YouTube       33392
+Instagram     33392
+Website       33360
+Facebook      32819
+Date range: 2021-01-01 to 2021-12-31 (365 distinct days)
+
+=== Channel summary ===
+            Impressions    Clicks  Conversions         Cost       Revenue  Campaigns  CTR  Conversion_Rate     CPA  ROAS        Profit  Profit_Margin
+Channel                                                                                                                                              
+Website       183806353  18414628      1477660  416593500.0  2.504152e+09      33360  0.1             0.08  281.93  6.01  2.087559e+09           0.83
+Email         184801107  18493963      1485425  420874104.0  2.524644e+09      33599  0.1             0.08  283.34  6.00  2.103770e+09           0.83
+Facebook      180659428  18037947      1446338  410595258.0  2.474541e+09      32819  0.1             0.08  283.89  6.03  2.063945e+09           0.83
+YouTube       183448082  18350407      1463649  416778582.0  2.501105e+09      33392  0.1             0.08  284.75  6.00  2.084326e+09           0.83
+Instagram     183738455  18316654      1462938  417124850.0  2.497101e+09      33392  0.1             0.08  285.13  5.99  2.079977e+09           0.83
+Google Ads    185006879  18340807      1468717  418912314.0  2.516724e+09      33438  0.1             0.08  285.22  6.01  2.097811e+09           0.83
+
+Daily rows per channel:
+ Channel
+Email         365
+Facebook      365
+Google Ads    365
+Instagram     365
+Website       365
+YouTube       365
+
+Saved marketing_data.csv, daily_channel_metrics.csv, group_metrics_summary.csv and figures/.
