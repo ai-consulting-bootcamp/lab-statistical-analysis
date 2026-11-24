@@ -1,0 +1,5 @@
+effect_size_pct,min_days_for_80pct_power,current_days,status
+5,180,365,sufficient
+10,60,365,sufficient
+15,30,365,sufficient
+20,30,365,sufficient
