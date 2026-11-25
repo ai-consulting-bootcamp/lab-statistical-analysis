@@ -1,23 +1,38 @@
-# In God we trust, everyone else bring the data
+# Marketing channel budget allocation – statistical analysis
 
-**Track:** Module 5 — Evaluation & strategy · **When:** Week 7, Day 5 · **Status:** Required
+Ironhack AI Consulting bootcamp lab: *In God we trust, everyone else bring the data*.
+Should the $500K monthly marketing budget be shifted between 6 channels? Answered with t-tests, Fisher's exact test, multiple-comparison correction, power analysis and bootstrap confidence intervals.
 
-This repository contains everything you need for this lab.
+**Start here:** [`lab_proof.md`](lab_proof.md) · **Findings:** [`outputs/executive_memo.md`](outputs/executive_memo.md)
 
-## Files
+## How to run
 
-- [`instructions.md`](./instructions.md) — the lab instructions
-- [`rubric.md`](./rubric.md) — how your submission is graded; this is what the AI reviewer checks your PR against
+1. Python 3.11 with:
+   ```
+   pip install -U pandas numpy scipy matplotlib seaborn kagglehub
+   ```
+   SciPy must be 1.11+ (for `false_discovery_control`).
+2. Open `channel_budget_statistical_analysis.ipynb` and choose **Run All**.
+   The dataset downloads automatically from Kaggle via `kagglehub` (no login needed for this public dataset; if it fails, download the CSV manually and set `CSV_PATH`).
+3. All outputs are written to `outputs/`.
 
-## How to complete this lab
+## File map
 
-1. **Fork** this repository.
-2. Do the work described in `instructions.md`, committing to your fork.
-3. Open a **pull request** back into this repository.
-4. You'll receive **AI feedback** on your PR based on `rubric.md`. Address any blocking feedback and push updates to the same PR.
+| File | What it is |
+|---|---|
+| `lab_proof.md` | Entry point for the reviewer: workflow, one run, evidence, output, limitation |
+| `channel_budget_statistical_analysis.ipynb` | The full analysis, Parts 1–5 |
+| `outputs/marketing_data.csv` | Cleaned data: one row per channel per day (6 × 365) |
+| `outputs/group_metrics_overview.png` | CPA, ROAS, conversion rate, conversions, cost, profit per channel |
+| `outputs/group_distributions.png` | Daily CPA and conversion-rate distributions per channel |
+| `outputs/metric_comparison_heatmap.png` | Pairwise CPA t-test p-values |
+| `outputs/rate_comparison.png` | Conversion rate per channel |
+| `outputs/correction_comparison.png` | Significant pairs before/after Bonferroni and BH correction |
+| `outputs/power_analysis_cpa.png` | Power curves for 5–20% CPA differences |
+| `outputs/executive_memo.md` | Memo to the CMO with findings, recommendation and caveats |
+| `reflection.md` | Personal reflection on the lab |
+| `instructions.md`, `rubric.md` | Lab instructions and rubric from the original repo |
 
-## Submission hygiene
+## Dataset
 
-- Keep this repository scoped to this lab only — no unrelated projects or personal files.
-- Use clear, descriptive filenames.
-- Remove secrets, API keys, and tokens before committing.
+[Marketing Campaign Performance Dataset](https://www.kaggle.com/datasets/manishabhatt22/marketing-campaign-performance-dataset) (Kaggle, manishabhatt22): ~200,000 campaign rows, 6 channels, 2021.
