@@ -1,0 +1,15 @@
+pair,observed_diff_pct,pair_cv,weeks_available,power_full,power_13wk,weeks_needed_for_80
+Meta vs TikTok,21.1,0.37,155,0.999,0.28,49.0
+Meta vs Snapchat,28.0,0.4,154,1.0,0.41,35.0
+Google Display vs Snapchat,96.9,0.43,147,1.0,1.0,
+Google Display vs TikTok,108.2,0.4,147,1.0,1.0,
+Google Display vs Meta,152.1,0.42,147,1.0,1.0,
+Google Search vs Meta,378.8,0.37,155,1.0,1.0,
+Google Search vs TikTok,479.7,0.36,156,1.0,1.0,
+Google Search vs Snapchat,512.9,0.38,154,1.0,1.0,
+Google Display vs LinkedIn,625.0,0.48,147,1.0,1.0,
+Google Display vs Google Search,1107.0,0.4,147,1.0,1.0,
+LinkedIn vs Snapchat,1327.8,0.47,148,1.0,1.0,
+LinkedIn vs TikTok,1409.6,0.44,148,1.0,1.0,
+LinkedIn vs Meta,1727.7,0.46,148,1.0,1.0,
+Google Search vs LinkedIn,8651.1,0.44,148,1.0,1.0,

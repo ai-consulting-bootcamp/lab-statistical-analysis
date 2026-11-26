@@ -1,0 +1,9 @@
+cv,effect_size_pct,min_weeks_simulated,min_weeks_analytic,quarter_13wk,full_data
+0.15,5,145,142,insufficient,sufficient
+0.15,10,37,36,insufficient,sufficient
+0.15,15,18,16,insufficient,sufficient
+0.15,20,11,9,sufficient,sufficient
+0.4,5,1021,1005,insufficient,insufficient
+0.4,10,261,252,insufficient,insufficient
+0.4,15,117,112,insufficient,sufficient
+0.4,20,65,63,insufficient,sufficient

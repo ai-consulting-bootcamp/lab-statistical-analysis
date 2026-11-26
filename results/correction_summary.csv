@@ -1,0 +1,5 @@
+,comparisons,uncorrected,bonferroni,fdr_bh
+CPA (t-test),15,14,14,14
+Conversion rate (Fisher),15,15,15,15
+Conversion rate (weekly t-test),15,15,15,15
+"CPA, last 13 weeks (t-test)",15,12,11,12

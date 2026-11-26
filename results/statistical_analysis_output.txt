@@ -1,0 +1,233 @@
+
+==============================================================================
+STEP 4: WELCH t-TESTS ON WEEKLY CPA (difference = B - A)
+==============================================================================
+Google Display vs Google Search  mean   77.5492 ->    6.4249  diff  -71.1243 (  -91.7%)  t= +24.96  p=9.05e-55  d=-2.91 (large)
+Google Display vs LinkedIn       mean   77.5492 ->  562.2516  diff +484.7024 ( +625.0%)  t= -19.83  p=6.93e-44  d=+2.31 (large)
+Google Display vs Meta           mean   77.5492 ->   30.7632  diff  -46.7859 (  -60.3%)  t= +15.59  p=3.57e-35  d=-1.81 (large)
+Google Display vs Snapchat       mean   77.5492 ->   39.3792  diff  -38.1699 (  -49.2%)  t= +12.22  p=3.85e-26  d=-1.42 (large)
+Google Display vs TikTok         mean   77.5492 ->   37.2461  diff  -40.3031 (  -52.0%)  t= +13.26  p=9.99e-29  d=-1.54 (large)
+ Google Search vs LinkedIn       mean    6.4249 ->  562.2516  diff +555.8267 (+8651.1%)  t= -22.89  p=2.49e-50  d=+2.66 (large)
+ Google Search vs Meta           mean    6.4249 ->   30.7632  diff  +24.3383 ( +378.8%)  t= -24.93  p=7.15e-58  d=+2.83 (large)
+ Google Search vs Snapchat       mean    6.4249 ->   39.3792  diff  +32.9543 ( +512.9%)  t= -25.26  p=1.45e-57  d=+2.88 (large)
+ Google Search vs TikTok         mean    6.4249 ->   37.2461  diff  +30.8212 ( +479.7%)  t= -28.32  p=4.65e-65  d=+3.21 (large)
+      LinkedIn vs Meta           mean  562.2516 ->   30.7632  diff -531.4884 (  -94.5%)  t= +21.87  p=3.81e-48  d=-2.54 (large)
+      LinkedIn vs Snapchat       mean  562.2516 ->   39.3792  diff -522.8724 (  -93.0%)  t= +21.51  p=2.27e-47  d=-2.50 (large)
+      LinkedIn vs TikTok         mean  562.2516 ->   37.2461  diff -525.0055 (  -93.4%)  t= +21.60  p=1.49e-47  d=-2.51 (large)
+          Meta vs Snapchat       mean   30.7632 ->   39.3792  diff   +8.6160 (  +28.0%)  t=  -5.36  p=1.77e-07  d=+0.61 (medium)
+          Meta vs TikTok         mean   30.7632 ->   37.2461  diff   +6.4829 (  +21.1%)  t=  -4.51  p=9.44e-06  d=+0.51 (medium)
+      Snapchat vs TikTok         mean   39.3792 ->   37.2461  diff   -2.1332 (   -5.4%)  t=  +1.27  p=2.05e-01  d=-0.14 (negligible)
+
+cpa: 15 comparisons, 14 significant at alpha=0.05
+
+==============================================================================
+STEP 4 (extra): t-TESTS ON WEEKLY CONVERSION RATE, to compare with Fisher
+==============================================================================
+Google Display vs Google Search  mean    0.0082 ->    0.0360  diff   +0.0278 ( +339.8%)  t= -39.76  p=4.91e-92  d=+4.51 (large)
+Google Display vs LinkedIn       mean    0.0082 ->    0.0064  diff   -0.0018 (  -21.9%)  t=  +6.21  p=1.75e-09  d=-0.71 (medium)
+Google Display vs Meta           mean    0.0082 ->    0.0185  diff   +0.0103 ( +126.3%)  t= -26.77  p=4.47e-76  d=+3.06 (large)
+Google Display vs Snapchat       mean    0.0082 ->    0.0113  diff   +0.0031 (  +38.2%)  t= -10.14  p=5.90e-21  d=+1.16 (large)
+Google Display vs TikTok         mean    0.0082 ->    0.0136  diff   +0.0054 (  +65.8%)  t= -17.27  p=9.15e-47  d=+1.98 (large)
+ Google Search vs LinkedIn       mean    0.0360 ->    0.0064  diff   -0.0296 (  -82.2%)  t= +42.30  p=1.34e-96  d=-4.79 (large)
+ Google Search vs Meta           mean    0.0360 ->    0.0185  diff   -0.0175 (  -48.5%)  t= +23.43  p=2.36e-62  d=-2.66 (large)
+ Google Search vs Snapchat       mean    0.0360 ->    0.0113  diff   -0.0247 (  -68.6%)  t= +34.85  p=7.16e-85  d=-3.95 (large)
+ Google Search vs TikTok         mean    0.0360 ->    0.0136  diff   -0.0224 (  -62.3%)  t= +31.58  p=3.20e-78  d=-3.58 (large)
+      LinkedIn vs Meta           mean    0.0064 ->    0.0185  diff   +0.0121 ( +189.6%)  t= -31.36  p=5.83e-90  d=+3.56 (large)
+      LinkedIn vs Snapchat       mean    0.0064 ->    0.0113  diff   +0.0049 (  +76.8%)  t= -15.91  p=7.16e-42  d=+1.80 (large)
+      LinkedIn vs TikTok         mean    0.0064 ->    0.0136  diff   +0.0072 ( +112.2%)  t= -22.95  p=2.78e-68  d=+2.60 (large)
+          Meta vs Snapchat       mean    0.0185 ->    0.0113  diff   -0.0072 (  -38.9%)  t= +17.94  p=2.81e-48  d=-2.04 (large)
+          Meta vs TikTok         mean    0.0185 ->    0.0136  diff   -0.0049 (  -26.7%)  t= +12.22  p=7.90e-28  d=-1.39 (large)
+      Snapchat vs TikTok         mean    0.0113 ->    0.0136  diff   +0.0023 (  +20.0%)  t=  -6.82  p=4.69e-11  d=+0.77 (medium)
+
+conversion_rate: 15 comparisons, 15 significant at alpha=0.05
+
+==============================================================================
+STEP 5: FISHER'S EXACT TEST ON CONVERSIONS OUT OF CLICKS
+==============================================================================
+                conversions  total_attempts  non_conversions      rate
+platform                                                              
+Google Display         3268          368862           365594  0.008860
+Google Search         85289         2250473          2165184  0.037898
+LinkedIn                943          132172           131229  0.007135
+Meta                  17031          877366           860335  0.019412
+Snapchat               7989          652675           644686  0.012240
+TikTok                11123          777504           766381  0.014306
+
+Google Display vs Google Search  0.886% vs 3.790%  diff +2.904% (+327.8%)  OR=0.227  p=0.00e+00
+Google Display vs LinkedIn       0.886% vs 0.713%  diff -0.173% ( -19.5%)  OR=1.244  p=2.31e-09
+Google Display vs Meta           0.886% vs 1.941%  diff +1.055% (+119.1%)  OR=0.452  p=0.00e+00
+Google Display vs Snapchat       0.886% vs 1.224%  diff +0.338% ( +38.2%)  OR=0.721  p=1.93e-57
+Google Display vs TikTok         0.886% vs 1.431%  diff +0.545% ( +61.5%)  OR=0.616  p=2.26e-140
+ Google Search vs LinkedIn       3.790% vs 0.713%  diff -3.076% ( -81.2%)  OR=5.482  p=0.00e+00
+ Google Search vs Meta           3.790% vs 1.941%  diff -1.849% ( -48.8%)  OR=1.990  p=0.00e+00
+ Google Search vs Snapchat       3.790% vs 1.224%  diff -2.566% ( -67.7%)  OR=3.179  p=0.00e+00
+ Google Search vs TikTok         3.790% vs 1.431%  diff -2.359% ( -62.3%)  OR=2.714  p=0.00e+00
+      LinkedIn vs Meta           0.713% vs 1.941%  diff +1.228% (+172.1%)  OR=0.363  p=1.11e-270
+      LinkedIn vs Snapchat       0.713% vs 1.224%  diff +0.511% ( +71.6%)  OR=0.580  p=5.37e-64
+      LinkedIn vs TikTok         0.713% vs 1.431%  diff +0.717% (+100.5%)  OR=0.495  p=1.36e-114
+          Meta vs Snapchat       1.941% vs 1.224%  diff -0.717% ( -36.9%)  OR=1.597  p=5.02e-270
+          Meta vs TikTok         1.941% vs 1.431%  diff -0.511% ( -26.3%)  OR=1.364  p=4.62e-143
+      Snapchat vs TikTok         1.224% vs 1.431%  diff +0.207% ( +16.9%)  OR=0.854  p=6.35e-27
+
+Fisher: 15 comparisons, 15 significant at alpha=0.05
+
+Fisher vs t-test on conversion rate (same pairs):
+       group_a       group_b  p_value_fisher  p_value_ttest
+Google Display Google Search        0.00e+00       4.91e-92
+Google Display      LinkedIn        2.31e-09       1.75e-09
+Google Display          Meta        0.00e+00       4.47e-76
+Google Display      Snapchat        1.93e-57       5.90e-21
+Google Display        TikTok       2.26e-140       9.15e-47
+ Google Search      LinkedIn        0.00e+00       1.34e-96
+ Google Search          Meta        0.00e+00       2.36e-62
+ Google Search      Snapchat        0.00e+00       7.16e-85
+ Google Search        TikTok        0.00e+00       3.20e-78
+      LinkedIn          Meta       1.11e-270       5.83e-90
+      LinkedIn      Snapchat        5.37e-64       7.16e-42
+      LinkedIn        TikTok       1.36e-114       2.78e-68
+          Meta      Snapchat       5.02e-270       2.81e-48
+          Meta        TikTok       4.62e-143       7.90e-28
+      Snapchat        TikTok        6.35e-27       4.69e-11
+-> Fisher treats every click (~5M) as an independent trial, so even a 0.2pp gap gets p~1e-50.
+   The weekly t-test uses ~155 weekly rates per channel and keeps week-to-week noise, so its
+   p-values are much larger. Clicks within a week are not independent (same ads, audiences,
+   seasonality), so Fisher's p-values here are overconfident. Both agree on direction.
+
+==============================================================================
+STEP 6.1: THE MULTIPLE-COMPARISONS PROBLEM
+==============================================================================
+Primary family: 15 CPA t-tests + 15 conversion-rate Fisher tests = 30
+Expected false positives at alpha=0.05 if every null were true: 30 x 0.05 = 1.5
+P(at least one false positive) if all nulls true: 1 - 0.95^30 = 79%
+So some 'significant' results in an uncorrected table are expected to be noise.
+
+==============================================================================
+STEP 6.2-6.3: BONFERRONI AND BENJAMINI-HOCHBERG
+==============================================================================
+
+CPA (Welch t-test): m=15, Bonferroni alpha = 0.05/15 = 0.00333
+  uncorrected: 14  Bonferroni: 14  FDR (BH): 14
+  Significant after FDR:
+       group_a       group_b  p_value  p_value_fdr  cohens_d  significant_bonferroni  significant_fdr
+Google Display Google Search 9.05e-55     3.39e-54     -2.91                    True             True
+Google Display      LinkedIn 6.93e-44     1.15e-43      2.31                    True             True
+Google Display          Meta 3.57e-35     5.35e-35     -1.81                    True             True
+Google Display      Snapchat 3.85e-26     4.81e-26     -1.42                    True             True
+Google Display        TikTok 9.99e-29     1.36e-28     -1.54                    True             True
+ Google Search      LinkedIn 2.49e-50     7.46e-50      2.66                    True             True
+ Google Search          Meta 7.15e-58     5.36e-57      2.83                    True             True
+ Google Search      Snapchat 1.45e-57     7.24e-57      2.88                    True             True
+ Google Search        TikTok 4.65e-65     6.98e-64      3.21                    True             True
+      LinkedIn          Meta 3.81e-48     9.53e-48     -2.54                    True             True
+      LinkedIn      Snapchat 2.27e-47     4.26e-47      -2.5                    True             True
+      LinkedIn        TikTok 1.49e-47      3.2e-47     -2.51                    True             True
+          Meta      Snapchat 1.77e-07     2.04e-07      0.61                    True             True
+          Meta        TikTok 9.44e-06     1.01e-05     0.511                    True             True
+  NOT significant after FDR:
+ group_a group_b  p_value  p_value_fdr  cohens_d  significant_bonferroni  significant_fdr
+Snapchat  TikTok    0.205        0.205    -0.144                   False            False
+
+Conversion rate (Fisher): m=15, Bonferroni alpha = 0.05/15 = 0.00333
+  uncorrected: 15  Bonferroni: 15  FDR (BH): 15
+  Significant after FDR:
+       group_a       group_b   p_value  p_value_fdr  significant_bonferroni  significant_fdr
+Google Display Google Search         0            0                    True             True
+Google Display      LinkedIn  2.31e-09     2.31e-09                    True             True
+Google Display          Meta         0            0                    True             True
+Google Display      Snapchat  1.93e-57     2.23e-57                    True             True
+Google Display        TikTok 2.26e-140    3.39e-140                    True             True
+ Google Search      LinkedIn         0            0                    True             True
+ Google Search          Meta         0            0                    True             True
+ Google Search      Snapchat         0            0                    True             True
+ Google Search        TikTok         0            0                    True             True
+      LinkedIn          Meta 1.11e-270    2.38e-270                    True             True
+      LinkedIn      Snapchat  5.37e-64     6.72e-64                    True             True
+      LinkedIn        TikTok 1.36e-114    1.86e-114                    True             True
+          Meta      Snapchat 5.02e-270    9.41e-270                    True             True
+          Meta        TikTok 4.62e-143     7.7e-143                    True             True
+      Snapchat        TikTok  6.35e-27      6.8e-27                    True             True
+  NOT significant after FDR:
+    (none)
+
+Conversion rate (weekly t-test, supplementary): m=15, Bonferroni alpha = 0.05/15 = 0.00333
+  uncorrected: 15  Bonferroni: 15  FDR (BH): 15
+  Significant after FDR:
+       group_a       group_b  p_value  p_value_fdr  cohens_d  significant_bonferroni  significant_fdr
+Google Display Google Search 4.91e-92     3.68e-91      4.51                    True             True
+Google Display      LinkedIn 1.75e-09     1.75e-09    -0.712                    True             True
+Google Display          Meta 4.47e-76     1.12e-75      3.06                    True             True
+Google Display      Snapchat  5.9e-21     6.81e-21      1.16                    True             True
+Google Display        TikTok 9.15e-47     1.37e-46      1.98                    True             True
+ Google Search      LinkedIn 1.34e-96     2.02e-95     -4.79                    True             True
+ Google Search          Meta 2.36e-62     4.42e-62     -2.66                    True             True
+ Google Search      Snapchat 7.16e-85     2.69e-84     -3.95                    True             True
+ Google Search        TikTok  3.2e-78      9.6e-78     -3.58                    True             True
+      LinkedIn          Meta 5.83e-90     2.91e-89      3.56                    True             True
+      LinkedIn      Snapchat 7.16e-42     9.77e-42       1.8                    True             True
+      LinkedIn        TikTok 2.78e-68     5.96e-68       2.6                    True             True
+          Meta      Snapchat 2.81e-48     4.68e-48     -2.04                    True             True
+          Meta        TikTok  7.9e-28     9.87e-28     -1.39                    True             True
+      Snapchat        TikTok 4.69e-11     5.02e-11     0.774                    True             True
+  NOT significant after FDR:
+    (none)
+
+==============================================================================
+STEP 6 (extra): QUARTERLY LENS, last 13 weeks (~90 days) of CPA only
+==============================================================================
+Three years of data make almost every gap obvious, so correction has little to remove.
+A CMO usually reviews the last quarter. Re-running the CPA family on the final 13 weeks
+shows what correction does when samples are small and p-values sit near the threshold.
+
+cpa: 15 comparisons, 12 significant at alpha=0.05
+
+CPA, last 13 weeks (Welch t-test): m=15, Bonferroni alpha = 0.05/15 = 0.00333
+  uncorrected: 12  Bonferroni: 11  FDR (BH): 12
+  Significant after FDR:
+       group_a       group_b  p_value  p_value_fdr  cohens_d  significant_bonferroni  significant_fdr
+Google Display Google Search 1.53e-05     2.55e-05     -3.68                    True             True
+Google Display      LinkedIn 1.27e-05     2.37e-05      2.76                    True             True
+Google Display          Meta  0.00117      0.00176     -1.96                    True             True
+Google Display      Snapchat  0.00319      0.00435     -1.56                    True             True
+Google Display        TikTok  0.00431      0.00539     -1.57                   False             True
+ Google Search      LinkedIn 4.98e-06     1.79e-05      3.05                    True             True
+ Google Search          Meta 1.45e-09     2.17e-08      4.96                    True             True
+ Google Search      Snapchat 8.68e-07     4.34e-06       3.4                    True             True
+ Google Search        TikTok 5.21e-09      3.9e-08      4.87                    True             True
+      LinkedIn          Meta 7.61e-06     1.79e-05     -2.92                    True             True
+      LinkedIn      Snapchat  8.1e-06     1.79e-05      -2.9                    True             True
+      LinkedIn        TikTok 8.36e-06     1.79e-05      -2.9                    True             True
+  NOT significant after FDR:
+ group_a  group_b  p_value  p_value_fdr  cohens_d  significant_bonferroni  significant_fdr
+    Meta Snapchat    0.297        0.318     0.421                   False            False
+    Meta   TikTok   0.0776       0.0895     0.725                   False            False
+Snapchat   TikTok    0.715        0.715     0.145                   False            False
+  Lost significance under Bonferroni:
+       group_a group_b  p_value  p_value_fdr  cohens_d  significant_bonferroni  significant_fdr
+Google Display  TikTok  0.00431      0.00539     -1.57                   False             True
+
+Pairs significant on 3 years but NOT on the last quarter (after FDR):
+group_a  group_b  n_a  n_b  p_value  p_value_fdr
+   Meta Snapchat   13   13    0.297        0.318
+   Meta   TikTok   13   13   0.0776       0.0895
+-> Meta's CPA lead over Snapchat/TikTok (~20-28%) is real on 155 weeks but invisible in a
+   13-week review: an underpowered test, not evidence of 'no difference'. See power_analysis.py.
+
+==============================================================================
+STEP 6.4: SUMMARY OF CORRECTION METHODS
+==============================================================================
+                                 comparisons  uncorrected  bonferroni  fdr_bh
+CPA (t-test)                              15           14          14      14
+Conversion rate (Fisher)                  15           15          15      15
+Conversion rate (weekly t-test)           15           15          15      15
+CPA, last 13 weeks (t-test)               15           12          11      12
+
+==============================================================================
+KEY INSIGHTS
+==============================================================================
+- 14/15 CPA gaps survive FDR; exceptions: Snapchat vs TikTok (p_fdr=0.20, d=-0.14).
+- These channels differ by multiples, not percentages, so correction barely changes the picture.
+  Its value shows up exactly at the margin: the near-tied mid-tier pairs.
+- FDR is the better default for a budget review (we accept a few false leads to keep power);
+  Bonferroni fits when a single false positive is costly, e.g. killing a channel outright.
+
+Saved results/*.csv and figures/metric_comparison_heatmap.png, rate_comparison.png, correction_comparison.png

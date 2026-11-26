@@ -1,0 +1,30 @@
+metric,better,worse,abs_difference,p_value_fdr,cohens_d,effect
+CPA (weekly mean),Google Search,Google Display,71.12425475078355,3.3920094696247946e-54,2.9114178112841724,large
+CPA (weekly mean),Google Display,LinkedIn,484.7024413945253,1.1544886386098909e-43,2.3052034550834,large
+CPA (weekly mean),Meta,Google Display,46.78593638623043,5.352840126420271e-35,1.8136705000258673,large
+CPA (weekly mean),Snapchat,Google Display,38.169918333290894,4.81187414249205e-26,1.4199113451150256,large
+CPA (weekly mean),TikTok,Google Display,40.30307408572518,1.3624636766452909e-28,1.5411098395919374,large
+CPA (weekly mean),Google Search,LinkedIn,555.8266961453088,7.462363016802182e-50,2.661328483813406,large
+CPA (weekly mean),Google Search,Meta,24.33831836455311,5.362650931610542e-57,2.831076052772819,large
+CPA (weekly mean),Google Search,Snapchat,32.95433641749265,7.239380076525459e-57,2.878192646683049,large
+CPA (weekly mean),Google Search,TikTok,30.821180665058364,6.977898169987808e-64,3.206641992213088,large
+CPA (weekly mean),Meta,LinkedIn,531.4883777807556,9.531224318918355e-48,2.542795081704829,large
+CPA (weekly mean),Snapchat,LinkedIn,522.8723597278162,4.262998294422251e-47,2.4999378374171433,large
+CPA (weekly mean),TikTok,LinkedIn,525.0055154802504,3.2005940565234877e-47,2.511248157224532,large
+CPA (weekly mean),Meta,Snapchat,8.616018052939538,2.03930628482285e-07,0.6096321191452567,medium
+CPA (weekly mean),Meta,TikTok,6.4828623005052535,1.011868889660362e-05,0.5108653977384321,medium
+Conversion rate,Google Search,Google Display,0.0290385732261311,0.0,,-
+Conversion rate,Google Display,LinkedIn,0.0017250392024214,2.3053358591806743e-09,,-
+Conversion rate,Meta,Google Display,0.0105518293328448,0.0,,-
+Conversion rate,Snapchat,Google Display,0.0033807133556091,2.2260906297996437e-57,,-
+Conversion rate,TikTok,Google Display,0.0054463537839034,3.3926354504440624e-140,,-
+Conversion rate,Google Search,LinkedIn,0.0307636124285525,0.0,,-
+Conversion rate,Google Search,Meta,0.0184867438932863,0.0,,-
+Conversion rate,Google Search,Snapchat,0.025657859870522,0.0,,-
+Conversion rate,Google Search,TikTok,0.0235922194422276,0.0,,-
+Conversion rate,Meta,LinkedIn,0.0122768685352662,2.3786275861920122e-270,,-
+Conversion rate,Snapchat,LinkedIn,0.0051057525580305,6.715728784057724e-64,,-
+Conversion rate,TikTok,LinkedIn,0.0071713929863248,1.8610997563985642e-114,,-
+Conversion rate,Meta,Snapchat,0.0071711159772357,9.407939987851431e-270,,-
+Conversion rate,Meta,TikTok,0.0051054755489413,7.695223518880376e-143,,-
+Conversion rate,TikTok,Snapchat,0.0020656404282943,6.800511674917758e-27,,-

@@ -1,0 +1,143 @@
+
+==============================================================================
+LOAD
+==============================================================================
+Shape: (30000, 35)
+Columns: ['date', 'year', 'month', 'month_name', 'week', 'day_of_week', 'post_hour', 'season', 'is_holiday', 'is_holiday (text)', 'is_weekend', 'is_weekend (text)', 'country', 'market_tier', 'account', 'account_type', 'platform', 'placement', 'funnel_stage', 'objective', 'theme', 'campaign_id', 'campaign_name', 'ad_group_id', 'ad_group_name', 'ad_id', 'ad_name', 'spend', 'impressions', 'reach', 'frequency', 'clicks', 'conversions', 'revenue', 'video_views']
+str        21
+int64      11
+float64     3
+         date        platform    objective   spend  clicks  conversions  revenue
+0  08/04/2023          TikTok        Reach  871.17    1440            0     0.00
+1  28/04/2025            Meta  Video Views  362.55     283            0     0.00
+2  18/12/2024  Google Display        Sales  362.09    1238            7   671.74
+3  26/04/2024        Snapchat      Traffic   54.45      83            0     0.00
+4  19/04/2024            Meta        Reach   56.18      59            0     0.00
+
+==============================================================================
+STRUCTURE AND QUALITY
+==============================================================================
+Date range: 2023-01-01 to 2025-12-31 (1096 distinct days)
+Missing values: 0
+Exact duplicate rows: 0
+  clicks > impressions                   0
+  conversions > clicks                   0
+  negative spend/clicks/conv/revenue     0
+  zero spend                             0
+
+Grouping variable: platform (6 channels)
+platform
+Meta              6867
+Google Search     5709
+TikTok            5467
+LinkedIn          5339
+Snapchat          3603
+Google Display    3015
+
+Spend vs conversions/revenue by campaign objective:
+                 spend  conversions     revenue
+objective                                      
+Engagement   1579698.0         4531         0.0
+Leads        1685818.0       181910   3938524.0
+Reach        3184180.0         2258         0.0
+Sales        2081156.0       126984  10332831.0
+Traffic      1974368.0         5555         0.0
+Video Views  2131190.0         1560         0.0
+
+-> Reach/Traffic/Engagement/Video Views campaigns spend ~$8.9M but produce almost no
+   conversions and zero revenue by design. Including them would make CPA a measure of
+   how much awareness spend a platform carries, not how well it sells. Leads carry a
+   lead-value *proxy* as revenue, not purchases. For an e-commerce budget question the
+   right population is objective == 'Sales' (purchase-optimised campaigns).
+
+Sales rows, per ad-day distribution (heavy right tail, kept, not errors):
+             median      p99       max
+spend         203.6   1724.7    2824.6
+clicks        338.0   7895.1   27605.0
+conversions     5.0    298.5    1186.0
+revenue       338.6  25082.6  104733.4
+Sales ad-days with zero conversions: 11.6%
+
+==============================================================================
+PREPARE: platform x week panel
+==============================================================================
+Why weekly, not daily: Sales campaigns average ~0.8 rows per platform per day, so many
+platform-days have 0 or 1 ads and CPA is undefined or one ad's luck. Weekly sums give
+~5 ads per cell and ~155 complete weeks per platform. Partial first/last weeks are dropped.
+
+Saved data/marketing_data.csv: 926 rows
+Transformations: parsed dd/mm/yyyy dates; kept objective == 'Sales' (5,453 of 30,000 rows);
+summed to platform x ISO week; dropped partial edge weeks; derived CTR, CVR, CPA, ROAS,
+profit; division-by-zero CPA/ROAS set to NaN.
+
+Groups: 6
+                weeks   ads  weeks_zero_conv first_week  last_week
+platform                                                          
+Google Display    148   543                1 2023-01-02 2025-12-22
+Google Search     156  1029                0 2023-01-02 2025-12-22
+LinkedIn          156   980                8 2023-01-02 2025-12-22
+Meta              155  1208                0 2023-01-02 2025-12-22
+Snapchat          155   654                1 2023-01-02 2025-12-22
+TikTok            156  1010                0 2023-01-02 2025-12-22
+
+==============================================================================
+KEY METRICS BY CHANNEL (totals over the whole period)
+==============================================================================
+                impressions   clicks  conversions       cost     revenue    ctr conversion_rate     cpa   roas      profit profit_margin
+platform                                                                                                                                
+Google Search      33613135  2250473        85289  452469.77  7569138.24   6.7%           3.79%    5.31  16.73  7116668.47        94.02%
+Meta               61653739   877366        17031  431050.35  1153987.10  1.42%           1.94%   25.31   2.68   722936.75        62.65%
+Snapchat           58022780   652675         7989  242402.74   427452.89  1.12%           1.22%   30.34   1.76   185050.15        43.29%
+TikTok             67358050   777504        11123  344027.59   665804.11  1.15%           1.43%   30.93   1.94   321776.52        48.33%
+Google Display     43839965   368862         3268  188049.75   228423.89  0.84%           0.89%   57.54   1.21    40374.14        17.68%
+LinkedIn           16614780   132172          943  406965.42   177532.39   0.8%           0.71%  431.56   0.44  -229433.03      -129.23%
+
+==============================================================================
+WEEKLY DISTRIBUTIONS (variability)
+==============================================================================
+                    cpa          conversion_rate           roas       
+                   mean      std            mean    std    mean    std
+platform                                                              
+Google Display   77.549   34.472           0.008  0.002   1.180  0.735
+Google Search     6.425    2.292           0.036  0.008  15.846  7.563
+LinkedIn        562.252  295.354           0.006  0.003   0.399  0.249
+Meta             30.763   11.940           0.019  0.004   2.535  1.241
+Snapchat         39.379   16.029           0.011  0.003   1.605  0.830
+TikTok           37.246   13.398           0.014  0.003   1.818  0.730
+
+Coefficient of variation (std / mean) per platform:
+                cpa_cv  conversion_rate_cv  roas_cv
+platform                                           
+Google Display    0.44                0.30     0.62
+Google Search     0.36                0.23     0.48
+LinkedIn          0.53                0.40     0.62
+Meta              0.39                0.22     0.49
+Snapchat          0.41                0.26     0.52
+TikTok            0.36                0.22     0.40
+
+Mean weekly CPA CV across platforms: 0.41 (the lab's power simulation assumes 0.15; Part 4 tests both)
+
+==============================================================================
+SEASONALITY (pooled CPA by quarter)
+==============================================================================
+platform  Google Display  Google Search  LinkedIn   Meta  Snapchat  TikTok
+quarter                                                                   
+Q1                 74.62           6.54    518.92  30.07     36.56   36.82
+Q2                 76.63           6.56    531.08  32.22     38.43   38.13
+Q3                 72.22           6.40    556.72  30.02     41.72   38.73
+Q4                 37.27           3.70    302.23  18.58     22.07   23.16
+-> Q4 CPA is ~40% below Q1-Q3 on every platform (holiday demand). Rankings are stable across
+   quarters, but levels are not: any short-window comparison must say which season it covers.
+
+==============================================================================
+KEY INSIGHTS
+==============================================================================
+- Best CPA: Google Search ($5.31); worst: LinkedIn ($431.56).
+- Best ROAS: Google Search (16.73x). ROAS < 1 (loses money): LinkedIn.
+- Most variable weekly CPA (CV): LinkedIn (0.53).
+- Meta, Snapchat and TikTok sit in a tight $25-31 CPA cluster: that is where the tests matter.
+- Mean of weekly CPAs is above the pooled CPA (e.g. Google Search $6.43 vs $5.31): averaging
+  ratios over-weights low-volume weeks. Tests use weekly values; the budget view uses pooled totals.
+- Outliers are single big-revenue weeks (right tail), not data errors; kept.
+
+Saved figures/group_metrics_overview.png and figures/group_distributions.png
