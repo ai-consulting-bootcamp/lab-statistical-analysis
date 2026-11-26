@@ -2,7 +2,6 @@
 ==============================================================================
 LOAD
 ==============================================================================
-Downloading https://huggingface.co/datasets/jason1966/alinaboulsi_digital-marketing-performance-dataset/resolve/aaa929af5f0b69f6c49ab409f718ff836825c744/digital_marketing_dataset_30k.csv
 Shape: (30000, 35)
 Columns: ['date', 'year', 'month', 'month_name', 'week', 'day_of_week', 'post_hour', 'season', 'is_holiday', 'is_holiday (text)', 'is_weekend', 'is_weekend (text)', 'country', 'market_tier', 'account', 'account_type', 'platform', 'placement', 'funnel_stage', 'objective', 'theme', 'campaign_id', 'campaign_name', 'ad_group_id', 'ad_group_name', 'ad_id', 'ad_name', 'spend', 'impressions', 'reach', 'frequency', 'clicks', 'conversions', 'revenue', 'video_views']
 str        21
