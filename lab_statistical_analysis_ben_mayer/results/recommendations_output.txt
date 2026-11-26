@@ -1,0 +1,92 @@
+
+==============================================================================
+STEP 8.1: SIGNIFICANT FINDINGS AFTER BENJAMINI-HOCHBERG FDR
+==============================================================================
+  [CPA (weekly mean)]  Google Search beats Google Display       $71.12 lower CPA  p_fdr=3.4e-54, d=2.91 (large)
+  [CPA (weekly mean)] Google Display beats LinkedIn            $484.70 lower CPA  p_fdr=1.2e-43, d=2.31 (large)
+  [CPA (weekly mean)]           Meta beats Google Display       $46.79 lower CPA  p_fdr=5.4e-35, d=1.81 (large)
+  [CPA (weekly mean)]       Snapchat beats Google Display       $38.17 lower CPA  p_fdr=4.8e-26, d=1.42 (large)
+  [CPA (weekly mean)]         TikTok beats Google Display       $40.30 lower CPA  p_fdr=1.4e-28, d=1.54 (large)
+  [CPA (weekly mean)]  Google Search beats LinkedIn            $555.83 lower CPA  p_fdr=7.5e-50, d=2.66 (large)
+  [CPA (weekly mean)]  Google Search beats Meta                 $24.34 lower CPA  p_fdr=5.4e-57, d=2.83 (large)
+  [CPA (weekly mean)]  Google Search beats Snapchat             $32.95 lower CPA  p_fdr=7.2e-57, d=2.88 (large)
+  [CPA (weekly mean)]  Google Search beats TikTok               $30.82 lower CPA  p_fdr=7.0e-64, d=3.21 (large)
+  [CPA (weekly mean)]           Meta beats LinkedIn            $531.49 lower CPA  p_fdr=9.5e-48, d=2.54 (large)
+  [CPA (weekly mean)]       Snapchat beats LinkedIn            $522.87 lower CPA  p_fdr=4.3e-47, d=2.50 (large)
+  [CPA (weekly mean)]         TikTok beats LinkedIn            $525.01 lower CPA  p_fdr=3.2e-47, d=2.51 (large)
+  [CPA (weekly mean)]           Meta beats Snapchat              $8.62 lower CPA  p_fdr=2.0e-07, d=0.61 (medium)
+  [CPA (weekly mean)]           Meta beats TikTok                $6.48 lower CPA  p_fdr=1.0e-05, d=0.51 (medium)
+  [Conversion rate  ]  Google Search beats Google Display       2.90% higher CVR  p_fdr=0.0e+00
+  [Conversion rate  ] Google Display beats LinkedIn             0.17% higher CVR  p_fdr=2.3e-09
+  [Conversion rate  ]           Meta beats Google Display       1.06% higher CVR  p_fdr=0.0e+00
+  [Conversion rate  ]       Snapchat beats Google Display       0.34% higher CVR  p_fdr=2.2e-57
+  [Conversion rate  ]         TikTok beats Google Display       0.54% higher CVR  p_fdr=3.4e-140
+  [Conversion rate  ]  Google Search beats LinkedIn             3.08% higher CVR  p_fdr=0.0e+00
+  [Conversion rate  ]  Google Search beats Meta                 1.85% higher CVR  p_fdr=0.0e+00
+  [Conversion rate  ]  Google Search beats Snapchat             2.57% higher CVR  p_fdr=0.0e+00
+  [Conversion rate  ]  Google Search beats TikTok               2.36% higher CVR  p_fdr=0.0e+00
+  [Conversion rate  ]           Meta beats LinkedIn             1.23% higher CVR  p_fdr=2.4e-270
+  [Conversion rate  ]       Snapchat beats LinkedIn             0.51% higher CVR  p_fdr=6.7e-64
+  [Conversion rate  ]         TikTok beats LinkedIn             0.72% higher CVR  p_fdr=1.9e-114
+  [Conversion rate  ]           Meta beats Snapchat             0.72% higher CVR  p_fdr=9.4e-270
+  [Conversion rate  ]           Meta beats TikTok               0.51% higher CVR  p_fdr=7.7e-143
+  [Conversion rate  ]         TikTok beats Snapchat             0.21% higher CVR  p_fdr=6.8e-27
+
+29 significant findings (14 CPA, 15 conversion rate).
+Not significant: Snapchat vs TikTok on CPA -> treated as a tie below.
+
+==============================================================================
+STEP 8.2: 95% BOOTSTRAP CONFIDENCE INTERVALS FOR MEAN WEEKLY CPA
+==============================================================================
+       channel  weeks  mean_cpa  ci_lower  ci_upper  ci_width_pct  last13_mean  last13_ci_lower  last13_ci_upper  last13_width_pct
+ Google Search    156      6.42      6.08      6.76         10.57         4.44             3.64             5.31             37.59
+          Meta    155     30.76     28.87     32.56         11.96        20.19            17.96            22.29             21.46
+        TikTok    156     37.25     35.13     39.45         11.58        23.67            21.01            26.86             24.71
+      Snapchat    154     39.38     37.04     41.95         12.48        22.74            19.21            27.43             36.13
+Google Display    147     77.55     72.36     82.85         13.53        39.79            31.97            47.37             38.69
+      LinkedIn    148    562.25    515.87    610.86         16.89       384.28           301.42           488.22             48.61
+-> Full-period CIs are tight (+/-5-8%) and only Snapchat and TikTok overlap. On the last 13 weeks the
+   intervals are 2-3.5x wider and Meta/Snapchat/TikTok all overlap: a quarterly review can't rank them.
+   The last-13-week means are ~35% lower because that window is Q4 (seasonal CPA dip, see Part 1).
+
+==============================================================================
+STEP 8.3: COMPOSITE SCORE (50% CPA rank, 50% ROAS rank)
+==============================================================================
+CPA tie applied: Snapchat = TikTok = rank 3.5 (p_fdr = 0.20)
+                   cpa   roas  cpa_rank  roas_rank  composite
+platform                                                     
+Google Search     5.31  16.73       6.0        6.0       6.00
+Meta             25.31   2.68       5.0        5.0       5.00
+TikTok           30.93   1.94       3.5        4.0       3.75
+Snapchat         30.34   1.76       3.5        3.0       3.25
+Google Display   57.54   1.21       2.0        2.0       2.00
+LinkedIn        431.56   0.44       1.0        1.0       1.00
+
+==============================================================================
+BUDGET ALLOCATION: $500,000/month, floor 5%, cap 35%
+==============================================================================
+               current_share current_budget_equiv recommended_share recommended_budget   change
+platform                                                                                       
+Google Search          21.9%              $109.6K             28.5%            $142.5K  +$32.9K
+Meta                   20.9%              $104.4K             23.8%            $118.8K  +$14.4K
+TikTok                 16.7%               $83.3K             17.8%             $89.1K   +$5.8K
+Snapchat               11.7%               $58.7K             15.4%             $77.2K  +$18.5K
+Google Display          9.1%               $45.5K              9.5%             $47.5K   +$2.0K
+LinkedIn               19.7%               $98.5K              5.0%             $25.0K  -$73.5K
+TOTAL                 100.0%              $500.0K            100.0%            $500.0K   +$0.0K
+
+Naive monthly conversions at historical CPA: current mix 30,423 -> recommended 37,860 (+24%).
+Upper bound only: assumes average CPA = marginal CPA. Search demand is finite, so extra Search spend will buy
+conversions at a worse CPA than its history. Validate with a geo-split test.
+Why floor 5%: keeps every channel measurable (and LinkedIn as a monitored test cell, not zero).
+Why cap 35%: concentration risk + diminishing returns on Search.
+
+==============================================================================
+PRIORITISATION
+==============================================================================
+Invest:      Google Search (best on every metric; scale until marginal CPA rises), Meta (clear #2).
+Hold/grow:   TikTok and Snapchat (statistically tied on CPA; keep at a mid share, test creative).
+Hold flat:   Google Display (profitable but thin: CPA 2.3x Meta, ROAS 1.21; first to cut if Search saturates).
+Restructure: LinkedIn (ROAS 0.44 = loses $0.56 per $1; cut to the 5% floor, rebuild as a B2B/test cell).
+
+Saved results/significant_findings.csv, cpa_confidence_intervals.csv, budget_allocation.csv, figures/budget_allocation.png

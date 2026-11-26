@@ -1,0 +1,73 @@
+
+==============================================================================
+SETUP
+==============================================================================
+Base CPA (Meta mean weekly CPA): $30.76
+Noise scenarios: spec CV = 0.15, observed median weekly CPA CV = 0.4
+Current data: full panel = 154 weeks per channel; quarterly review = 13 weeks
+
+==============================================================================
+STEP 7.1: EMPIRICAL POWER (1,000 simulations per cell)
+==============================================================================
+
+Power table, CV = 0.15 (rows: true CPA difference, cols: weeks per channel)
+n_periods  13    30    60    90    120   180
+5% diff    16%   25%   47%   59%   72%   90%
+10% diff   37%   72%   96%   99%  100%  100%
+15% diff   69%   97%  100%  100%  100%  100%
+20% diff   89%  100%  100%  100%  100%  100%
+
+Power table, CV = 0.4 (rows: true CPA difference, cols: weeks per channel)
+n_periods  13   30   60   90   120   180
+5% diff     6%   8%   8%  13%  16%   20%
+10% diff   10%  13%  25%  37%  48%   65%
+15% diff   17%  28%  53%  68%  83%   94%
+20% diff   23%  45%  78%  91%  96%  100%
+
+==============================================================================
+STEP 7.2: MINIMUM WEEKS PER CHANNEL FOR 80% POWER
+==============================================================================
+  cv  effect_size_pct  min_weeks_simulated  min_weeks_analytic quarter_13wk    full_data
+0.15                5                  145                 142 insufficient   sufficient
+0.15               10                   37                  36 insufficient   sufficient
+0.15               15                   18                  16 insufficient   sufficient
+0.15               20                   11                   9   sufficient   sufficient
+0.40                5                 1021                1005 insufficient insufficient
+0.40               10                  261                 252 insufficient insufficient
+0.40               15                  117                 112 insufficient   sufficient
+0.40               20                   65                  63 insufficient   sufficient
+(analytic = normal-approximation n = 2(z_0.975 + z_0.8)^2 / d^2, a cross-check on the simulation)
+
+==============================================================================
+STEP 7.3: DATA ADEQUACY FOR FDR-SIGNIFICANT CPA PAIRS
+==============================================================================
+Observed difference uses the smaller mean as baseline; noise = the pair's average observed CV.
+Caveat: power computed at the observed effect is 'post-hoc power'; it is used here only to ask
+whether a quarterly (13-week) review could see the same gap, not to re-judge the 3-year test.
+
+                           pair  observed_diff_pct  pair_cv  weeks_available power_full power_13wk weeks_needed_for_80
+                 Meta vs TikTok               21.1     0.37              155       100%        28%                  49
+               Meta vs Snapchat               28.0     0.40              154       100%        41%                  35
+     Google Display vs Snapchat               96.9     0.43              147       100%       100%                   -
+       Google Display vs TikTok              108.2     0.40              147       100%       100%                   -
+         Google Display vs Meta              152.1     0.42              147       100%       100%                   -
+          Google Search vs Meta              378.8     0.37              155       100%       100%                   -
+        Google Search vs TikTok              479.7     0.36              156       100%       100%                   -
+      Google Search vs Snapchat              512.9     0.38              154       100%       100%                   -
+     Google Display vs LinkedIn              625.0     0.48              147       100%       100%                   -
+Google Display vs Google Search             1107.0     0.40              147       100%       100%                   -
+           LinkedIn vs Snapchat             1327.8     0.47              148       100%       100%                   -
+             LinkedIn vs TikTok             1409.6     0.44              148       100%       100%                   -
+               LinkedIn vs Meta             1727.7     0.46              148       100%       100%                   -
+      Google Search vs LinkedIn             8651.1     0.44              148       100%       100%                   -
+
+==============================================================================
+KEY ANSWERS
+==============================================================================
+- Enough data? For the full panel, yes: every significant pair has ~100% power at 154 weeks.
+- Under the spec's 15% noise, 13 weeks detects only large gaps; a 10% CPA gap needs 37 weeks.
+- Under real noise (CV 0.4), a 10% gap needs 261 weeks and a 5% gap 1021 weeks per channel; even the full 3 years cannot resolve 5%.
+- The spec's 15% noise assumption understates required sample size by ~(CV_obs/0.15)^2 = 7.1x. Plan tests on measured variance, not a textbook default.
+- Pairs a 13-week review would likely miss: Meta vs TikTok (21% gap, 28% power, needs 49 wk); Meta vs Snapchat (28% gap, 41% power, needs 35 wk).
+
+Saved figures/power_analysis_cpa.png and results/power_*.csv, results/min_sample_size.csv
