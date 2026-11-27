@@ -1,0 +1,9 @@
+variability,effect_size_pct,min_days_for_80pct_power,90_days,365_days
+lab assumption (15%),5,144,insufficient,sufficient
+lab assumption (15%),10,37,sufficient,sufficient
+lab assumption (15%),15,18,sufficient,sufficient
+lab assumption (15%),20,10,sufficient,sufficient
+observed (8.6%),5,48,sufficient,sufficient
+observed (8.6%),10,13,sufficient,sufficient
+observed (8.6%),15,7,sufficient,sufficient
+observed (8.6%),20,5,sufficient,sufficient
