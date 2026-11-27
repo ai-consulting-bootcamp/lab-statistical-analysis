@@ -1,0 +1,49 @@
+variability,effect_size_pct,n_days,power
+lab assumption (15%),5,30,0.241
+lab assumption (15%),5,60,0.469
+lab assumption (15%),5,90,0.604
+lab assumption (15%),5,120,0.724
+lab assumption (15%),5,180,0.893
+lab assumption (15%),5,365,0.994
+lab assumption (15%),10,30,0.728
+lab assumption (15%),10,60,0.957
+lab assumption (15%),10,90,0.995
+lab assumption (15%),10,120,0.998
+lab assumption (15%),10,180,1.0
+lab assumption (15%),10,365,1.0
+lab assumption (15%),15,30,0.963
+lab assumption (15%),15,60,1.0
+lab assumption (15%),15,90,1.0
+lab assumption (15%),15,120,1.0
+lab assumption (15%),15,180,1.0
+lab assumption (15%),15,365,1.0
+lab assumption (15%),20,30,0.999
+lab assumption (15%),20,60,1.0
+lab assumption (15%),20,90,1.0
+lab assumption (15%),20,120,1.0
+lab assumption (15%),20,180,1.0
+lab assumption (15%),20,365,1.0
+observed (8.6%),5,30,0.585
+observed (8.6%),5,60,0.877
+observed (8.6%),5,90,0.97
+observed (8.6%),5,120,0.996
+observed (8.6%),5,180,1.0
+observed (8.6%),5,365,1.0
+observed (8.6%),10,30,0.988
+observed (8.6%),10,60,1.0
+observed (8.6%),10,90,1.0
+observed (8.6%),10,120,1.0
+observed (8.6%),10,180,1.0
+observed (8.6%),10,365,1.0
+observed (8.6%),15,30,1.0
+observed (8.6%),15,60,1.0
+observed (8.6%),15,90,1.0
+observed (8.6%),15,120,1.0
+observed (8.6%),15,180,1.0
+observed (8.6%),15,365,1.0
+observed (8.6%),20,30,1.0
+observed (8.6%),20,60,1.0
+observed (8.6%),20,90,1.0
+observed (8.6%),20,120,1.0
+observed (8.6%),20,180,1.0
+observed (8.6%),20,365,1.0
